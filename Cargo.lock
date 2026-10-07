@@ -63,12 +63,13 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "app-core",
  "axum",
  "mime_guess",
  "rust-embed",
  "serde_json",
  "tokio",
- "webbrowser",
+ "tower",
 ]
 
 [[package]]
@@ -214,8 +215,11 @@ name = "cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "api",
+ "app-core",
  "clap",
  "tokio",
+ "webbrowser",
 ]
 
 [[package]]
@@ -288,6 +292,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.6",
+]
+
+[[package]]
+name = "errno"
+version = "0.3.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+dependencies = [
+ "libc",
+ "windows-sys",
 ]
 
 [[package]]
@@ -903,6 +917,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "signal-hook-registry"
+version = "1.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
+dependencies = [
+ "errno",
+ "libc",
+]
+
+[[package]]
 name = "simd_cesu8"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1030,6 +1054,7 @@ dependencies = [
  "libc",
  "mio",
  "pin-project-lite",
+ "signal-hook-registry",
  "socket2",
  "tokio-macros",
  "windows-sys",

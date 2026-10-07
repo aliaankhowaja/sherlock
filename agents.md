@@ -19,9 +19,19 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
 
 ## Commands
 
+Pre-deploy gate — all tests in one place, separated by crate. Run before shipping the CLI:
+
 ```sh
-cargo test
-cargo clippy -- -D warnings
+./scripts/test.sh
+```
+
+What it runs, in order:
+
+```sh
+cd ui && npm run lint && npm run build   # fresh dist so api embeds it
+cargo test -p app-core
+cargo test -p api
+cargo test -p cli
+cargo clippy --all-targets -- -D warnings
 cargo fmt --check
-cd ui && npm run lint && npm run build
 ```
