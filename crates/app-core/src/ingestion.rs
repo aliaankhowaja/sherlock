@@ -112,14 +112,14 @@ pub struct RunLogs {
 }
 
 /// List all agentic teams (`POST /assistants/search` with `{}`).
-pub fn list_teams(transport: &impl LangGraphTransport) -> anyhow::Result<Vec<Team>> {
+pub fn list_teams(transport: &dyn LangGraphTransport) -> anyhow::Result<Vec<Team>> {
     let raw = transport.post_json(ASSISTANTS_SEARCH_PATH, serde_json::json!({}))?;
     parse_teams(&raw)
 }
 
 /// Fetch team runs (threads), optionally filtered by team via metadata.
 pub fn fetch_team_runs(
-    transport: &impl LangGraphTransport,
+    transport: &dyn LangGraphTransport,
     query: &TeamRunsQuery,
 ) -> anyhow::Result<Vec<TeamRun>> {
     let mut body = serde_json::json!({"limit": query.limit, "offset": query.offset});
@@ -132,7 +132,7 @@ pub fn fetch_team_runs(
 
 /// Fetch run logs (checkpoint history) for one team run.
 pub fn fetch_run_logs(
-    transport: &impl LangGraphTransport,
+    transport: &dyn LangGraphTransport,
     thread_id: &str,
     query: &RunLogsQuery,
 ) -> anyhow::Result<RunLogs> {

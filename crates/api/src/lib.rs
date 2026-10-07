@@ -1,11 +1,13 @@
 use anyhow::Result;
 use axum::{
     Json,
+    extract::{Query, State},
     http::{StatusCode, header},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Response},
     routing::get,
 };
 use rust_embed::RustEmbed;
+use serde::Deserialize;
 use std::path::PathBuf;
 
 #[derive(RustEmbed, Clone)]
@@ -15,6 +17,10 @@ struct Assets;
 pub struct ServeOptions {
     pub host: String,
     pub port: u16,
+    /// Base URL of the LangGraph API server proxied by `/api/*`.
+    pub langgraph_url: String,
+    /// Sent as X-Api-Key; only needed by secured servers.
+    pub langgraph_api_key: Option<String>,
 }
 
 impl ServeOptions {
@@ -90,6 +96,152 @@ async fn health() -> impl IntoResponse {
     Json(serde_json::json!({ "status": "ok" }))
 }
 
+/// Shared state: the LangGraph transport. Built live in `serve`, faked in
+/// tests. Kept behind `Arc<dyn …>` so handlers stay thin controllers over
+/// `app-core` (the trait is object-safe).
+#[derive(Clone)]
+pub struct AppState {
+    transport: std::sync::Arc<dyn app_core::ingestion::LangGraphTransport + Send + Sync>,
+}
+
+impl AppState {
+    pub fn new(langgraph_url: String, langgraph_api_key: Option<String>) -> Self {
+        Self {
+            transport: std::sync::Arc::new(HttpTransport {
+                base_url: langgraph_url,
+                api_key: langgraph_api_key,
+            }),
+        }
+    }
+}
+
+/// Blocking HTTP transport over the LangGraph API. The trait is sync by
+/// design (runtime-agnostic `app-core`); the few sequential requests of a
+/// local debugger do not justify a second async client.
+struct HttpTransport {
+    base_url: String,
+    api_key: Option<String>,
+}
+
+impl app_core::ingestion::LangGraphTransport for HttpTransport {
+    fn post_json(&self, path: &str, body: serde_json::Value) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        let mut request = ureq::post(&url);
+        if let Some(key) = &self.api_key {
+            request = request.header("X-Api-Key", key);
+        }
+        let mut response = request
+            .send_json(body)
+            .map_err(|e| anyhow::anyhow!("POST {url} failed: {e}"))?;
+        response
+            .body_mut()
+            .read_json()
+            .map_err(|e| anyhow::anyhow!("invalid JSON from {url}: {e}"))
+    }
+}
+
+/// JSON error envelope. LangGraph failures surface as 502 (bad gateway:
+/// sherlock is up, the upstream is not), client mistakes as 400.
+struct ApiError {
+    status: StatusCode,
+    message: String,
+}
+
+impl ApiError {
+    fn bad_request(message: impl Into<String>) -> Self {
+        Self {
+            status: StatusCode::BAD_REQUEST,
+            message: message.into(),
+        }
+    }
+
+    fn bad_gateway(err: anyhow::Error) -> Self {
+        Self {
+            status: StatusCode::BAD_GATEWAY,
+            message: format!("{err:#}"),
+        }
+    }
+}
+
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        (
+            self.status,
+            Json(serde_json::json!({ "error": self.message })),
+        )
+            .into_response()
+    }
+}
+
+fn default_runs_limit() -> u32 {
+    20
+}
+
+fn default_logs_limit() -> u32 {
+    50
+}
+
+#[derive(Deserialize)]
+struct RunsParams {
+    assistant_id: Option<String>,
+    #[serde(default = "default_runs_limit")]
+    limit: u32,
+    #[serde(default)]
+    offset: u32,
+}
+
+#[derive(Deserialize)]
+struct LogsParams {
+    thread_id: Option<String>,
+    #[serde(default = "default_logs_limit")]
+    limit: u32,
+    run_id: Option<String>,
+}
+
+async fn teams(
+    State(state): State<AppState>,
+) -> Result<Json<Vec<app_core::ingestion::Team>>, ApiError> {
+    app_core::ingestion::list_teams(&*state.transport)
+        .map(Json)
+        .map_err(ApiError::bad_gateway)
+}
+
+async fn runs(
+    State(state): State<AppState>,
+    Query(params): Query<RunsParams>,
+) -> Result<Json<Vec<app_core::ingestion::TeamRun>>, ApiError> {
+    app_core::ingestion::fetch_team_runs(
+        &*state.transport,
+        &app_core::ingestion::TeamRunsQuery {
+            limit: params.limit,
+            offset: params.offset,
+            assistant_id: params.assistant_id,
+        },
+    )
+    .map(Json)
+    .map_err(ApiError::bad_gateway)
+}
+
+async fn logs(
+    State(state): State<AppState>,
+    Query(params): Query<LogsParams>,
+) -> Result<Json<app_core::ingestion::RunLogs>, ApiError> {
+    let thread_id = params
+        .thread_id
+        .filter(|id| !id.is_empty())
+        .ok_or_else(|| ApiError::bad_request("missing required query param: thread_id"))?;
+    app_core::ingestion::fetch_run_logs(
+        &*state.transport,
+        &thread_id,
+        &app_core::ingestion::RunLogsQuery {
+            limit: params.limit,
+            run_id: params.run_id,
+        },
+    )
+    .map(Json)
+    .map_err(ApiError::bad_gateway)
+}
+
 async fn serve_ui(uri: axum::http::Uri) -> impl IntoResponse {
     let raw_path = uri.path().trim_start_matches('/');
     let path = if raw_path.is_empty() {
@@ -112,10 +264,14 @@ async fn serve_ui(uri: axum::http::Uri) -> impl IntoResponse {
     (StatusCode::SERVICE_UNAVAILABLE, msg).into_response()
 }
 
-pub fn build_router() -> axum::Router {
+pub fn build_router(state: AppState) -> axum::Router {
     axum::Router::new()
         .route("/api/health", get(health))
+        .route("/api/teams", get(teams))
+        .route("/api/runs", get(runs))
+        .route("/api/logs", get(logs))
         .fallback(serve_ui)
+        .with_state(state)
 }
 
 fn ui_available() -> bool {
@@ -128,7 +284,8 @@ pub async fn serve(opts: ServeOptions) -> Result<()> {
     }
     let listener = tokio::net::TcpListener::bind(opts.addr()).await?;
     println!("Serving sherlock at {}", opts.base_url());
-    axum::serve(listener, build_router())
+    let state = AppState::new(opts.langgraph_url, opts.langgraph_api_key);
+    axum::serve(listener, build_router(state))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
         })
@@ -141,19 +298,101 @@ mod tests {
     use super::*;
     use axum::body::{Body, to_bytes};
     use axum::http::{Request, StatusCode};
+    use std::collections::HashMap;
+    use std::sync::{Arc, Mutex};
     use tower::ServiceExt;
+
+    /// Fake LangGraph transport: canned JSON per path, records requests.
+    type SeenRequests = Arc<Mutex<Vec<(String, serde_json::Value)>>>;
+
+    struct FakeTransport {
+        routes: HashMap<String, serde_json::Value>,
+        seen: SeenRequests,
+    }
+
+    impl app_core::ingestion::LangGraphTransport for FakeTransport {
+        fn post_json(
+            &self,
+            path: &str,
+            body: serde_json::Value,
+        ) -> anyhow::Result<serde_json::Value> {
+            self.seen
+                .lock()
+                .expect("lock")
+                .push((path.to_string(), body));
+            self.routes
+                .get(path)
+                .cloned()
+                .ok_or_else(|| anyhow::anyhow!("no LangGraph route for {path}"))
+        }
+    }
+
+    fn state_with(routes: &[(&str, serde_json::Value)]) -> (AppState, SeenRequests) {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let fake = FakeTransport {
+            routes: routes
+                .iter()
+                .map(|(p, v)| (p.to_string(), v.clone()))
+                .collect(),
+            seen: seen.clone(),
+        };
+        (
+            AppState {
+                transport: Arc::new(fake),
+            },
+            seen,
+        )
+    }
+
+    fn assistant_fixture() -> serde_json::Value {
+        serde_json::json!([
+            {"assistant_id": "a1", "graph_id": "triage", "name": "triage-team"},
+            {"assistant_id": "a2", "graph_id": "triage"}
+        ])
+    }
+
+    fn threads_fixture() -> serde_json::Value {
+        serde_json::json!([
+            {"thread_id": "t1", "status": "idle",
+             "metadata": {"assistant_id": "a1"},
+             "created_at": "2026-01-01T00:00:00Z"}
+        ])
+    }
+
+    fn history_fixture() -> serde_json::Value {
+        serde_json::json!([
+            {"values": {}, "next": [],
+             "checkpoint": {"thread_id": "t1", "checkpoint_ns": "",
+                            "checkpoint_id": "c2"},
+             "metadata": {"step": 2, "source": "loop", "run_id": "r2",
+                          "writes": {"router": {"route": "nurse"}}},
+             "created_at": "2026-01-01T00:02:00Z",
+             "tasks": [{"id": "x", "name": "router"}]},
+            {"values": {}, "next": [],
+             "checkpoint": {"thread_id": "t1", "checkpoint_ns": "",
+                            "checkpoint_id": "c1"},
+             "metadata": {"step": 1, "source": "loop", "run_id": "r1",
+                          "writes": {}},
+             "created_at": "2026-01-01T00:01:00Z",
+             "tasks": [{"id": "y", "name": "nurse", "error": "boom"}]}
+        ])
+    }
+
+    async fn get(router: axum::Router, uri: &str) -> (StatusCode, serde_json::Value) {
+        let req = Request::builder().uri(uri).body(Body::empty()).unwrap();
+        let res = router.oneshot(req).await.unwrap();
+        let status = res.status();
+        let body = to_bytes(res.into_body(), 65536).await.unwrap();
+        let json: serde_json::Value =
+            serde_json::from_slice(&body).unwrap_or(serde_json::Value::Null);
+        (status, json)
+    }
 
     #[tokio::test]
     async fn health_endpoint_returns_ok_status() {
-        let router = build_router();
-        let req = Request::builder()
-            .uri("/api/health")
-            .body(Body::empty())
-            .unwrap();
-        let res = router.oneshot(req).await.unwrap();
-        assert_eq!(res.status(), StatusCode::OK);
-        let body = to_bytes(res.into_body(), 1024).await.unwrap();
-        let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        let (state, _) = state_with(&[]);
+        let (status, json) = get(build_router(state), "/api/health").await;
+        assert_eq!(status, StatusCode::OK);
         assert_eq!(json["status"], "ok");
     }
 
@@ -186,14 +425,104 @@ mod tests {
         let opts = ServeOptions {
             host: "127.0.0.1".to_string(),
             port: 3000,
+            langgraph_url: "http://127.0.0.1:2024".to_string(),
+            langgraph_api_key: None,
         };
         assert_eq!(opts.addr(), "127.0.0.1:3000");
         assert_eq!(opts.base_url(), "http://127.0.0.1:3000");
     }
 
     #[tokio::test]
+    async fn teams_endpoint_returns_assistants_as_json() {
+        let (state, seen) = state_with(&[("/assistants/search", assistant_fixture())]);
+        let (status, json) = get(build_router(state), "/api/teams").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json.as_array().expect("array").len(), 2);
+        assert_eq!(json[0]["assistant_id"], "a1");
+        assert_eq!(json[0]["graph_id"], "triage");
+        let (path, body) = &seen.lock().expect("lock")[0];
+        assert_eq!(path, "/assistants/search");
+        assert_eq!(*body, serde_json::json!({}));
+    }
+
+    #[tokio::test]
+    async fn runs_endpoint_forwards_filter_and_paging() {
+        let (state, seen) = state_with(&[("/threads/search", threads_fixture())]);
+        let (status, json) = get(
+            build_router(state),
+            "/api/runs?assistant_id=a1&limit=5&offset=10",
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json[0]["thread_id"], "t1");
+        assert_eq!(json[0]["assistant_id"], "a1");
+        let (path, body) = &seen.lock().expect("lock")[0];
+        assert_eq!(path, "/threads/search");
+        assert_eq!(body["limit"], 5);
+        assert_eq!(body["offset"], 10);
+        assert_eq!(body["metadata"]["assistant_id"], "a1");
+    }
+
+    #[tokio::test]
+    async fn runs_endpoint_defaults_limit_and_no_team_filter() {
+        let (state, seen) = state_with(&[("/threads/search", serde_json::json!([]))]);
+        let (status, json) = get(build_router(state), "/api/runs").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json, serde_json::json!([]));
+        let (_, body) = &seen.lock().expect("lock")[0];
+        assert_eq!(body["limit"], 20);
+        assert_eq!(body["offset"], 0);
+        assert!(
+            body.get("metadata").is_none(),
+            "no metadata filter expected, got: {body}"
+        );
+    }
+
+    #[tokio::test]
+    async fn logs_endpoint_requires_thread_id() {
+        let (state, seen) = state_with(&[]);
+        let (status, json) = get(build_router(state), "/api/logs").await;
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        assert!(
+            json["error"].as_str().unwrap_or("").contains("thread_id"),
+            "got: {json}"
+        );
+        assert!(seen.lock().expect("lock").is_empty());
+    }
+
+    #[tokio::test]
+    async fn logs_endpoint_returns_events_and_forwards_run_filter() {
+        let (state, seen) = state_with(&[("/threads/t1/history", history_fixture())]);
+        let (status, json) = get(
+            build_router(state),
+            "/api/logs?thread_id=t1&limit=7&run_id=r1",
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["thread_id"], "t1");
+        assert_eq!(json["events"].as_array().unwrap().len(), 1);
+        assert_eq!(json["events"][0]["node"], "nurse");
+        assert_eq!(json["events"][0]["error"], "boom");
+        let (path, body) = &seen.lock().expect("lock")[0];
+        assert_eq!(path, "/threads/t1/history");
+        assert_eq!(body["limit"], 7);
+    }
+
+    #[tokio::test]
+    async fn langgraph_failure_maps_to_502_json() {
+        let (state, _) = state_with(&[]);
+        let (status, json) = get(build_router(state), "/api/teams").await;
+        assert_eq!(status, StatusCode::BAD_GATEWAY);
+        assert!(
+            !json["error"].as_str().unwrap_or("").is_empty(),
+            "got: {json}"
+        );
+    }
+
+    #[tokio::test]
     async fn unknown_route_falls_back_to_spa_or_dist_error() {
-        let router = build_router();
+        let (state, _) = state_with(&[]);
+        let router = build_router(state);
         let req = Request::builder()
             .uri("/some/client/route")
             .body(Body::empty())

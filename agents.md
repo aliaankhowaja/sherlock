@@ -13,7 +13,13 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     endpoints live in `cli`/`api`.
 - `crates/cli/` — thin CLI controller over `app-core` (+ triggers `api` for `serve`). Primary interface.
 - `crates/api/` — thin HTTP controller over `app-core`. Serves `ui/dist` via rust-embed, opens browser.
+  - Proxies LangGraph for the dashboard: `GET /api/teams`, `GET /api/runs`,
+    `GET /api/logs` (400 on missing `thread_id`, 502 + `{error}` JSON when
+    LangGraph is down). Connection fixed at startup via `serve`
+    `--langgraph-url` (default `http://127.0.0.1:2024`) / `--langgraph-api-key`.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
+  - `/` is the ingestion dashboard: teams → runs → error-first per-node log
+    timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
 
 ## Rules
 

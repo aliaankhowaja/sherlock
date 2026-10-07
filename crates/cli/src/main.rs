@@ -28,6 +28,14 @@ struct ServeArgs {
     /// Do not open a browser window on startup
     #[arg(long, alias = "no-browser", default_value_t = false)]
     no_open: bool,
+
+    /// Base URL of the LangGraph API server proxied by the dashboard
+    #[arg(long, default_value = "http://127.0.0.1:2024")]
+    langgraph_url: String,
+
+    /// API key for secured LangGraph servers, sent as X-Api-Key
+    #[arg(long)]
+    langgraph_api_key: Option<String>,
 }
 
 #[tokio::main]
@@ -44,6 +52,8 @@ async fn main() -> anyhow::Result<()> {
             api::serve(api::ServeOptions {
                 host: args.host,
                 port: args.port,
+                langgraph_url: args.langgraph_url,
+                langgraph_api_key: args.langgraph_api_key,
             })
             .await?;
         }
@@ -214,6 +224,33 @@ mod tests {
     #[test]
     fn serve_rejects_invalid_port() {
         assert!(Cli::try_parse_from(["sherlock", "serve", "--port", "abc"]).is_err());
+    }
+
+    #[test]
+    fn serve_defaults_langgraph_to_local_dev_server() {
+        let cli = parse(&["sherlock", "serve"]);
+        let Commands::Serve(args) = cli.command else {
+            panic!("expected serve subcommand");
+        };
+        assert_eq!(args.langgraph_url, "http://127.0.0.1:2024");
+        assert_eq!(args.langgraph_api_key, None);
+    }
+
+    #[test]
+    fn serve_accepts_langgraph_options() {
+        let cli = parse(&[
+            "sherlock",
+            "serve",
+            "--langgraph-url",
+            "http://prod:2024",
+            "--langgraph-api-key",
+            "secret",
+        ]);
+        let Commands::Serve(args) = cli.command else {
+            panic!("expected serve subcommand");
+        };
+        assert_eq!(args.langgraph_url, "http://prod:2024");
+        assert_eq!(args.langgraph_api_key.as_deref(), Some("secret"));
     }
 
     fn ingest(args: &[&str]) -> IngestArgs {
