@@ -5,6 +5,12 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
 ## Layout
 
 - `crates/app-core/` — domain logic only. Put fault-isolation logic here.
+  - `ingestion` module: LangGraph data intake. Team = assistant
+    (`POST /assistants/search`), team run = thread (`POST /threads/search`,
+    team association via `metadata.assistant_id`), run logs = checkpoint
+    history (`POST /threads/{id}/history`) expanded to per-node events.
+    No I/O inside: callers inject `LangGraphTransport`; real HTTP + `serve`
+    endpoints live in `cli`/`api`.
 - `crates/cli/` — thin CLI controller over `app-core` (+ triggers `api` for `serve`). Primary interface.
 - `crates/api/` — thin HTTP controller over `app-core`. Serves `ui/dist` via rust-embed, opens browser.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
@@ -34,4 +40,19 @@ cargo test -p api
 cargo test -p cli
 cargo clippy --all-targets -- -D warnings
 cargo fmt --check
+```
+
+## CLI ingestion
+
+```sh
+sherlock ingest teams [--base-url URL] [--api-key KEY]
+sherlock ingest runs [--assistant-id ID] [--limit N] [--offset N]
+sherlock ingest logs --thread-id ID [--limit N] [--run-id RID]
+```
+
+Defaults to the local dev server (`http://127.0.0.1:2024`). Prints pretty
+JSON. Live smoke test (skipped unless the env var is set):
+
+```sh
+SHERLOCK_LIVE_URL=http://127.0.0.1:2024 cargo test -p app-core --test live_langgraph -- --nocapture
 ```

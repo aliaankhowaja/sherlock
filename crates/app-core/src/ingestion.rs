@@ -34,7 +34,7 @@ pub trait LangGraphTransport {
 }
 
 /// An agentic team: a configured instance of a graph.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 pub struct Team {
     pub assistant_id: String,
     pub graph_id: String,
@@ -64,7 +64,7 @@ impl TeamRunsQuery {
 }
 
 /// One team run: a thread holding the checkpoints of its runs.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct TeamRun {
     pub thread_id: String,
     pub status: Option<String>,
@@ -93,7 +93,7 @@ impl RunLogsQuery {
 }
 
 /// One per-node log event derived from a checkpoint.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct RunEvent {
     pub checkpoint_id: Option<String>,
     pub step: Option<i64>,
@@ -105,7 +105,7 @@ pub struct RunEvent {
 }
 
 /// Logs for one team run, in server order (most recent checkpoint first).
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct RunLogs {
     pub thread_id: String,
     pub events: Vec<RunEvent>,
