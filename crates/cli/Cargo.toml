@@ -1,0 +1,15 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+clap = { version = "4.6.7", features = ["derive"] }
+tokio = { version = "1.53.2", features = ["rt-multi-thread", "macros"] }
+app-core = { path = "../app-core" }
+api = { path = "../api" }
+
+[[bin]]
+name = "myapp"
+path = "src/main.rs"
