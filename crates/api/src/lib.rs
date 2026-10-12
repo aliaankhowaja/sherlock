@@ -19,8 +19,12 @@ pub struct ServeOptions {
     pub port: u16,
     /// Base URL of the LangGraph API server proxied by `/api/*`.
     pub langgraph_url: String,
-    /// Sent as X-Api-Key; only needed by secured servers.
+    /// Sent as X-Api-Key; only needed by secured LangGraph servers.
     pub langgraph_api_key: Option<String>,
+    /// When set, `/api/teams|runs|logs` read LangSmith traces instead of LangGraph.
+    pub langsmith_api_key: Option<String>,
+    /// LangSmith API origin. Ignored when `langsmith_api_key` is absent.
+    pub langsmith_url: String,
 }
 
 impl ServeOptions {
@@ -96,21 +100,35 @@ async fn health() -> impl IntoResponse {
     Json(serde_json::json!({ "status": "ok" }))
 }
 
-/// Shared state: the LangGraph transport. Built live in `serve`, faked in
-/// tests. Kept behind `Arc<dyn …>` so handlers stay thin controllers over
-/// `app-core` (the trait is object-safe).
+/// Which upstream the dashboard reads. Built live in `serve`, faked in tests.
+#[derive(Clone)]
+enum Upstream {
+    LangGraph(std::sync::Arc<dyn app_core::ingestion::LangGraphTransport + Send + Sync>),
+    LangSmith(std::sync::Arc<dyn app_core::langsmith::LangSmithTransport + Send + Sync>),
+}
+
+/// Shared state for `/api/*`. Handlers stay thin controllers over `app-core`.
 #[derive(Clone)]
 pub struct AppState {
-    transport: std::sync::Arc<dyn app_core::ingestion::LangGraphTransport + Send + Sync>,
+    upstream: Upstream,
 }
 
 impl AppState {
     pub fn new(langgraph_url: String, langgraph_api_key: Option<String>) -> Self {
         Self {
-            transport: std::sync::Arc::new(HttpTransport {
+            upstream: Upstream::LangGraph(std::sync::Arc::new(HttpTransport {
                 base_url: langgraph_url,
                 api_key: langgraph_api_key,
-            }),
+            })),
+        }
+    }
+
+    pub fn langsmith(langsmith_url: String, langsmith_api_key: String) -> Self {
+        Self {
+            upstream: Upstream::LangSmith(std::sync::Arc::new(LangSmithHttp::new(
+                langsmith_url.trim_end_matches('/').to_string(),
+                langsmith_api_key,
+            ))),
         }
     }
 }
@@ -137,6 +155,130 @@ impl app_core::ingestion::LangGraphTransport for HttpTransport {
             .body_mut()
             .read_json()
             .map_err(|e| anyhow::anyhow!("invalid JSON from {url}: {e}"))
+    }
+}
+
+/// Blocking HTTP transport over the LangSmith REST API (`x-api-key`).
+///
+/// The dashboard asks for teams and then runs back to back. Both read the same
+/// root traces, so replies are cached briefly. HTTP 429 is retried.
+struct LangSmithHttp {
+    base_url: String,
+    api_key: String,
+    agent: ureq::Agent,
+    cache: std::sync::Mutex<
+        std::collections::HashMap<String, (std::time::Instant, serde_json::Value)>,
+    >,
+}
+
+impl LangSmithHttp {
+    fn new(base_url: String, api_key: String) -> Self {
+        let config = ureq::Agent::config_builder()
+            .http_status_as_error(false)
+            .build();
+        Self {
+            base_url,
+            api_key,
+            agent: config.into(),
+            cache: std::sync::Mutex::new(std::collections::HashMap::new()),
+        }
+    }
+
+    fn cached(
+        &self,
+        key: &str,
+        fetch: impl FnOnce() -> anyhow::Result<serde_json::Value>,
+    ) -> anyhow::Result<serde_json::Value> {
+        const TTL: std::time::Duration = std::time::Duration::from_secs(45);
+        if let Ok(cache) = self.cache.lock()
+            && let Some((at, value)) = cache.get(key)
+            && at.elapsed() < TTL
+        {
+            return Ok(value.clone());
+        }
+        match fetch() {
+            Ok(value) => {
+                if let Ok(mut cache) = self.cache.lock() {
+                    cache.insert(key.to_string(), (std::time::Instant::now(), value.clone()));
+                }
+                Ok(value)
+            }
+            Err(err) => {
+                if let Ok(cache) = self.cache.lock()
+                    && let Some((_, value)) = cache.get(key)
+                {
+                    eprintln!("LangSmith request failed ({err}); using cached reply");
+                    return Ok(value.clone());
+                }
+                Err(err)
+            }
+        }
+    }
+
+    fn send(
+        &self,
+        url: &str,
+        body: Option<&serde_json::Value>,
+    ) -> anyhow::Result<serde_json::Value> {
+        let mut wait = std::time::Duration::from_secs(2);
+        for attempt in 0..5 {
+            let call = match body {
+                None => self
+                    .agent
+                    .get(url)
+                    .header("x-api-key", &self.api_key)
+                    .call(),
+                Some(body) => self
+                    .agent
+                    .post(url)
+                    .header("x-api-key", &self.api_key)
+                    .send_json(body),
+            };
+            let mut response = call.map_err(|e| anyhow::anyhow!("{url} failed: {e}"))?;
+            let status = response.status().as_u16();
+            if status == 429 && attempt < 4 {
+                let pause = response
+                    .headers()
+                    .get("retry-after")
+                    .and_then(|v| v.to_str().ok())
+                    .and_then(|v| v.parse::<u64>().ok())
+                    .map(|secs| std::time::Duration::from_secs(secs.clamp(1, 20)))
+                    .unwrap_or(wait);
+                eprintln!(
+                    "LangSmith rate limit (429) on {url}; retrying in {}s",
+                    pause.as_secs()
+                );
+                std::thread::sleep(pause);
+                wait = (wait * 2).min(std::time::Duration::from_secs(20));
+                continue;
+            }
+            if status == 429 {
+                anyhow::bail!(
+                    "{url} failed: http status: 429. LangSmith is rate limiting this key. Wait about a minute, then press Refresh."
+                );
+            }
+            if !(200..300).contains(&status) {
+                anyhow::bail!("{url} failed: http status: {status}");
+            }
+            return response
+                .body_mut()
+                .read_json()
+                .map_err(|e| anyhow::anyhow!("invalid JSON from {url}: {e}"));
+        }
+        anyhow::bail!("{url} failed: http status: 429")
+    }
+}
+
+impl app_core::langsmith::LangSmithTransport for LangSmithHttp {
+    fn get_json(&self, path: &str) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        self.cached(&format!("GET {path}"), || self.send(&url, None))
+    }
+
+    fn post_json(&self, path: &str, body: serde_json::Value) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        let key = format!("POST {path} {body}");
+        self.cached(&key, || self.send(&url, Some(&body)))
     }
 }
 
@@ -198,20 +340,54 @@ struct LogsParams {
     run_id: Option<String>,
 }
 
+fn list_teams(state: &AppState) -> anyhow::Result<Vec<app_core::ingestion::Team>> {
+    match &state.upstream {
+        Upstream::LangGraph(transport) => app_core::ingestion::list_teams(transport.as_ref()),
+        Upstream::LangSmith(transport) => app_core::langsmith::list_teams(transport.as_ref()),
+    }
+}
+
+fn fetch_runs(
+    state: &AppState,
+    query: &app_core::ingestion::TeamRunsQuery,
+) -> anyhow::Result<Vec<app_core::ingestion::TeamRun>> {
+    match &state.upstream {
+        Upstream::LangGraph(transport) => {
+            app_core::ingestion::fetch_team_runs(transport.as_ref(), query)
+        }
+        Upstream::LangSmith(transport) => {
+            app_core::langsmith::fetch_team_runs(transport.as_ref(), query)
+        }
+    }
+}
+
+fn fetch_logs(
+    state: &AppState,
+    thread_id: &str,
+    query: &app_core::ingestion::RunLogsQuery,
+) -> anyhow::Result<app_core::ingestion::RunLogs> {
+    match &state.upstream {
+        Upstream::LangGraph(transport) => {
+            app_core::ingestion::fetch_run_logs(transport.as_ref(), thread_id, query)
+        }
+        Upstream::LangSmith(transport) => {
+            app_core::langsmith::fetch_run_logs(transport.as_ref(), thread_id, query)
+        }
+    }
+}
+
 async fn teams(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<app_core::ingestion::Team>>, ApiError> {
-    app_core::ingestion::list_teams(&*state.transport)
-        .map(Json)
-        .map_err(ApiError::bad_gateway)
+    list_teams(&state).map(Json).map_err(ApiError::bad_gateway)
 }
 
 async fn runs(
     State(state): State<AppState>,
     Query(params): Query<RunsParams>,
 ) -> Result<Json<Vec<app_core::ingestion::TeamRun>>, ApiError> {
-    app_core::ingestion::fetch_team_runs(
-        &*state.transport,
+    fetch_runs(
+        &state,
         &app_core::ingestion::TeamRunsQuery {
             limit: params.limit,
             offset: params.offset,
@@ -230,8 +406,8 @@ async fn logs(
         .thread_id
         .filter(|id| !id.is_empty())
         .ok_or_else(|| ApiError::bad_request("missing required query param: thread_id"))?;
-    app_core::ingestion::fetch_run_logs(
-        &*state.transport,
+    fetch_logs(
+        &state,
         &thread_id,
         &app_core::ingestion::RunLogsQuery {
             limit: params.limit,
@@ -284,7 +460,13 @@ pub async fn serve(opts: ServeOptions) -> Result<()> {
     }
     let listener = tokio::net::TcpListener::bind(opts.addr()).await?;
     println!("Serving sherlock at {}", opts.base_url());
-    let state = AppState::new(opts.langgraph_url, opts.langgraph_api_key);
+    let state = if let Some(key) = opts.langsmith_api_key.clone() {
+        println!("Ingestion source: LangSmith ({})", opts.langsmith_url);
+        AppState::langsmith(opts.langsmith_url, key)
+    } else {
+        println!("Ingestion source: LangGraph ({})", opts.langgraph_url);
+        AppState::new(opts.langgraph_url, opts.langgraph_api_key)
+    };
     axum::serve(listener, build_router(state))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
@@ -338,7 +520,7 @@ mod tests {
         };
         (
             AppState {
-                transport: Arc::new(fake),
+                upstream: Upstream::LangGraph(Arc::new(fake)),
             },
             seen,
         )
@@ -427,6 +609,8 @@ mod tests {
             port: 3000,
             langgraph_url: "http://127.0.0.1:2024".to_string(),
             langgraph_api_key: None,
+            langsmith_api_key: None,
+            langsmith_url: "https://api.smith.langchain.com".to_string(),
         };
         assert_eq!(opts.addr(), "127.0.0.1:3000");
         assert_eq!(opts.base_url(), "http://127.0.0.1:3000");

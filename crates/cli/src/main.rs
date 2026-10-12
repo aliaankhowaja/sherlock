@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 
 #[derive(Parser, Debug)]
 #[command(name = "sherlock", about = "Multi-agent team debugger")]
@@ -36,6 +36,28 @@ struct ServeArgs {
     /// API key for secured LangGraph servers, sent as X-Api-Key
     #[arg(long)]
     langgraph_api_key: Option<String>,
+
+    /// Where teams, runs, and logs come from. `auto` uses LangSmith when a key is set.
+    #[arg(long, value_enum, default_value = "auto")]
+    source: IngestSource,
+
+    /// LangSmith API key. Falls back to LANGSMITH_API_KEY, then a `.env` file.
+    #[arg(long)]
+    langsmith_api_key: Option<String>,
+
+    /// LangSmith API origin
+    #[arg(long, default_value = "https://api.smith.langchain.com")]
+    langsmith_url: String,
+}
+
+#[derive(Clone, Debug, ValueEnum)]
+enum IngestSource {
+    /// LangSmith when a key is available, otherwise the local LangGraph server
+    Auto,
+    /// LangGraph Agent Server (`--langgraph-url` / `--base-url`)
+    Langgraph,
+    /// LangSmith traces (`--langsmith-api-key`)
+    Langsmith,
 }
 
 #[tokio::main]
@@ -49,47 +71,135 @@ async fn main() -> anyhow::Result<()> {
             {
                 eprintln!("warning: could not open browser ({e})");
             }
+            let langsmith_key = resolve_langsmith_key(args.langsmith_api_key);
+            let use_langsmith = match args.source {
+                IngestSource::Langsmith => true,
+                IngestSource::Langgraph => false,
+                IngestSource::Auto => langsmith_key.is_some(),
+            };
+            let langsmith_api_key = if use_langsmith {
+                Some(langsmith_key.ok_or_else(|| {
+                    anyhow::anyhow!(
+                        "LangSmith source selected but no API key. Set LANGSMITH_API_KEY or pass --langsmith-api-key"
+                    )
+                })?)
+            } else {
+                None
+            };
             api::serve(api::ServeOptions {
                 host: args.host,
                 port: args.port,
                 langgraph_url: args.langgraph_url,
                 langgraph_api_key: args.langgraph_api_key,
+                langsmith_api_key,
+                langsmith_url: args.langsmith_url,
             })
             .await?;
         }
         Commands::Ingest(args) => {
-            let transport = HttpTransport::new(args.base_url, args.api_key);
-            match args.command {
-                IngestCommands::Teams => {
-                    let teams = app_core::ingestion::list_teams(&transport)?;
-                    println!("{}", render_json(&teams)?);
+            let langsmith_key = resolve_langsmith_key(args.langsmith_api_key);
+            let use_langsmith = match args.source {
+                IngestSource::Langsmith => true,
+                IngestSource::Langgraph => false,
+                IngestSource::Auto => langsmith_key.is_some(),
+            };
+            if use_langsmith {
+                let key = langsmith_key.ok_or_else(|| {
+                    anyhow::anyhow!(
+                        "LangSmith source selected but no API key. Set LANGSMITH_API_KEY or pass --langsmith-api-key"
+                    )
+                })?;
+                let transport = LangSmithHttp::new(args.langsmith_url, key);
+                match args.command {
+                    IngestCommands::Teams => {
+                        let teams = app_core::langsmith::list_teams(&transport)?;
+                        println!("{}", render_json(&teams)?);
+                    }
+                    IngestCommands::Runs(r) => {
+                        let runs = app_core::langsmith::fetch_team_runs(
+                            &transport,
+                            &app_core::ingestion::TeamRunsQuery {
+                                limit: r.limit,
+                                offset: r.offset,
+                                assistant_id: r.assistant_id,
+                            },
+                        )?;
+                        println!("{}", render_json(&runs)?);
+                    }
+                    IngestCommands::Logs(l) => {
+                        let logs = app_core::langsmith::fetch_run_logs(
+                            &transport,
+                            &l.thread_id,
+                            &app_core::ingestion::RunLogsQuery {
+                                limit: l.limit,
+                                run_id: l.run_id,
+                            },
+                        )?;
+                        println!("{}", render_json(&logs)?);
+                    }
                 }
-                IngestCommands::Runs(r) => {
-                    let runs = app_core::ingestion::fetch_team_runs(
-                        &transport,
-                        &app_core::ingestion::TeamRunsQuery {
-                            limit: r.limit,
-                            offset: r.offset,
-                            assistant_id: r.assistant_id,
-                        },
-                    )?;
-                    println!("{}", render_json(&runs)?);
-                }
-                IngestCommands::Logs(l) => {
-                    let logs = app_core::ingestion::fetch_run_logs(
-                        &transport,
-                        &l.thread_id,
-                        &app_core::ingestion::RunLogsQuery {
-                            limit: l.limit,
-                            run_id: l.run_id,
-                        },
-                    )?;
-                    println!("{}", render_json(&logs)?);
+            } else {
+                let transport = HttpTransport::new(args.base_url, args.api_key);
+                match args.command {
+                    IngestCommands::Teams => {
+                        let teams = app_core::ingestion::list_teams(&transport)?;
+                        println!("{}", render_json(&teams)?);
+                    }
+                    IngestCommands::Runs(r) => {
+                        let runs = app_core::ingestion::fetch_team_runs(
+                            &transport,
+                            &app_core::ingestion::TeamRunsQuery {
+                                limit: r.limit,
+                                offset: r.offset,
+                                assistant_id: r.assistant_id,
+                            },
+                        )?;
+                        println!("{}", render_json(&runs)?);
+                    }
+                    IngestCommands::Logs(l) => {
+                        let logs = app_core::ingestion::fetch_run_logs(
+                            &transport,
+                            &l.thread_id,
+                            &app_core::ingestion::RunLogsQuery {
+                                limit: l.limit,
+                                run_id: l.run_id,
+                            },
+                        )?;
+                        println!("{}", render_json(&logs)?);
+                    }
                 }
             }
         }
     }
     Ok(())
+}
+
+fn resolve_langsmith_key(flag: Option<String>) -> Option<String> {
+    flag.filter(|value| !value.is_empty())
+        .or_else(|| {
+            std::env::var("LANGSMITH_API_KEY")
+                .ok()
+                .filter(|value| !value.is_empty())
+        })
+        .or_else(|| dotenv_value("LANGSMITH_API_KEY"))
+}
+
+fn dotenv_value(key: &str) -> Option<String> {
+    let text = std::fs::read_to_string(".env").ok()?;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let (name, value) = line.split_once('=')?;
+        if name.trim() == key {
+            let value = value.trim().trim_matches('"').trim_matches('\'');
+            if !value.is_empty() {
+                return Some(value.to_string());
+            }
+        }
+    }
+    None
 }
 
 /// Shared connection options for all `ingest` subcommands.
@@ -102,6 +212,18 @@ struct IngestArgs {
     /// API key for secured servers, sent as X-Api-Key
     #[arg(long)]
     api_key: Option<String>,
+
+    /// Where teams, runs, and logs come from. `auto` uses LangSmith when a key is set.
+    #[arg(long, value_enum, default_value = "auto")]
+    source: IngestSource,
+
+    /// LangSmith API key. Falls back to LANGSMITH_API_KEY, then a `.env` file.
+    #[arg(long)]
+    langsmith_api_key: Option<String>,
+
+    /// LangSmith API origin
+    #[arg(long, default_value = "https://api.smith.langchain.com")]
+    langsmith_url: String,
 
     #[command(subcommand)]
     command: IngestCommands,
@@ -158,6 +280,51 @@ struct HttpTransport {
 impl HttpTransport {
     fn new(base_url: String, api_key: Option<String>) -> Self {
         Self { base_url, api_key }
+    }
+}
+
+struct LangSmithHttp {
+    base_url: String,
+    api_key: String,
+}
+
+impl LangSmithHttp {
+    fn new(base_url: String, api_key: String) -> Self {
+        Self {
+            base_url: base_url.trim_end_matches('/').to_string(),
+            api_key,
+        }
+    }
+
+    fn read_json(
+        url: &str,
+        result: Result<ureq::http::Response<ureq::Body>, ureq::Error>,
+    ) -> anyhow::Result<serde_json::Value> {
+        let mut response = result.map_err(|e| anyhow::anyhow!("{url} failed: {e}"))?;
+        response
+            .body_mut()
+            .read_json()
+            .map_err(|e| anyhow::anyhow!("invalid JSON from {url}: {e}"))
+    }
+}
+
+impl app_core::langsmith::LangSmithTransport for LangSmithHttp {
+    fn get_json(&self, path: &str) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        Self::read_json(
+            &url,
+            ureq::get(&url).header("x-api-key", &self.api_key).call(),
+        )
+    }
+
+    fn post_json(&self, path: &str, body: serde_json::Value) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        Self::read_json(
+            &url,
+            ureq::post(&url)
+                .header("x-api-key", &self.api_key)
+                .send_json(body),
+        )
     }
 }
 

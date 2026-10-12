@@ -79,7 +79,7 @@ function ErrorBanner({ message, hint }: { message: string; hint?: string }) {
 }
 
 const LANGGRAPH_HINT =
-  'Is the LangGraph server running? Check the --langgraph-url passed to `sherlock serve`.'
+  'LangGraph mode needs a server on --langgraph-url. LangSmith mode needs LANGSMITH_API_KEY (auto when `.env` is set).'
 
 function App() {
   const [teams, setTeams] = useState<Team[]>([])

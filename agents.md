@@ -17,6 +17,9 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     `GET /api/logs` (400 on missing `thread_id`, 502 + `{error}` JSON when
     LangGraph is down). Connection fixed at startup via `serve`
     `--langgraph-url` (default `http://127.0.0.1:2024`) / `--langgraph-api-key`.
+    When `LANGSMITH_API_KEY` is set (flag, env, or `.env`), `serve` and `ingest`
+    read LangSmith traces instead (`--source langgraph` forces the local server).
+    Team = `metadata.assistant_id`, run = `thread_id`, logs = runs in that thread.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
   - `/` is the ingestion dashboard: teams → runs → error-first per-node log
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
@@ -56,8 +59,9 @@ sherlock ingest runs [--assistant-id ID] [--limit N] [--offset N]
 sherlock ingest logs --thread-id ID [--limit N] [--run-id RID]
 ```
 
-Defaults to the local dev server (`http://127.0.0.1:2024`). Prints pretty
-JSON. Live smoke test (skipped unless the env var is set):
+Defaults to LangSmith when `LANGSMITH_API_KEY` is set, otherwise the local
+dev server (`http://127.0.0.1:2024`). Prints pretty JSON. Live smoke test
+(skipped unless the env var is set):
 
 ```sh
 SHERLOCK_LIVE_URL=http://127.0.0.1:2024 cargo test -p app-core --test live_langgraph -- --nocapture
