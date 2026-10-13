@@ -76,7 +76,7 @@ def _g3(args) -> int:
 def _diagnose(args) -> int:
     from sherlock.checks import CheckError
     from sherlock.diagnose import diagnose, write_artifact
-    from sherlock.g3 import Client, G3Error, load_known_good
+    from sherlock.g3 import Client, G3Error, load_known_good, load_node_map
     from sherlock.intake import checks_for, read_intake
     from sherlock.search import Budget
 
@@ -86,10 +86,11 @@ def _diagnose(args) -> int:
         checks = checks_for(record, args.config)
         context = json.loads(args.context) if args.context else None
         known_good = load_known_good(args.known_good) if args.known_good else None
+        node_map = load_node_map(args.node_map) if args.node_map else None
         result = diagnose(Client(args.url, args.api_key), args.thread_id, known_good, checks, args.cassette,
                           Budget(args.max_trials, args.max_minutes, args.max_size), context,
                           good_runs=args.good_run or [], discover_good=args.discover_good,
-                          suspects=args.suspect or [], intake=record)
+                          suspects=args.suspect or [], intake=record, node_map=node_map)
         path = write_artifact(result, sherlock_dir)
     except (G3Error, CheckError, ValueError, OSError) as exc:
         print(f"sherlock-rec: {exc}", file=sys.stderr)
@@ -138,6 +139,8 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--thread-id", required=True, help="the recorded failed run")
     dg.add_argument("--known-good", help="JSON/YAML: node -> context patch giving its good behaviour "
                                          "(overrides what --good-run derives, per node)")
+    dg.add_argument("--node-map", help="JSON/YAML: context item or key -> node, for behaviour not named after its node "
+                                       "(e.g. a global prompt); without it such a difference abstains cannot_attribute")
     dg.add_argument("--good-run", action="append", metavar="THREAD",
                     help="a prior successful run of the same input on this server; its recorded behaviour is the "
                          "known-good source (repeatable; several are ranked, and disagreement abstains)")

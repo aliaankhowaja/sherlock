@@ -56,7 +56,8 @@ def _tool_clues(cassette_path):
     return tool_call_clues(cassette.calls(), cassette.chunks)
 
 
-def _gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover) -> list[Source]:
+def _gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover,
+                    owners=None) -> list[Source]:
     """Assess every named prior run (confirmed by the engineer) and, if asked, same-graph runs found on the server."""
     wanted = [(g, True) for g in dict.fromkeys(good_runs) if g != thread_id]
     if discover:
@@ -73,7 +74,7 @@ def _gather_sources(client, thread_id, graph_id, history, context, checks, good_
             sources.append(Source(gid, confirmed, why=f"cannot be read: {exc}"))
             continue
         sources.append(assess(gid, confirmed, history, context, good_history,
-                              _context_of(client, gid, good_history) if good_history else None, checks))
+                              _context_of(client, gid, good_history) if good_history else None, checks, owners))
     return sources
 
 
@@ -106,7 +107,7 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
             "abstain", "cannot_attribute",
             f"the passing run {source.thread_id} differs in {', '.join(source.unattributed)}, which no node name "
             "claims, so Sherlock cannot tell which node's behaviour to restore (name context items after their "
-            "node, e.g. `writer.template`, or pass --known-good)", notes=notes).to_dict()
+            "node, e.g. `writer.template`, or pass --node-map or --known-good)", notes=notes).to_dict()
     else:
         result = search(candidates,
                         lambda restore: run_g3(client, thread_id, restore, kg, checks, cassette_path, context),
@@ -122,11 +123,14 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
 
 def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | None, cassette_path: Path | str,
              budget: Budget | None = None, context: dict | None = None, clock=time.monotonic, *,
-             good_runs=(), discover_good: bool = False, suspects=(), intake: dict | None = None) -> dict:
+             good_runs=(), discover_good: bool = False, suspects=(), intake: dict | None = None,
+             node_map: dict[str, str] | None = None) -> dict:
     """Run the whole diagnosis and return the result artifact (a JSON-able dict).
 
     Known-good comes from `known_good` (a hand-written per-node context patch), from prior successful runs
     (`good_runs`, or found with `discover_good`), or both (the file overrides the derived patch per node).
+    `node_map` says which node a run-context item or key configures when its name does not (a global
+    prompt, an unprefixed flag); without an entry such a difference still abstains `cannot_attribute`.
     `suspects` is an optional shortlist that the G2 path check must accept. `checks` None means the run was
     marked wrong with no check yet: the result is the G0 clues and an abstain.
     """
@@ -160,7 +164,7 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
         context = _context_of(client, thread_id, history)
     graph_id = (thread.get("metadata") or {}).get("graph_id")
 
-    sources = (_gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover_good)
+    sources = (_gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover_good, node_map)
                if (good_runs or discover_good) else [])
     early = dict(created=created, intake=intake, clues=shown, on_path=on_path, sources_considered=[s.to_dict() for s in sources])
     path = path_check(history, checks.output_key, list(suspects)) if suspects else None

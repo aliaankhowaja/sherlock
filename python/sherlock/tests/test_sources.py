@@ -97,3 +97,19 @@ def test_run_input_and_outputs_come_from_the_tape():
     assert run_input(HISTORY) == {"vendor": "acme"}
     out = node_outputs(HISTORY)
     assert list(out) == ["router", "retriever", "extractor", "writer", "reviewer"] and len(out["writer"]) == 1
+
+
+# --- node map: unprefixed context items (the cannot_attribute gap) -------------------------------------------
+
+def test_node_map_attributes_items_and_keys_no_name_claims():
+    owners = {"qty_off_by_one": "retriever", "system_prompt": "writer"}
+    kg, lost = derive_known_good({"faults": ["qty_off_by_one", "mystery"], "system_prompt": "bad"},
+                                 {"faults": [], "system_prompt": "good"}, NODES, owners)
+    assert kg["retriever"] == {"faults": {"$remove": ["qty_off_by_one"]}}
+    assert kg["writer"] == {"system_prompt": "good"}
+    assert lost == ["faults: 'mystery'"]  # still never guessed
+
+
+def test_node_map_wins_over_the_name_prefix_and_ignores_unknown_nodes():
+    kg, lost = derive_known_good({"faults": ["writer.x"]}, {"faults": []}, NODES, {"writer.x": "reviewer", "y": "nope"})
+    assert kg["reviewer"] == {"faults": {"$remove": ["writer.x"]}} and kg["writer"] == {} and lost == []

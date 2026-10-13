@@ -38,15 +38,19 @@ def node_outputs(history: list[dict]) -> dict[str, list]:
     return out
 
 
-def _owner(item, nodes: list[str]) -> str | None:
-    """The node a context item belongs to: its name, or a name followed by a separator (longest wins)."""
+def _owner(item, nodes: list[str], owners: dict[str, str] | None = None) -> str | None:
+    """The node a context item belongs to: the engineer's node map first, else its name, or a name
+    followed by a separator (longest wins)."""
     if not isinstance(item, str):
         return None
+    if owners and owners.get(item) in nodes:
+        return owners[item]
     hits = [n for n in nodes if item == n or any(item.startswith(n + s) for s in SEPARATORS)]
     return max(hits, key=len) if hits else None
 
 
-def derive_known_good(failed: dict | None, good: dict | None, nodes: list[str]) -> tuple[dict, list[str]]:
+def derive_known_good(failed: dict | None, good: dict | None, nodes: list[str],
+                      owners: dict[str, str] | None = None) -> tuple[dict, list[str]]:
     """Per-node context patches turning the failed run's behaviour into the good run's.
 
     Returns (known_good, unattributed). Every node in `nodes` gets an entry; an empty patch means its
@@ -65,13 +69,13 @@ def derive_known_good(failed: dict | None, good: dict | None, nodes: list[str]) 
             f, g = f or [], g or []
             for kind, items in (("$remove", [x for x in f if x not in g]), ("$add", [x for x in g if x not in f])):
                 for item in items:
-                    node = _owner(item, nodes)
+                    node = _owner(item, nodes, owners)
                     if node is None:
                         unattributed.append(f"{key}: {item!r}")
                     else:
                         known[node].setdefault(key, {}).setdefault(kind, []).append(item)
         else:
-            node = _owner(key, nodes)
+            node = _owner(key, nodes, owners)
             if node is None or key not in good:
                 unattributed.append(key)
             else:
@@ -101,7 +105,8 @@ class Source:
 
 
 def assess(thread_id: str, confirmed: bool, failed_history: list[dict], failed_context: dict | None,
-           good_history: list[dict], good_context: dict | None, checks: Checks) -> Source:
+           good_history: list[dict], good_context: dict | None, checks: Checks,
+           owners: dict[str, str] | None = None) -> Source:
     """Decide whether `thread_id` is a usable known-good source for the failed run, and derive from it."""
     src = Source(thread_id, confirmed, created_at=str((good_history[0].get("created_at") if good_history else "") or ""))
     if not good_history or not any(t.get("result") is not None for s in good_history for t in s.get("tasks") or []):
@@ -119,7 +124,7 @@ def assess(thread_id: str, confirmed: bool, failed_history: list[dict], failed_c
     failed_out, good_out = node_outputs(failed_history), node_outputs(good_history)
     src.differing = [n for n in nodes if failed_out[n] != good_out.get(n)]
     src.same_output = [n for n in nodes if n not in src.differing]
-    src.known_good, src.unattributed = derive_known_good(failed_context, good_context, nodes)
+    src.known_good, src.unattributed = derive_known_good(failed_context, good_context, nodes, owners)
     src.context = good_context
     src.eligible = True
     src.why = f"passes the check on the same input; {len(src.differing)} node(s) wrote something different"

@@ -156,6 +156,19 @@ def load_known_good(path: Path | str) -> dict:
     return doc
 
 
+def load_node_map(path: Path | str) -> dict[str, str]:
+    """Which node a run-context item or key configures: {"stale_inventory": "stock", "system_prompt": "writer"}."""
+    import yaml
+
+    try:
+        doc = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        raise G3Error(f"cannot read node map {path}: {exc}") from exc
+    if not isinstance(doc, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in doc.items()):
+        raise G3Error(f"{path}: expected a mapping of context item/key to node name")
+    return doc
+
+
 def prefix_mismatch(original: dict, forked: dict) -> str | None:
     """FR-G3.7: the fork point must be the same state, heading to the same nodes."""
     if forked.get("values") != original.get("values"):
