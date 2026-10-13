@@ -73,6 +73,28 @@ def _g3(args) -> int:
     return 0 if verdict.verdict == "pass" else EXIT_FAIL
 
 
+def _diagnose(args) -> int:
+    from sherlock.checks import CheckError, load_checks
+    from sherlock.diagnose import diagnose, write_artifact
+    from sherlock.g3 import Client, G3Error, load_known_good
+    from sherlock.search import Budget
+
+    try:
+        checks = load_checks(args.config)
+        context = json.loads(args.context) if args.context else None
+        result = diagnose(Client(args.url, args.api_key), args.thread_id, load_known_good(args.known_good), checks,
+                          args.cassette, Budget(args.max_trials, args.max_minutes, args.max_size), context)
+        path = write_artifact(result, args.out or Path(args.cassette).parent)
+    except (G3Error, CheckError, ValueError, OSError) as exc:
+        print(f"sherlock-rec: {exc}", file=sys.stderr)
+        return EXIT_ERROR
+    print(json.dumps(result, indent=2))
+    c = result["counts"]
+    print(f"sherlock-rec: {result['reason']} ({c['fixes']} fix, {c['partly_helps']} partly, "
+          f"{c['does_not_help']} no help, {c['cannot_say']} cannot say of {c['total']} trials) -> {path}", file=sys.stderr)
+    return 0 if result["status"] == "found" else EXIT_ABSTAIN
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="sherlock-rec")
     sub = ap.add_subparsers(dest="verb", required=True)
@@ -90,6 +112,19 @@ def main(argv: list[str] | None = None) -> int:
     g3.add_argument("--api-key")
     g3.add_argument("--cassette", default=".sherlock/cassette.db")
     g3.add_argument("--context", help="JSON run context to start from (default: the original run's)")
+    dg = sub.add_parser("diagnose", help="find every minimal set of nodes whose restoration fixes a failed run "
+                                         "(exit 0 found, 75 cannot say, 2 error); writes .sherlock/diagnoses/<thread>.json")
+    dg.add_argument("--thread-id", required=True, help="the recorded failed run")
+    dg.add_argument("--known-good", required=True, help="JSON/YAML: node -> context patch giving its good behaviour")
+    dg.add_argument("-c", "--config", help="check file (default: sherlock.yaml found upward from cwd)")
+    dg.add_argument("--url", default="http://127.0.0.1:2024", help="a server started with `sherlock-rec run --replay`")
+    dg.add_argument("--api-key")
+    dg.add_argument("--cassette", default=".sherlock/cassette.db")
+    dg.add_argument("--context", help="JSON run context to start from (default: the original run's)")
+    dg.add_argument("--max-trials", type=int, default=40, help="hard cap on G3 trials (default 40)")
+    dg.add_argument("--max-minutes", type=float, default=10.0, help="hard cap on wall-clock time (default 10)")
+    dg.add_argument("--max-size", type=int, default=3, help="largest set of nodes to try (default 3)")
+    dg.add_argument("--out", help="artifact directory (default: the cassette's directory)")
     run = sub.add_parser("run", help="run a command under the recorder")
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
     run.add_argument("--cassette", default=".sherlock/cassette.db")
@@ -102,6 +137,8 @@ def main(argv: list[str] | None = None) -> int:
         return _check(args)
     if args.verb == "g3":
         return _g3(args)
+    if args.verb == "diagnose":
+        return _diagnose(args)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
     if not cmd:
         ap.error("run: missing command")
