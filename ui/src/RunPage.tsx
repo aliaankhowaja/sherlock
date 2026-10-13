@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { short, useJson, type Artifact, type Diagnosis, type Trial } from './api'
+import { short, useJson, when, type Artifact, type Diagnosis, type Trial } from './api'
 import {
   CommandBox,
   ErrorBanner,
@@ -16,6 +16,7 @@ import {
   TRIAL_LABEL,
   TRIAL_MEANING,
   buildCommand,
+  plain,
   setText,
 } from './terms'
 
@@ -71,7 +72,11 @@ function Timeline({ d }: { d: Diagnosis }) {
             <span className="node-name">{n.node}</span>
             <StatusChip status={n.status} />
           </div>
-          <div className="node-reason">{n.reason}</div>
+          <div className="node-reason">
+            {n.status === 'abstained'
+              ? 'No verdict for this run, so no claim about this node. See the reason at the top.'
+              : plain(n.reason)}
+          </div>
           {n.clues.map((c, j) => (
             <div key={j} className="node-clue">
               <span className="tag tag-clue">hint</span> {c}
@@ -114,7 +119,7 @@ function Evidence({ d }: { d: Diagnosis }) {
           <p>
             Run <code>{short(src.thread_id ?? null)}</code>
             {src.confirmed === false && ' (found automatically, not confirmed by you)'}:{' '}
-            {src.why ?? 'a prior run that passes the check'}.
+            {plain(src.why ?? 'a prior run that passes the check')}.
             {src.differing_nodes && src.differing_nodes.length > 0 && (
               <> It wrote something different in: {src.differing_nodes.join(', ')}.</>
             )}
@@ -208,7 +213,7 @@ function Evidence({ d }: { d: Diagnosis }) {
           <h3>Limits to keep in mind</h3>
           <ul>
             {[...(a.notes ?? []), ...(a.limitations ?? [])].map((t, i) => (
-              <li key={i}>{t}</li>
+              <li key={i}>{plain(t)}</li>
             ))}
           </ul>
         </>
@@ -309,7 +314,7 @@ export default function RunPage({ threadId }: { threadId: string }) {
             <div className="meta">
               <code>{summary.thread_id}</code>
               {summary.graph_id && <span> · team {summary.graph_id}</span>}
-              {summary.created && <span> · diagnosed {summary.created}</span>}
+              {summary.created && <span> · diagnosed {when(summary.created)}</span>}
             </div>
           </div>
           <div className="share" data-noshare>

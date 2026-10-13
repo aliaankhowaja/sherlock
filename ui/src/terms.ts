@@ -19,6 +19,38 @@ export const STATUS_MEANING: Record<NodeStatus, string> = {
     'Sherlock could not reach a verdict for this run, so it names no node. See the reason above.',
 }
 
+/** Strip internal spec references such as "(FR-K1)" or "(spec 4.4, secondary path)" from engine text. */
+export function plain(text: string): string {
+  return text.replace(/\s*\((?:FR-[A-Z0-9, -]+|spec [0-9.]+[^)]*)\)/g, '')
+}
+
+/** What each "cannot say" reason code means for the reader, and what to do about it. */
+export const REASON_HELP: Record<string, string> = {
+  unrecorded_call:
+    'Testing some group of nodes would send a model or tool request that was never recorded, and replay never makes a live call, so that group cannot be judged. If the trial log shows a group that passes, it fixes the run but was not proven to be the smallest.',
+  cannot_test:
+    'No group of nodes could be tested honestly, so none is named.',
+  budget_exhausted:
+    'The trial or time budget ran out before any smallest fix was confirmed. Raise --max-trials or --max-minutes.',
+  no_known_good:
+    'No known-good run was given for these nodes, so there was nothing to restore them to. Pick a run that passed (step 2).',
+  no_candidates:
+    'No node on the recorded path could be restored to different behaviour, so there is nothing to test.',
+  cutoff:
+    'Restoring every candidate fixes the run, but no group within the size limit does. Raise --max-size.',
+  not_fixable:
+    'Restoring all the candidates still does not make the run pass, so the fault is outside what Sherlock can restore.',
+  already_passes:
+    'The failed run already passes the check, so there is nothing to diagnose. Check that the check describes a wrong answer.',
+  no_history: 'The run has no recorded steps to replay.',
+  no_check:
+    'No check says what a right answer looks like, so Sherlock cannot tell a pass from a fail. Add one to sherlock.yaml or run sherlock-rec intake.',
+  path_check_failed: 'The suspect you named is not on the recorded path of this run.',
+  sources_disagree: 'The known-good runs gave different answers, so Sherlock names none.',
+  cannot_attribute:
+    'A difference between the runs could not be tied to one node. Pass --node-map to say which node owns it.',
+}
+
 export const STATUS_ORDER: NodeStatus[] = ['culprit', 'cleared', 'unverified', 'abstained']
 
 export const TRIAL_LABEL: Record<Trial['label'], string> = {

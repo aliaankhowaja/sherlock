@@ -136,8 +136,8 @@
 }
 
 .status-idle {
-  color: #15803d;
-  border-color: #15803d;
+  color: var(--text);
+  border-color: var(--border);
 }
 
 .empty {

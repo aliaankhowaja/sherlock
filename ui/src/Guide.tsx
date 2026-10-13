@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import {
+  isTrial,
   short,
   useJson,
+  when,
   type DiagnosisList,
   type Info,
   type Summary,
@@ -25,6 +27,7 @@ function RunPicker({
   onChange,
   disabledId,
   diagnosed,
+  skipDiagnosed,
 }: {
   name: string
   runs: TeamRun[]
@@ -32,6 +35,8 @@ function RunPicker({
   onChange: (id: string) => void
   disabledId?: string
   diagnosed: Map<string, Summary>
+  /** Runs with a diagnosis are failed runs, so they cannot be the known-good run. */
+  skipDiagnosed?: boolean
 }) {
   return (
     <div className="picker">
@@ -46,16 +51,18 @@ function RunPicker({
                     type="radio"
                     name={name}
                     checked={value === run.thread_id}
-                    disabled={run.thread_id === disabledId}
+                    disabled={run.thread_id === disabledId || (skipDiagnosed && !!d)}
                     onChange={() => onChange(run.thread_id)}
                   />
                   <code>{short(run.thread_id)}</code>
-                  <span className="row-sub">{run.created_at ?? ''}</span>
+                  <span className="row-sub">{when(run.created_at)}</span>
                   {d && (
                     <span className="tag">
-                      {d.status === 'found'
-                        ? `diagnosed ${setText(d.minimal_sets)}`
-                        : 'diagnosed: cannot say'}
+                      {skipDiagnosed
+                        ? 'failed (already diagnosed)'
+                        : d.status === 'found'
+                          ? `diagnosed ${setText(d.minimal_sets)}`
+                          : 'diagnosed: cannot say'}
                     </span>
                   )}
                 </label>
@@ -142,7 +149,23 @@ export default function Guide() {
   const list = diagnoses.data
   const diagnosed = new Map((list?.diagnoses ?? []).map((d) => [d.thread_id, d]))
   const mine = failed ? diagnosed.get(failed) : undefined
-  const runList = runs.data ?? []
+  const teamGraph = teams.data?.find((t) => t.assistant_id === teamId)?.graph_id
+  // Sherlock's own trial forks are not runs of the user's team; hide them.
+  const runList = (runs.data ?? []).filter((r) => !isTrial(r))
+  // A diagnosis of this team whose run this server does not list (e.g. the demo seed) stays reachable.
+  const known = new Set(runList.map((r) => r.thread_id))
+  const failedList: TeamRun[] = [
+    ...runList,
+    ...(list?.diagnoses ?? [])
+      .filter((d) => d.graph_id && d.graph_id === teamGraph && !known.has(d.thread_id))
+      .map((d) => ({
+        thread_id: d.thread_id,
+        status: null,
+        assistant_id: teamId,
+        created_at: d.created,
+        metadata: null,
+      })),
+  ]
   const command = buildCommand(info.data, failed, good)
 
   return (
@@ -200,7 +223,7 @@ export default function Guide() {
           )}
           <RunPicker
             name="failed"
-            runs={runList}
+            runs={failedList}
             value={failed}
             onChange={setFailed}
             disabledId={good}
@@ -220,6 +243,7 @@ export default function Guide() {
             onChange={setGood}
             disabledId={failed}
             diagnosed={diagnosed}
+            skipDiagnosed
           />
         </Step>
 

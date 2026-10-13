@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { NodeStatus, Summary } from './api'
 import { navigate } from './route'
-import { GLOSSARY, STATUS_LABEL, setText } from './terms'
+import { GLOSSARY, REASON_HELP, STATUS_LABEL, plain, setText } from './terms'
 
 export function ErrorBanner({ message, hint }: { message: string; hint?: string }) {
   return (
@@ -79,7 +79,7 @@ export function VerdictCard({ summary }: { summary: Summary }) {
     <div className="verdict verdict-abstain">
       <div className="verdict-title">Cannot say</div>
       <p>
-        {summary.reason}
+        {plain(summary.reason)}
         {summary.reason_code && (
           <>
             {' '}
@@ -87,6 +87,11 @@ export function VerdictCard({ summary }: { summary: Summary }) {
           </>
         )}
       </p>
+      {summary.reason_code && REASON_HELP[summary.reason_code] && (
+        <p>
+          <strong>In plain words:</strong> {REASON_HELP[summary.reason_code]}
+        </p>
+      )}
       <p className="verdict-note">
         Sherlock names no node when it cannot prove one. Nothing below is a cause.
       </p>

@@ -551,3 +551,8 @@
   border: 1px solid var(--border);
   border-radius: 6px;
 }
+
+.dashboard-header a {
+  color: var(--text-h);
+  font-weight: 600;
+}

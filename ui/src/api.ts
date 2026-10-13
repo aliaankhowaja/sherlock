@@ -154,6 +154,18 @@ export async function getJson<T>(url: string): Promise<T> {
   return data as T
 }
 
+/** Threads Sherlock forks while testing a node set are its own trials, not runs of the user's team. */
+export function isTrial(run: { metadata: unknown }): boolean {
+  const m = run.metadata as { sherlock_fork_of?: unknown } | null
+  return !!m && typeof m === 'object' && 'sherlock_fork_of' in m
+}
+
+/** "2026-10-13T22:23:16.240887+00:00" -> "2026-10-13 22:23 UTC". */
+export function when(iso: string | null | undefined): string {
+  const m = iso && /^(\d{4}-\d\d-\d\d)T(\d\d:\d\d)/.exec(iso)
+  return m ? `${m[1]} ${m[2]}${/(Z|[+-]00:00)$/.test(iso) ? ' UTC' : ''}` : (iso ?? '')
+}
+
 export function short(id: string | null): string {
   return id ? (id.length > 12 ? `${id.slice(0, 8)}…${id.slice(-4)}` : id) : '–'
 }

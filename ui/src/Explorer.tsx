@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   getJson,
+  isTrial,
   short,
+  when,
   type RunLogs,
   type Team,
   type TeamRun,
 } from './api'
-import { ErrorBanner } from './parts'
+import { ErrorBanner, Link } from './parts'
 
 function Pane({
   title,
@@ -149,7 +151,12 @@ function Explorer() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <p>Browse every team, run and per-node log (errors first).</p>
+        <p>
+          Browse every team, run and per-node log (errors first). This is the raw
+          record from the server. It does not say which runs gave a wrong
+          answer; &quot;idle&quot; only means the run finished without crashing.
+          To find the broken agent, use <Link to="/">Diagnose a run</Link>.
+        </p>
       </header>
 
       <div className="panes">
@@ -214,13 +221,28 @@ function Explorer() {
                 >
                   <span className="row-title">
                     <code>{short(run.thread_id)}</code>
+                    {isTrial(run) && (
+                      <span
+                        className="status"
+                        title="A replay Sherlock ran while testing a group of nodes. Not one of your runs."
+                      >
+                        Sherlock trial
+                      </span>
+                    )}
                     {run.status && (
-                      <span className={`status status-${run.status}`}>
+                      <span
+                        className={`status status-${run.status}`}
+                        title={
+                          run.status === 'idle'
+                            ? 'Finished without crashing. Says nothing about whether the answer was right.'
+                            : undefined
+                        }
+                      >
                         {run.status}
                       </span>
                     )}
                   </span>
-                  <span className="row-sub">{run.created_at ?? ''}</span>
+                  <span className="row-sub">{when(run.created_at)}</span>
                 </button>
               </li>
             ))}
