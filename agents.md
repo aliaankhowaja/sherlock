@@ -23,6 +23,16 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
   - `/` is the ingestion dashboard: teams → runs → error-first per-node log
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
+- `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
+  derivation, live-server spikes and fixtures. See `harness/README.md`.
+- `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
+  `spikes/` (dated findings from checking spec claims against real software).
+
+## Progress tracking
+
+`docs/STATUS.md` is the single live tracker. Read it before starting work. Update it
+before stopping: tick items with evidence, add dated verified facts, decisions, and one
+session-log line. Do not edit status columns inside the spec.
 
 ## Rules
 
@@ -44,6 +54,7 @@ What it runs, in order:
 
 ```sh
 cd ui && npm run lint && npm run build   # fresh dist so api embeds it
+(cd harness && uv run pytest -q)   # demo teams + gold derivation
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli
