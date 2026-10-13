@@ -25,6 +25,12 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
 - `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
   derivation, live-server spikes and fixtures. See `harness/README.md`.
+- `python/sherlock/` — Python recorder (uv, 3.12, stdlib-only runtime; `cd python/sherlock && uv run pytest -q`).
+  `sherlock run [--replay] [--cassette PATH] [--match hash|sequence] <cmd>` puts `src/sherlock/_bootstrap`
+  (a `sitecustomize`) on `PYTHONPATH`. `_hook` patches modules on first import; `shim_httpx` and `shim_tools`
+  record or replay into the SQLite `cassette` (`.sherlock/cassette.db`). Replay never goes live; a miss raises
+  `CannotSay` and the launcher exits 75 with `cannot say: ...`. Tests use `tests/stub_server.py`
+  (OpenAI-compatible stub) and `tests/llm_team.py` (demo team). No real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
 
@@ -55,6 +61,7 @@ What it runs, in order:
 ```sh
 cd ui && npm run lint && npm run build   # fresh dist so api embeds it
 (cd harness && uv run pytest -q)   # demo teams + gold derivation
+(cd python/sherlock && uv run pytest -q)   # recorder, replay, exit criterion
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli

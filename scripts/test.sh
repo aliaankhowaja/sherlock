@@ -14,6 +14,9 @@ cd ..
 section "harness (python)"
 (cd harness && uv run pytest -q)
 
+section "recorder (python/sherlock)"
+(cd python/sherlock && uv run pytest -q)
+
 section "app-core"
 cargo test -p app-core
 
