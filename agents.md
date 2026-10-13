@@ -74,6 +74,9 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     abstains `no_check`.
   - `tests/seed_demo.py OUTDIR` regenerates the demo artifacts with the real pipeline (live `langgraph dev`, no provider);
     the checked-in copy is `harness/fixtures/sherlock-demo/` (try `sherlock serve --sherlock-dir harness/fixtures/sherlock-demo`).
+  - `eval/live_demo.py OUTDIR` records the four demo teams, diagnoses five failed runs (two-cause, single, redundant fix, abstain) with the real pipeline,
+    writes `OUTDIR/diagnoses/` and leaves the replay server running (prints `SERVER <url>`), so the web app can be tried end to end:
+    `sherlock serve --langgraph-url <url> --sherlock-dir OUTDIR`. Ctrl-C stops it.
   - `sherlock-rec diagnose --node-map FILE` (`{context item or key: node}`) attributes run-context differences no node name claims
     (an unprefixed fault flag, a global prompt); otherwise they still abstain `cannot_attribute`.
   - `src/sherlock/evaluation.py` (pure): baselines (`last_node`, `random_node`, `g0_only`, `paste_and_play`), scoring (exact / wrong / abstain,
