@@ -92,3 +92,10 @@ def test_launcher_passes_the_allowlist_to_the_child(tmp_path):
 
     assert child_env("replay", tmp_path / "c.db", "hash", base={}, allow_tools=["a", "b"])["SHERLOCK_ALLOW_TOOLS"] == "a,b"
     assert "SHERLOCK_ALLOW_TOOLS" not in child_env("replay", tmp_path / "c.db", "hash", base={})
+
+
+def test_replay_children_skip_the_langgraph_version_check_which_is_a_live_call(tmp_path):
+    from sherlock.cli import child_env
+
+    assert child_env("replay", tmp_path / "c.db", "hash", base={})["LANGGRAPH_NO_VERSION_CHECK"] == "1"
+    assert "LANGGRAPH_NO_VERSION_CHECK" not in child_env("record", tmp_path / "c.db", "hash", base={})

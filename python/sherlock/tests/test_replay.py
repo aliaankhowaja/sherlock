@@ -128,18 +128,15 @@ def test_never_recorded_request_abstains(stub, session):
     assert stub.hits == []
 
 
-def test_abstain_is_not_swallowed_by_except_exception(stub, session):
+def test_a_swallowed_abstain_is_still_recorded_for_the_launcher_and_g3(stub, session):
     session("record")
-    session("replay")
-    swallowed = False
+    rt = session("replay")
     try:
-        try:
-            httpx.post(stub.url + URL_PATH, json=BODY)
-        except Exception:
-            swallowed = True
-    except CannotSay:
-        pass
-    assert not swallowed
+        httpx.post(stub.url + URL_PATH, json=BODY)
+    except Exception:
+        pass  # user code swallows the abort and carries on
+    assert any("cannot say" in r for r in rt.cassette.abstains())
+    assert stub.hits == []
 
 
 def test_sequence_fallback_serves_changed_request_in_recorded_order(stub, session):

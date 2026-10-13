@@ -24,6 +24,9 @@ def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, a
     env["SHERLOCK_MODE"] = mode
     env["SHERLOCK_CASSETTE"] = str(cassette)
     env["SHERLOCK_MATCH"] = match
+    if mode == "replay":
+        # `langgraph dev` asks pypi.org for the latest version at startup, which is a live call.
+        env.setdefault("LANGGRAPH_NO_VERSION_CHECK", "1")
     if allow_tools is not None:
         env["SHERLOCK_ALLOW_TOOLS"] = ",".join(allow_tools)
     return env

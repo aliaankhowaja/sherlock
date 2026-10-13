@@ -6,11 +6,14 @@ import threading
 from sherlock.cassette import Cassette, request_key
 
 
-class CannotSay(BaseException):
+class CannotSay(Exception):
     """Replay needed something the cassette does not have: abstain, never go live.
 
-    BaseException on purpose: SDK retry loops and user code catch Exception, and
-    swallowing an abstain would let the run carry on with an invented answer.
+    An Exception, not a BaseException: inside `langgraph dev` a BaseException kills the worker
+    and the run hangs forever (seen live, Phase 2), whereas an Exception fails the node and the
+    run. Swallowing is still caught: every abstain is stored in the cassette first, and both
+    the launcher (exit 75) and G3 read it back, so user code that swallows it cannot turn an
+    abort into an invented answer.
     """
 
 
