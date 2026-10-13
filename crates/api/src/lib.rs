@@ -25,6 +25,8 @@ pub struct ServeOptions {
     pub langsmith_api_key: Option<String>,
     /// LangSmith API origin. Ignored when `langsmith_api_key` is absent.
     pub langsmith_url: String,
+    /// Sherlock's local state directory; diagnoses are read from `<dir>/diagnoses/`.
+    pub sherlock_dir: PathBuf,
 }
 
 impl ServeOptions {
@@ -111,24 +113,36 @@ enum Upstream {
 #[derive(Clone)]
 pub struct AppState {
     upstream: Upstream,
+    /// Where runs are read from, shown to the user in the guided steps.
+    source: (&'static str, String),
+    sherlock_dir: PathBuf,
 }
 
 impl AppState {
     pub fn new(langgraph_url: String, langgraph_api_key: Option<String>) -> Self {
         Self {
+            source: ("langgraph", langgraph_url.clone()),
             upstream: Upstream::LangGraph(std::sync::Arc::new(HttpTransport {
                 base_url: langgraph_url,
                 api_key: langgraph_api_key,
             })),
+            sherlock_dir: PathBuf::from(".sherlock"),
         }
+    }
+
+    pub fn with_sherlock_dir(mut self, dir: PathBuf) -> Self {
+        self.sherlock_dir = dir;
+        self
     }
 
     pub fn langsmith(langsmith_url: String, langsmith_api_key: String) -> Self {
         Self {
+            source: ("langsmith", langsmith_url.clone()),
             upstream: Upstream::LangSmith(std::sync::Arc::new(LangSmithHttp::new(
                 langsmith_url.trim_end_matches('/').to_string(),
                 langsmith_api_key,
             ))),
+            sherlock_dir: PathBuf::from(".sherlock"),
         }
     }
 }
@@ -418,6 +432,38 @@ async fn logs(
     .map_err(ApiError::bad_gateway)
 }
 
+/// What the guided steps need to build a runnable command: which server the
+/// runs come from and where diagnoses are read.
+async fn info(State(state): State<AppState>) -> impl IntoResponse {
+    Json(serde_json::json!({
+        "source": state.source.0,
+        "url": state.source.1,
+        "sherlock_dir": state.sherlock_dir.display().to_string(),
+    }))
+}
+
+async fn diagnoses(State(state): State<AppState>) -> Json<app_core::diagnosis::DiagnosisList> {
+    Json(app_core::diagnosis::DiagnosisStore::new(&state.sherlock_dir).list())
+}
+
+async fn diagnosis(
+    State(state): State<AppState>,
+    axum::extract::Path(thread_id): axum::extract::Path<String>,
+) -> Result<Json<app_core::diagnosis::Diagnosis>, ApiError> {
+    use app_core::diagnosis::DiagnosisError;
+    app_core::diagnosis::DiagnosisStore::new(&state.sherlock_dir)
+        .get(&thread_id)
+        .map(Json)
+        .map_err(|e| ApiError {
+            status: match e {
+                DiagnosisError::BadId(_) => StatusCode::BAD_REQUEST,
+                DiagnosisError::NotFound(_) => StatusCode::NOT_FOUND,
+                DiagnosisError::Invalid(_) => StatusCode::UNPROCESSABLE_ENTITY,
+            },
+            message: e.to_string(),
+        })
+}
+
 async fn serve_ui(uri: axum::http::Uri) -> impl IntoResponse {
     let raw_path = uri.path().trim_start_matches('/');
     let path = if raw_path.is_empty() {
@@ -446,6 +492,9 @@ pub fn build_router(state: AppState) -> axum::Router {
         .route("/api/teams", get(teams))
         .route("/api/runs", get(runs))
         .route("/api/logs", get(logs))
+        .route("/api/info", get(info))
+        .route("/api/diagnoses", get(diagnoses))
+        .route("/api/diagnoses/{thread_id}", get(diagnosis))
         .fallback(serve_ui)
         .with_state(state)
 }
@@ -466,7 +515,12 @@ pub async fn serve(opts: ServeOptions) -> Result<()> {
     } else {
         println!("Ingestion source: LangGraph ({})", opts.langgraph_url);
         AppState::new(opts.langgraph_url, opts.langgraph_api_key)
-    };
+    }
+    .with_sherlock_dir(opts.sherlock_dir.clone());
+    println!(
+        "Diagnoses: {}",
+        opts.sherlock_dir.join("diagnoses").display()
+    );
     axum::serve(listener, build_router(state))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
@@ -521,6 +575,8 @@ mod tests {
         (
             AppState {
                 upstream: Upstream::LangGraph(Arc::new(fake)),
+                source: ("langgraph", "http://fake".to_string()),
+                sherlock_dir: PathBuf::from("does-not-exist"),
             },
             seen,
         )
@@ -611,6 +667,7 @@ mod tests {
             langgraph_api_key: None,
             langsmith_api_key: None,
             langsmith_url: "https://api.smith.langchain.com".to_string(),
+            sherlock_dir: PathBuf::from(".sherlock"),
         };
         assert_eq!(opts.addr(), "127.0.0.1:3000");
         assert_eq!(opts.base_url(), "http://127.0.0.1:3000");
@@ -701,6 +758,101 @@ mod tests {
             !json["error"].as_str().unwrap_or("").is_empty(),
             "got: {json}"
         );
+    }
+
+    fn demo_state() -> AppState {
+        let dir =
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../harness/fixtures/sherlock-demo");
+        state_with(&[]).0.with_sherlock_dir(dir)
+    }
+
+    #[tokio::test]
+    async fn info_endpoint_tells_the_ui_where_runs_and_diagnoses_live() {
+        let (status, json) = get(build_router(demo_state()), "/api/info").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["source"], "langgraph");
+        assert_eq!(json["url"], "http://fake");
+        assert!(
+            json["sherlock_dir"]
+                .as_str()
+                .unwrap()
+                .contains("sherlock-demo")
+        );
+    }
+
+    #[tokio::test]
+    async fn diagnoses_endpoint_lists_the_seeded_artifacts() {
+        let (status, json) = get(build_router(demo_state()), "/api/diagnoses").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["diagnoses"].as_array().unwrap().len(), 3);
+        assert_eq!(json["invalid"].as_array().unwrap().len(), 0);
+    }
+
+    #[tokio::test]
+    async fn diagnoses_endpoint_is_empty_not_an_error_without_a_directory() {
+        let (state, _) = state_with(&[]);
+        let (status, json) = get(build_router(state), "/api/diagnoses").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["diagnoses"], serde_json::json!([]));
+        assert!(json["dir"].as_str().unwrap().contains("diagnoses"));
+    }
+
+    #[tokio::test]
+    async fn diagnosis_endpoint_returns_verdict_nodes_and_artifact() {
+        let router = build_router(demo_state());
+        let (_, list) = get(router.clone(), "/api/diagnoses").await;
+        let id = list["diagnoses"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| {
+                d["minimal_sets"][0]
+                    .as_array()
+                    .is_some_and(|s| s.len() == 2)
+            })
+            .unwrap()["thread_id"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        let (status, json) = get(router, &format!("/api/diagnoses/{id}")).await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["summary"]["status"], "found");
+        let statuses: Vec<_> = json["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n["status"].as_str().unwrap())
+            .collect();
+        assert_eq!(
+            statuses,
+            [
+                "unverified",
+                "culprit",
+                "culprit",
+                "unverified",
+                "unverified"
+            ]
+        );
+        assert_eq!(json["artifact"]["trials"].as_array().unwrap().len(), 3);
+    }
+
+    #[tokio::test]
+    async fn diagnosis_endpoint_maps_errors_to_status_codes() {
+        let router = build_router(demo_state());
+        let (status, json) = get(router.clone(), "/api/diagnoses/no-such-thread").await;
+        assert_eq!(status, StatusCode::NOT_FOUND);
+        assert!(json["error"].as_str().unwrap().contains("no-such-thread"));
+        let (status, _) = get(router, "/api/diagnoses/bad.id").await;
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+
+        let tmp = std::env::temp_dir().join(format!("sherlock-api-{}", std::process::id()));
+        std::fs::create_dir_all(tmp.join("diagnoses")).unwrap();
+        std::fs::write(tmp.join("diagnoses/broken.json"), r#"{"schema": 9}"#).unwrap();
+        let state = state_with(&[]).0.with_sherlock_dir(tmp.clone());
+        let (status, json) = get(build_router(state), "/api/diagnoses/broken").await;
+        assert_eq!(status, StatusCode::UNPROCESSABLE_ENTITY);
+        assert!(json["error"].as_str().unwrap().contains("schema"));
+        std::fs::remove_dir_all(tmp).unwrap();
     }
 
     #[tokio::test]
