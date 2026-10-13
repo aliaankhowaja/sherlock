@@ -27,7 +27,9 @@ pytest.importorskip("langgraph_cli")
 
 from sherlock.cassette import Cassette  # noqa: E402
 from sherlock.checks import Checks, load_checks  # noqa: E402
+from sherlock.diagnose import diagnose  # noqa: E402
 from sherlock.g3 import Client, load_known_good, run_g3  # noqa: E402
+from sherlock.search import Budget  # noqa: E402
 
 TESTS = Path(__file__).parent
 REPO = TESTS.parents[2]
@@ -123,6 +125,8 @@ def team1(tmp_path_factory):
         ("single", "vendor_brief", {"vendor": "acme"}, ["extractor.legacy_pattern"]),
         ("two", "vendor_brief", {"vendor": "acme"}, ["retriever.drop_latest", "extractor.legacy_pattern"]),
         ("llm", "llm_brief", {"question": QUESTION}, ["fmt.shout"]),
+        ("harmless", "vendor_brief", {"vendor": "acme"}, ["retriever.reverse_order"]),
+        ("writer", "vendor_brief", {"vendor": "acme"}, ["writer.stale_template"]),
     ])
 
 
@@ -212,3 +216,89 @@ def test_cli_exit_codes_end_to_end(team1, llm_miss, tmp_path):
     miss = cli(llm_miss, "both", "prep", "-c", str(llm_z), "--known-good", str(llm_kg))
     assert miss.returncode == 75 and "cannot say" in miss.stderr
     assert cli(team1, "single", "extractor", "-c", str(llm_z), "--known-good", str(tmp_path / "nope.json")).returncode == 2
+
+
+# --- Phase 3 exit criterion: diagnose on demo team #1 (FR-D1-D9, FR-E3) ----------------------------
+
+def gold(faults):
+    """Gold minimal sets from the harness, derived by restoring subsets (FR-E3), never from fault names."""
+    sys.path.insert(0, str(HARNESS))
+    from sherlock_harness.faults import gold_minimal_sets
+    return {frozenset(s) for s in gold_minimal_sets(faults)}
+
+
+def dx(lab, key, known_good, checks, **budget):
+    return diagnose(lab["client"], lab["threads"][key], known_good, checks, lab["cassette"], Budget(**budget))
+
+
+def found(result):
+    return {frozenset(s) for s in result["minimal_sets"]}
+
+
+def test_diagnose_single_fault_matches_gold(team1, z1, good1):
+    r = dx(team1, "single", good1, z1)
+    assert r["status"] == "found" and found(r) == gold(["extractor.legacy_pattern"]) == {frozenset({"extractor"})}
+    assert r["counts"]["total"] == 1 and r["pruning"]["candidates"] == ["extractor"]
+    assert r["trial_reduction"]["exhaustive_trials"] == 31 and r["trial_reduction"]["fewer_pct"] >= 40
+    assert r["complete"] is True
+
+
+def test_diagnose_two_cause_returns_the_pair_and_no_singleton(team1, z1, good1):
+    r = dx(team1, "two", good1, z1)
+    both = ["retriever.drop_latest", "extractor.legacy_pattern"]
+    assert r["status"] == "found" and found(r) == gold(both) == {frozenset({"retriever", "extractor"})}
+    by = {tuple(t["restored"]): t["verdict"] for t in r["trials"]}
+    assert by[("retriever",)] == by[("extractor",)] == "fail" and by[("retriever", "extractor")] == "pass"
+    assert r["counts"]["total"] == 3 and r["trial_reduction"]["fewer_pct"] >= 90
+    assert Cassette(team1["cassette"]).abstains() == []
+
+
+def test_diagnose_single_writer_fault_matches_gold(team1, z1, good1):
+    r = dx(team1, "writer", good1, z1)
+    assert found(r) == gold(["writer.stale_template"]) == {frozenset({"writer"})}
+
+
+def test_diagnose_harmless_fault_has_nothing_to_diagnose(team1, z1, good1):
+    r = dx(team1, "harmless", good1, z1)
+    assert r["status"] == "abstain" and r["reason_code"] == "already_passes" and r["trials"] == []
+    assert gold(["retriever.reverse_order"]) == set()
+
+
+def test_diagnose_llm_node_downstream_is_served_from_the_cassette(team1):
+    z = LLM_CHECK
+    r = dx(team1, "llm", LLM_KNOWN_GOOD, z)
+    assert r["status"] == "found" and found(r) == {frozenset({"fmt"})}
+
+
+def test_diagnose_cache_miss_abstains_with_a_reason(llm_miss):
+    r = dx(llm_miss, "both", LLM_KNOWN_GOOD, LLM_CHECK)
+    assert r["status"] == "abstain" and r["reason_code"] == "unrecorded_call" and r["minimal_sets"] == []
+    assert "request changed since recording" in r["reason"]
+    assert r["counts"]["cannot_say"] >= 1 and r["counts"]["total"] <= 40
+
+
+def test_diagnose_stays_within_the_trial_budget(team1, z1, good1):
+    r = dx(team1, "two", good1, z1, max_trials=2)
+    assert r["status"] == "abstain" and r["reason_code"] == "budget_exhausted" and r["counts"]["total"] == 2
+
+
+def test_diagnose_cli_writes_the_artifact_and_exits_by_result(team1, llm_miss, tmp_path):
+    def cli(lab, key, kg, z, *extra):
+        out = tmp_path / lab["work"].name
+        proc = subprocess.run(
+            [sys.executable, "-m", "sherlock", "diagnose", "--url", lab["url"], "--thread-id", lab["threads"][key],
+             "--cassette", str(lab["cassette"]), "--known-good", str(kg), "-c", str(z), "--out", str(out), *extra],
+            capture_output=True, text=True, cwd=tmp_path)
+        return proc, out / "diagnoses" / f"{lab['threads'][key]}.json"
+
+    proc, artifact = cli(team1, "two", HARNESS / "known_good" / "vendor_brief.json", HARNESS / "sherlock.yaml")
+    assert proc.returncode == 0, proc.stderr
+    assert json.loads(artifact.read_text()) == json.loads(proc.stdout)
+    assert json.loads(proc.stdout)["minimal_sets"] == [["retriever", "extractor"]]
+    llm_kg, llm_z = tmp_path / "kg.json", tmp_path / "sherlock.yaml"
+    llm_kg.write_text(json.dumps(LLM_KNOWN_GOOD))
+    llm_z.write_text(f"assert:\n  - type: contains\n    value: 'ANSWER: echo: {QUESTION}'\n")
+    miss, artifact = cli(llm_miss, "both", llm_kg, llm_z)
+    assert miss.returncode == 75 and artifact.exists(), miss.stderr
+    assert json.loads(artifact.read_text())["status"] == "abstain"
+    assert cli(team1, "two", tmp_path / "nope.json", HARNESS / "sherlock.yaml")[0].returncode == 2
