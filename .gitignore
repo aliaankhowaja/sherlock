@@ -1,2 +1,12 @@
 /target
 .env
+
+# Python harness
+__pycache__/
+.venv/
+.pytest_cache/
+harness/.langgraph_api/
+harness/langgraph-dev.log
+
+# Sherlock local state (tapes, cassettes, diagnoses)
+.sherlock/
