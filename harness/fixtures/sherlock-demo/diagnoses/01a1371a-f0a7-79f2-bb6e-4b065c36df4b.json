@@ -1,0 +1,353 @@
+{
+  "schema": 1,
+  "created": "2026-10-13T21:11:25+00:00",
+  "thread_id": "01a1371a-f0a7-79f2-bb6e-4b065c36df4b",
+  "graph_id": "vendor_brief",
+  "check": {
+    "pass": false,
+    "results": [
+      {
+        "type": "contains",
+        "pass": false,
+        "score": 0.0,
+        "reason": "output does not contain 'ISO 27001'"
+      },
+      {
+        "type": "contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "output contains 'Data region: EU'"
+      },
+      {
+        "type": "not-contains",
+        "pass": false,
+        "score": 0.0,
+        "reason": "expected the opposite: output contains 'SOC 2'"
+      },
+      {
+        "type": "not-contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "expected the opposite: output does not contain 'BLOCKED'"
+      }
+    ]
+  },
+  "context": {
+    "faults": [
+      "retriever.drop_latest",
+      "extractor.legacy_pattern"
+    ]
+  },
+  "status": "found",
+  "reason_code": "ok",
+  "reason": "minimal set(s) of nodes whose restoration fixes the run: {retriever, extractor}",
+  "minimal_sets": [
+    [
+      "retriever",
+      "extractor"
+    ]
+  ],
+  "unverified_sets": [],
+  "complete": true,
+  "notes": [],
+  "counts": {
+    "fixes": 1,
+    "partly_helps": 2,
+    "does_not_help": 0,
+    "cannot_say": 0,
+    "total": 3
+  },
+  "budget": {
+    "max_trials": 40,
+    "max_minutes": 10.0,
+    "max_size": 3,
+    "trials_used": 3,
+    "elapsed_s": 3.218
+  },
+  "trials": [
+    {
+      "n": 1,
+      "restored": [
+        "retriever",
+        "extractor"
+      ],
+      "verdict": "pass",
+      "label": "fixes",
+      "score": 1.0,
+      "reason": "restoring retriever, extractor makes the check pass",
+      "fork_node": "retriever",
+      "fork_thread": "01a1371b-1ba3-7082-be3c-36273e6b3eec",
+      "check": {
+        "pass": true,
+        "results": [
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'ISO 27001'"
+          },
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'Data region: EU'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'SOC 2'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'BLOCKED'"
+          }
+        ]
+      },
+      "elapsed_s": 1.203,
+      "cassette_miss": false
+    },
+    {
+      "n": 2,
+      "restored": [
+        "retriever"
+      ],
+      "verdict": "fail",
+      "label": "partly_helps",
+      "score": 0.75,
+      "reason": "restoring retriever does not fix the check: expected the opposite: output contains 'SOC 2'",
+      "fork_node": "retriever",
+      "fork_thread": "01a1371b-205f-7960-a31d-419b9f648d71",
+      "check": {
+        "pass": false,
+        "results": [
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'ISO 27001'"
+          },
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'Data region: EU'"
+          },
+          {
+            "type": "not-contains",
+            "pass": false,
+            "score": 0.0,
+            "reason": "expected the opposite: output contains 'SOC 2'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'BLOCKED'"
+          }
+        ]
+      },
+      "elapsed_s": 0.984,
+      "cassette_miss": false
+    },
+    {
+      "n": 3,
+      "restored": [
+        "extractor"
+      ],
+      "verdict": "fail",
+      "label": "partly_helps",
+      "score": 0.75,
+      "reason": "restoring extractor does not fix the check: output does not contain 'ISO 27001'",
+      "fork_node": "extractor",
+      "fork_thread": "01a1371b-2436-7410-bfa3-2e72c981a28e",
+      "check": {
+        "pass": false,
+        "results": [
+          {
+            "type": "contains",
+            "pass": false,
+            "score": 0.0,
+            "reason": "output does not contain 'ISO 27001'"
+          },
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'Data region: EU'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'SOC 2'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'BLOCKED'"
+          }
+        ]
+      },
+      "elapsed_s": 1.031,
+      "cassette_miss": false
+    }
+  ],
+  "pruning": {
+    "nodes_on_path": [
+      "router",
+      "retriever",
+      "extractor",
+      "writer",
+      "reviewer"
+    ],
+    "candidates": [
+      "retriever",
+      "extractor"
+    ],
+    "pruned": {
+      "router": "it wrote the same output as the passing run, so it is not tested (FR-K1)",
+      "writer": "restoring it changes nothing (its known-good behaviour is already in the run)",
+      "reviewer": "restoring it changes nothing (its known-good behaviour is already in the run)"
+    },
+    "untestable": [],
+    "widened": [],
+    "exhaustive_trials": 31,
+    "search_space": 3,
+    "pruned_ratio": 0.6,
+    "limitation": "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)"
+  },
+  "trial_reduction": {
+    "exhaustive_trials": 31,
+    "trials_used": 3,
+    "fewer_pct": 90.3
+  },
+  "clues": [
+    {
+      "kind": "differs_from_passing_run",
+      "node": "retriever",
+      "detail": "retriever wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    },
+    {
+      "kind": "differs_from_passing_run",
+      "node": "extractor",
+      "detail": "extractor wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    },
+    {
+      "kind": "differs_from_passing_run",
+      "node": "writer",
+      "detail": "writer wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    },
+    {
+      "kind": "differs_from_passing_run",
+      "node": "reviewer",
+      "detail": "reviewer wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    }
+  ],
+  "path_check": null,
+  "known_good_source": {
+    "kind": "run",
+    "thread_id": "01a1371a-fb57-7973-b25c-ea081b1f9c98",
+    "confirmed": true,
+    "eligible": true,
+    "why": "passes the check on the same input; 4 node(s) wrote something different",
+    "created_at": "2026-10-13T21:11:18.592947+00:00",
+    "differing_nodes": [
+      "retriever",
+      "extractor",
+      "writer",
+      "reviewer"
+    ],
+    "same_output_nodes": [
+      "router"
+    ],
+    "unattributed": [],
+    "context_diff": {
+      "retriever": {
+        "faults": {
+          "$remove": [
+            "retriever.drop_latest"
+          ]
+        }
+      },
+      "extractor": {
+        "faults": {
+          "$remove": [
+            "extractor.legacy_pattern"
+          ]
+        }
+      }
+    }
+  },
+  "sources_considered": [
+    {
+      "kind": "run",
+      "thread_id": "01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "confirmed": true,
+      "eligible": true,
+      "why": "passes the check on the same input; 4 node(s) wrote something different",
+      "created_at": "2026-10-13T21:11:18.592947+00:00",
+      "differing_nodes": [
+        "retriever",
+        "extractor",
+        "writer",
+        "reviewer"
+      ],
+      "same_output_nodes": [
+        "router"
+      ],
+      "unattributed": [],
+      "context_diff": {
+        "retriever": {
+          "faults": {
+            "$remove": [
+              "retriever.drop_latest"
+            ]
+          }
+        },
+        "extractor": {
+          "faults": {
+            "$remove": [
+              "extractor.legacy_pattern"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "other_sources": [],
+  "intake": null,
+  "limitations": [
+    "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)",
+    "restoration goes through the run context only (spec 4.4, secondary path); a node whose behaviour is not configurable through context cannot be restored",
+    "trials are served only from the recorded cassette; a set that needs a call that was never recorded is reported as 'cannot say', never guessed",
+    "clues (G0) are weaker than a G3 trial: they order the search and may widen it, they never decide"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "thread_id": "01a1371a-f74e-70c3-b4d9-86e2ac13d36e",
+  "status": "abstain",
+  "reason_code": "no_known_good",
+  "reason": "no known-good source: pass --good-run THREAD (a prior successful run of the same input), --known-good FILE, or --discover-good",
+  "minimal_sets": [],
+  "unverified_sets": [],
+  "complete": false,
+  "notes": [],
+  "counts": {
+    "fixes": 0,
+    "partly_helps": 0,
+    "does_not_help": 0,
+    "cannot_say": 0,
+    "total": 0
+  },
+  "budget": {},
+  "trials": [],
+  "check": {
+    "pass": false,
+    "results": [
+      {
+        "type": "contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "output contains 'ISO 27001'"
+      },
+      {
+        "type": "contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "output contains 'Data region: EU'"
+      },
+      {
+        "type": "not-contains",
+        "pass": false,
+        "score": 0.0,
+        "reason": "expected the opposite: output contains 'SOC 2'"
+      },
+      {
+        "type": "not-contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "expected the opposite: output does not contain 'BLOCKED'"
+      }
+    ]
+  },
+  "pruning": {
+    "nodes_on_path": [
+      "router",
+      "retriever",
+      "extractor",
+      "writer",
+      "reviewer"
+    ],
+    "candidates": [],
+    "pruned": {},
+    "untestable": [],
+    "widened": [],
+    "exhaustive_trials": 31,
+    "search_space": 0,
+    "pruned_ratio": 0.0,
+    "limitation": "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)"
+  },
+  "trial_reduction": null,
+  "limitations": [
+    "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)",
+    "restoration goes through the run context only (spec 4.4, secondary path); a node whose behaviour is not configurable through context cannot be restored",
+    "trials are served only from the recorded cassette; a set that needs a call that was never recorded is reported as 'cannot say', never guessed",
+    "clues (G0) are weaker than a G3 trial: they order the search and may widen it, they never decide"
+  ],
+  "clues": [],
+  "path_check": null,
+  "known_good_source": null,
+  "sources_considered": [],
+  "other_sources": [],
+  "intake": null,
+  "created": "2026-10-13T21:11:30+00:00"
+}

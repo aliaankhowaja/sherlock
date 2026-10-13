@@ -15,7 +15,7 @@ from sherlock.cassette import Cassette
 from sherlock.checks import Checks, evaluate
 from sherlock.clues import differs_clues, history_clues, order_candidates, path_check, tool_call_clues
 from sherlock.g3 import G3Error, history_usable, run_g3
-from sherlock.search import LIMITATION, Budget, Pruning, SearchResult, plan_candidates, score_of, search
+from sherlock.search import LIMITATION, Budget, Pruning, SearchResult, _supersteps, plan_candidates, score_of, search
 from sherlock.sources import Source, assess, rank
 
 # Schema 1 stays; Phase 4 only adds fields: clues, path_check, known_good_source, sources_considered,
@@ -37,7 +37,7 @@ NEW_FIELDS = {"clues": [], "path_check": None, "known_good_source": None, "sourc
 
 def _early(thread_id, code, reason, check=None, **extra) -> dict:
     """An abstain decided before any trial."""
-    empty = Pruning([], [], {}, [])
+    empty = Pruning(list(extra.pop("on_path", [])), [], {}, [])  # the path is shown, nothing is claimed about it
     return {"schema": SCHEMA, "thread_id": thread_id, "status": "abstain", "reason_code": code, "reason": reason,
             "minimal_sets": [], "unverified_sets": [], "complete": False, "notes": [],
             "counts": {"fixes": 0, "partly_helps": 0, "does_not_help": 0, "cannot_say": 0, "total": 0},
@@ -144,24 +144,25 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     if problem:
         return _early(thread_id, "no_history", problem, created=created, intake=intake)
     clues = history_clues(history, checks.output_key if checks else "final_output") + _tool_clues(cassette_path)
+    on_path = list(dict.fromkeys(t["name"] for step in _supersteps(history) for t in step))
     shown = [c.to_dict() for c in clues]
     if checks is None:
         return _early(thread_id, "no_check",
                       "the run is marked wrong, but there is no check Z to say what right looks like; the clues are "
                       "not a verdict. Add a check (-c sherlock.yaml, or `intake --expected`) and a known-good run "
-                      "to get one", created=created, intake=intake, clues=shown)
+                      "to get one", created=created, intake=intake, clues=shown, on_path=on_path)
     report = evaluate(checks.assertions, (history[0]["values"] or {}).get(checks.output_key) or "", checks.base_dir)
     original = report.to_dict()
     if report.passed:
         return _early(thread_id, "already_passes", "the original run already passes the check; "
-                      "there is nothing to diagnose", check=original, created=created, intake=intake, clues=shown)
+                      "there is nothing to diagnose", check=original, created=created, intake=intake, clues=shown, on_path=on_path)
     if context is None:
         context = _context_of(client, thread_id, history)
     graph_id = (thread.get("metadata") or {}).get("graph_id")
 
     sources = (_gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover_good)
                if (good_runs or discover_good) else [])
-    early = dict(created=created, intake=intake, clues=shown, sources_considered=[s.to_dict() for s in sources])
+    early = dict(created=created, intake=intake, clues=shown, on_path=on_path, sources_considered=[s.to_dict() for s in sources])
     path = path_check(history, checks.output_key, list(suspects)) if suspects else None
     if path:
         early["path_check"] = path.to_dict()

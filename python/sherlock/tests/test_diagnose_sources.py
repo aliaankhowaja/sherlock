@@ -83,6 +83,8 @@ def test_no_known_good_source_abstains_and_says_what_to_pass(cassette):
     r = dx(DiagServer(TWO), cassette)
     assert r["status"] == "abstain" and r["reason_code"] == "no_known_good" and r["trials"] == []
     assert "--good-run" in r["reason"] and r["known_good_source"] is None
+    # the run page needs the path to draw nodes, even when nothing may be claimed about them
+    assert r["pruning"]["nodes_on_path"] and r["pruning"]["candidates"] == []
 
 
 def test_an_unusable_prior_run_is_named_with_the_reason(cassette):

@@ -1,3 +1,4 @@
+pub mod diagnosis;
 pub mod ingestion;
 pub mod langsmith;
 

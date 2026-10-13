@@ -1,0 +1,228 @@
+{
+  "schema": 1,
+  "created": "2026-10-13T21:11:29+00:00",
+  "thread_id": "01a1371a-f342-7150-be1d-a1507fe2f876",
+  "graph_id": "vendor_brief",
+  "check": {
+    "pass": false,
+    "results": [
+      {
+        "type": "contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "output contains 'ISO 27001'"
+      },
+      {
+        "type": "contains",
+        "pass": false,
+        "score": 0.0,
+        "reason": "output does not contain 'Data region: EU'"
+      },
+      {
+        "type": "not-contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "expected the opposite: output does not contain 'SOC 2'"
+      },
+      {
+        "type": "not-contains",
+        "pass": true,
+        "score": 1.0,
+        "reason": "expected the opposite: output does not contain 'BLOCKED'"
+      }
+    ]
+  },
+  "context": {
+    "faults": [
+      "writer.stale_template"
+    ]
+  },
+  "status": "found",
+  "reason_code": "ok",
+  "reason": "minimal set(s) of nodes whose restoration fixes the run: {writer}",
+  "minimal_sets": [
+    [
+      "writer"
+    ]
+  ],
+  "unverified_sets": [],
+  "complete": true,
+  "notes": [],
+  "counts": {
+    "fixes": 1,
+    "partly_helps": 0,
+    "does_not_help": 0,
+    "cannot_say": 0,
+    "total": 1
+  },
+  "budget": {
+    "max_trials": 40,
+    "max_minutes": 10.0,
+    "max_size": 3,
+    "trials_used": 1,
+    "elapsed_s": 0.938
+  },
+  "trials": [
+    {
+      "n": 1,
+      "restored": [
+        "writer"
+      ],
+      "verdict": "pass",
+      "label": "fixes",
+      "score": 1.0,
+      "reason": "restoring writer makes the check pass",
+      "fork_node": "writer",
+      "fork_thread": "01a1371b-288c-72e1-a3ed-77112d59b840",
+      "check": {
+        "pass": true,
+        "results": [
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'ISO 27001'"
+          },
+          {
+            "type": "contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "output contains 'Data region: EU'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'SOC 2'"
+          },
+          {
+            "type": "not-contains",
+            "pass": true,
+            "score": 1.0,
+            "reason": "expected the opposite: output does not contain 'BLOCKED'"
+          }
+        ]
+      },
+      "elapsed_s": 0.938,
+      "cassette_miss": false
+    }
+  ],
+  "pruning": {
+    "nodes_on_path": [
+      "router",
+      "retriever",
+      "extractor",
+      "writer",
+      "reviewer"
+    ],
+    "candidates": [
+      "writer"
+    ],
+    "pruned": {
+      "router": "it wrote the same output as the passing run, so it is not tested (FR-K1)",
+      "retriever": "it wrote the same output as the passing run, so it is not tested (FR-K1)",
+      "extractor": "it wrote the same output as the passing run, so it is not tested (FR-K1)",
+      "reviewer": "restoring it changes nothing (its known-good behaviour is already in the run)"
+    },
+    "untestable": [],
+    "widened": [],
+    "exhaustive_trials": 31,
+    "search_space": 1,
+    "pruned_ratio": 0.8,
+    "limitation": "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)"
+  },
+  "trial_reduction": {
+    "exhaustive_trials": 31,
+    "trials_used": 1,
+    "fewer_pct": 96.8
+  },
+  "clues": [
+    {
+      "kind": "differs_from_passing_run",
+      "node": "writer",
+      "detail": "writer wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    },
+    {
+      "kind": "differs_from_passing_run",
+      "node": "reviewer",
+      "detail": "reviewer wrote something different from the passing run 01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "weight": 2,
+      "widens": false,
+      "evidence": {
+        "good_thread": "01a1371a-fb57-7973-b25c-ea081b1f9c98"
+      },
+      "strength": "clue"
+    }
+  ],
+  "path_check": null,
+  "known_good_source": {
+    "kind": "run",
+    "thread_id": "01a1371a-fb57-7973-b25c-ea081b1f9c98",
+    "confirmed": true,
+    "eligible": true,
+    "why": "passes the check on the same input; 2 node(s) wrote something different",
+    "created_at": "2026-10-13T21:11:18.592947+00:00",
+    "differing_nodes": [
+      "writer",
+      "reviewer"
+    ],
+    "same_output_nodes": [
+      "router",
+      "retriever",
+      "extractor"
+    ],
+    "unattributed": [],
+    "context_diff": {
+      "writer": {
+        "faults": {
+          "$remove": [
+            "writer.stale_template"
+          ]
+        }
+      }
+    }
+  },
+  "sources_considered": [
+    {
+      "kind": "run",
+      "thread_id": "01a1371a-fb57-7973-b25c-ea081b1f9c98",
+      "confirmed": true,
+      "eligible": true,
+      "why": "passes the check on the same input; 2 node(s) wrote something different",
+      "created_at": "2026-10-13T21:11:18.592947+00:00",
+      "differing_nodes": [
+        "writer",
+        "reviewer"
+      ],
+      "same_output_nodes": [
+        "router",
+        "retriever",
+        "extractor"
+      ],
+      "unattributed": [],
+      "context_diff": {
+        "writer": {
+          "faults": {
+            "$remove": [
+              "writer.stale_template"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "other_sources": [],
+  "intake": null,
+  "limitations": [
+    "we recover ancestry, not read-dependencies; the dependency graph is conservative (spec 9.2)",
+    "restoration goes through the run context only (spec 4.4, secondary path); a node whose behaviour is not configurable through context cannot be restored",
+    "trials are served only from the recorded cassette; a set that needs a call that was never recorded is reported as 'cannot say', never guessed",
+    "clues (G0) are weaker than a G3 trial: they order the search and may widen it, they never decide"
+  ]
+}
