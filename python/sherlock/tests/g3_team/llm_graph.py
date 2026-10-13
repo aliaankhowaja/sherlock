@@ -1,0 +1,57 @@
+"""Live-test target for G3: prep -> ask (LLM over httpx) -> fmt. Faults come from run context.
+
+Served by `langgraph dev`; the stub URL is read from STUB_URL. Knows nothing about Sherlock.
+Faults: prep.truncate (cuts the prompt, so the LLM request changes), fmt.shout (upper-cases the output).
+"""
+
+import os
+from dataclasses import dataclass, field
+from typing import TypedDict
+
+import httpx
+from langgraph.graph import END, START, StateGraph
+from langgraph.runtime import Runtime
+
+
+@dataclass
+class Context:
+    faults: list[str] = field(default_factory=list)
+
+
+class State(TypedDict, total=False):
+    question: str
+    prompt: str
+    answer: str
+    final_output: str
+
+
+def _faulty(runtime: Runtime[Context], fault: str) -> bool:
+    return runtime.context is not None and fault in runtime.context.faults
+
+
+def prep(state: State, runtime: Runtime[Context]) -> State:
+    prompt = state["question"][:8] if _faulty(runtime, "prep.truncate") else state["question"]
+    return {"prompt": prompt}
+
+
+def ask(state: State) -> State:
+    body = {"model": "stub-1", "messages": [{"role": "user", "content": state["prompt"]}]}
+    with httpx.Client() as client:
+        reply = client.post(os.environ["STUB_URL"] + "/v1/chat/completions", json=body).json()
+    return {"answer": reply["choices"][0]["message"]["content"]}
+
+
+def fmt(state: State, runtime: Runtime[Context]) -> State:
+    text = f"ANSWER: {state['answer']}"
+    return {"final_output": text.upper() if _faulty(runtime, "fmt.shout") else text}
+
+
+builder = StateGraph(State, context_schema=Context)
+builder.add_node("prep", prep)
+builder.add_node("ask", ask)
+builder.add_node("fmt", fmt)
+builder.add_edge(START, "prep")
+builder.add_edge("prep", "ask")
+builder.add_edge("ask", "fmt")
+builder.add_edge("fmt", END)
+graph = builder.compile()

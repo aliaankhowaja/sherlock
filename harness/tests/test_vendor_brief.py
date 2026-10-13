@@ -57,3 +57,19 @@ def test_gold_is_derived_by_restoring_not_by_planted_names():
 
 def test_clean_run_has_no_gold():
     assert gold_minimal_sets([]) == []
+
+
+def test_known_good_and_check_files_match_the_catalogue():
+    """The files Sherlock's G3 consumes must agree with the in-process team (FR-C, FR-K)."""
+    import json
+    from pathlib import Path
+
+    import yaml
+
+    from sherlock_harness.teams.vendor_brief import CHECK
+
+    root = Path(__file__).resolve().parents[1]
+    known_good = json.loads((root / "known_good" / "vendor_brief.json").read_text())
+    for node, patch in known_good.items():
+        assert sorted(patch["faults"]["$remove"]) == sorted(n for n, f in FAULTS.items() if f.node == node)
+    assert yaml.safe_load((root / "sherlock.yaml").read_text())["assert"] == CHECK

@@ -1,0 +1,6 @@
+# Outcome check Z for demo team #1 (promptfoo-style assertions; spec FR-C).
+assert:
+  - {type: contains, value: "ISO 27001"}
+  - {type: contains, value: "Data region: EU"}
+  - {type: not-contains, value: "SOC 2"}
+  - {type: not-contains, value: "BLOCKED"}

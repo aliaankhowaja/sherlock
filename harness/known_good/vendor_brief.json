@@ -1,0 +1,7 @@
+{
+  "router": {"faults": {"$remove": ["router.wrong_source"]}},
+  "retriever": {"faults": {"$remove": ["retriever.drop_latest", "retriever.reverse_order"]}},
+  "extractor": {"faults": {"$remove": ["extractor.legacy_pattern"]}},
+  "writer": {"faults": {"$remove": ["writer.stale_template"]}},
+  "reviewer": {"faults": {"$remove": ["reviewer.false_block"]}}
+}
