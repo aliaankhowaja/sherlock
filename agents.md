@@ -26,7 +26,7 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
 - `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
   derivation, live-server spikes and fixtures. See `harness/README.md`.
 - `python/sherlock/` — Python recorder (uv, 3.12, stdlib-only runtime; `cd python/sherlock && uv run pytest -q`).
-  `sherlock run [--replay] [--cassette PATH] [--match hash|sequence] <cmd>` puts `src/sherlock/_bootstrap`
+  `sherlock-rec run [--replay] [--cassette PATH] [--match hash|sequence] <cmd>` puts `src/sherlock/_bootstrap`
   (a `sitecustomize`) on `PYTHONPATH`. `_hook` patches modules on first import; `shim_httpx` and `shim_tools`
   record or replay into the SQLite `cassette` (`.sherlock/cassette.db`). Replay never goes live; a miss raises
   `CannotSay` and the launcher exits 75 with `cannot say: ...`. Tests use `tests/stub_server.py`

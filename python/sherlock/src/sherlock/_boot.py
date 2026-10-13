@@ -1,4 +1,4 @@
-"""Bootstrap entry, called from the sitecustomize shim. Reads the environment set by `sherlock run`."""
+"""Bootstrap entry, called from the sitecustomize shim. Reads the environment set by `sherlock-rec run`."""
 
 import os
 import sys

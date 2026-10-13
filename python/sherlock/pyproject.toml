@@ -6,7 +6,7 @@ requires-python = ">=3.12,<3.14"
 dependencies = []
 
 [project.scripts]
-sherlock = "sherlock.cli:main"
+sherlock-rec = "sherlock.cli:main"
 
 [build-system]
 requires = ["hatchling"]

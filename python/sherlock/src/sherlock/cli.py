@@ -1,4 +1,4 @@
-"""`sherlock run <cmd>`: launch a command with the recorder bootstrapped (spec 4.2)."""
+"""`sherlock-rec run <cmd>`: launch a command with the recorder bootstrapped (spec 4.2)."""
 
 import argparse
 import os
@@ -27,7 +27,7 @@ def child_env(mode: str, cassette: Path, match: str, base: dict | None = None) -
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="sherlock")
+    ap = argparse.ArgumentParser(prog="sherlock-rec")
     sub = ap.add_subparsers(dest="verb", required=True)
     run = sub.add_parser("run", help="run a command under the recorder")
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
