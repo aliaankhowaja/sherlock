@@ -8,14 +8,14 @@
 //!   association uses the `assistant_id` thread-metadata convention (set it
 //!   when creating threads); without it, pass no filter and match client-side.
 //! - run logs      -> checkpoint history (`POST /threads/{id}/history`),
-//!   expanded to one event per writing node so fault isolation can blame a
-//!   single agent. Attribution to a single run uses `metadata.run_id`.
+//!   expanded to one event per task, so fault isolation can blame a single
+//!   node. A task's `result` is that node's output; `metadata.writes` (removed
+//!   in LangGraph 0.5) is only a fallback for old servers. Attribution to a
+//!   single run uses `metadata.run_id`.
 //!
 //! The module does no I/O itself: callers inject a [`LangGraphTransport`]
 //! (real HTTP lives outside `app-core`; tests use a fake). This keeps
 //! `app-core` free of CLI/HTTP/UI dependencies per `agents.md`.
-
-use std::collections::HashMap;
 
 /// LangGraph API paths used by this module.
 pub const ASSISTANTS_SEARCH_PATH: &str = "/assistants/search";
@@ -92,7 +92,10 @@ impl RunLogsQuery {
     }
 }
 
-/// One per-node log event derived from a checkpoint.
+/// One per-node log event: a task that ran from a checkpoint.
+///
+/// `checkpoint_id` is the checkpoint the node ran *from*, i.e. the fork point for
+/// re-running that node.
 #[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct RunEvent {
     pub checkpoint_id: Option<String>,
@@ -196,27 +199,6 @@ fn parse_team_runs(raw: &serde_json::Value) -> anyhow::Result<Vec<TeamRun>> {
         .collect()
 }
 
-/// Errors recorded against tasks of one checkpoint, keyed by node name.
-fn task_errors(state: &serde_json::Value) -> HashMap<String, String> {
-    let mut errors = HashMap::new();
-    for task in state
-        .get("tasks")
-        .and_then(|t| t.as_array())
-        .into_iter()
-        .flatten()
-    {
-        if let (Some(name), Some(error)) = (
-            task.get("name").and_then(|n| n.as_str()),
-            task.get("error").and_then(|e| e.as_str()),
-        ) {
-            errors
-                .entry(name.to_string())
-                .or_insert_with(|| error.to_string());
-        }
-    }
-    errors
-}
-
 fn parse_run_logs(
     thread_id: &str,
     raw: &serde_json::Value,
@@ -246,52 +228,41 @@ fn parse_run_logs(
             continue;
         }
         let created_at = optional_str(state, "created_at");
-        let errors = task_errors(state);
-        let writes = metadata
+        // LangGraph < 0.5 put per-node writes in metadata; current servers do not.
+        let legacy_writes = metadata
             .and_then(|m| m.get("writes"))
             .and_then(|w| w.as_object());
-        match writes {
-            Some(map) if !map.is_empty() => {
-                for (node, payload) in map {
-                    events.push(RunEvent {
-                        checkpoint_id: checkpoint_id.clone(),
-                        step,
-                        node: node.clone(),
-                        writes: payload.clone(),
-                        error: errors.get(node).cloned(),
-                        run_id: run_id.clone(),
-                        created_at: created_at.clone(),
-                    });
-                }
+        let event = |node: &str, writes: serde_json::Value, error: Option<String>| RunEvent {
+            checkpoint_id: checkpoint_id.clone(),
+            step,
+            node: node.to_string(),
+            writes,
+            error,
+            run_id: run_id.clone(),
+            created_at: created_at.clone(),
+        };
+        let tasks = state
+            .get("tasks")
+            .and_then(|t| t.as_array())
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        if !tasks.is_empty() {
+            // Each task ran from this checkpoint; its `result` is that node's output.
+            for task in tasks {
+                let Some(node) = task.get("name").and_then(|n| n.as_str()) else {
+                    continue;
+                };
+                let writes = task
+                    .get("result")
+                    .filter(|r| !r.is_null())
+                    .or_else(|| legacy_writes.and_then(|w| w.get(node)))
+                    .cloned()
+                    .unwrap_or(serde_json::Value::Null);
+                events.push(event(node, writes, optional_str(task, "error")));
             }
-            _ => {
-                // No writes: surface errored tasks, else one placeholder so no
-                // checkpoint is silently dropped from the debugger timeline.
-                let mut errored: Vec<(&String, &String)> = errors.iter().collect();
-                errored.sort_by(|a, b| a.0.cmp(b.0));
-                if errored.is_empty() {
-                    events.push(RunEvent {
-                        checkpoint_id: checkpoint_id.clone(),
-                        step,
-                        node: "unknown".to_string(),
-                        writes: serde_json::Value::Null,
-                        error: None,
-                        run_id: run_id.clone(),
-                        created_at: created_at.clone(),
-                    });
-                } else {
-                    for (node, error) in errored {
-                        events.push(RunEvent {
-                            checkpoint_id: checkpoint_id.clone(),
-                            step,
-                            node: node.to_string(),
-                            writes: serde_json::Value::Null,
-                            error: Some(error.to_string()),
-                            run_id: run_id.clone(),
-                            created_at: created_at.clone(),
-                        });
-                    }
-                }
+        } else if let Some(map) = legacy_writes {
+            for (node, payload) in map {
+                events.push(event(node, payload.clone(), None));
             }
         }
     }
@@ -366,28 +337,28 @@ mod tests {
         ])
     }
 
+    /// Current server shape (LangGraph >= 0.5): newest first, each node's output in
+    /// `tasks[].result`, no `metadata.writes`.
     fn history_fixture() -> serde_json::Value {
         serde_json::json!([
             {"values": {}, "next": [],
              "checkpoint": {"thread_id": "t1", "checkpoint_ns": "",
                             "checkpoint_id": "c2"},
-             "metadata": {"step": 2, "source": "loop", "run_id": "r2",
-                          "writes": {"router": {"route": "nurse"}}},
+             "metadata": {"step": 2, "source": "loop", "run_id": "r2"},
              "created_at": "2026-01-01T00:02:00Z",
-             "tasks": [{"id": "x", "name": "router"}]},
+             "tasks": []},
             {"values": {}, "next": ["nurse"],
              "checkpoint": {"thread_id": "t1", "checkpoint_ns": "",
                             "checkpoint_id": "c1"},
-             "metadata": {"step": 1, "source": "loop", "run_id": "r1",
-                          "writes": {}},
+             "metadata": {"step": 1, "source": "loop", "run_id": "r1"},
              "created_at": "2026-01-01T00:01:00Z",
-             "tasks": [{"id": "y", "name": "nurse", "error": "boom"}]},
-            {"values": {}, "next": [],
+             "tasks": [{"id": "y", "name": "nurse", "error": "boom", "result": null}]},
+            {"values": {}, "next": ["router"],
              "checkpoint": {"thread_id": "t1", "checkpoint_ns": "",
                             "checkpoint_id": "c0"},
-             "metadata": {"step": 0, "source": "input", "run_id": "r1"},
+             "metadata": {"step": 0, "source": "loop", "run_id": "r1"},
              "created_at": "2026-01-01T00:00:00Z",
-             "tasks": []}
+             "tasks": [{"id": "x", "name": "router", "result": {"route": "nurse"}}]}
         ])
     }
 
@@ -476,20 +447,59 @@ mod tests {
     }
 
     #[test]
-    fn fetch_run_logs_expands_writes_to_per_node_events() {
+    fn fetch_run_logs_expands_tasks_to_per_node_events() {
         let fake = Fake::ok(history_fixture());
         let logs = fetch_run_logs(&fake, "t1", &RunLogsQuery::new(50)).expect("parse");
-        // c2 -> 1 router event; c1 -> 1 nurse error event;
-        // c0 -> 1 synthesized "unknown" event (no writes, no tasks).
-        assert_eq!(logs.events.len(), 3);
+        // c2 is the final checkpoint (no tasks) -> no event; c1 -> nurse error; c0 -> router.
+        assert_eq!(logs.events.len(), 2);
+        assert_eq!(logs.events[0].node, "nurse");
+        assert_eq!(logs.events[0].error.as_deref(), Some("boom"));
+        assert_eq!(logs.events[0].writes, serde_json::Value::Null);
+        assert_eq!(logs.events[1].node, "router");
+        assert_eq!(logs.events[1].writes, serde_json::json!({"route": "nurse"}));
+        assert_eq!(logs.events[1].step, Some(0));
+        assert_eq!(logs.events[1].checkpoint_id.as_deref(), Some("c0"));
+        assert_eq!(logs.events[1].error, None);
+    }
+
+    #[test]
+    fn fetch_run_logs_falls_back_to_legacy_metadata_writes() {
+        let fake = Fake::ok(serde_json::json!([
+            {"checkpoint": {"checkpoint_id": "c1"},
+             "metadata": {"step": 1, "writes": {"router": {"route": "nurse"}}},
+             "tasks": []}
+        ]));
+        let logs = fetch_run_logs(&fake, "t1", &RunLogsQuery::new(10)).expect("parse");
+        assert_eq!(logs.events.len(), 1);
         assert_eq!(logs.events[0].node, "router");
         assert_eq!(logs.events[0].writes, serde_json::json!({"route": "nurse"}));
-        assert_eq!(logs.events[0].step, Some(2));
-        assert_eq!(logs.events[0].checkpoint_id.as_deref(), Some("c2"));
-        assert_eq!(logs.events[0].error, None);
-        assert_eq!(logs.events[1].node, "nurse");
-        assert_eq!(logs.events[1].error.as_deref(), Some("boom"));
-        assert_eq!(logs.events[2].node, "unknown");
+    }
+
+    #[test]
+    fn fetch_run_logs_reads_a_real_langgraph_history() {
+        // Captured from langgraph-api 0.16.0 by harness/spikes/fork_recipe.py.
+        let raw: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../harness/fixtures/vendor_brief_two_cause_history.json"
+        ))
+        .expect("fixture is JSON");
+        let logs = fetch_run_logs(&Fake::ok(raw), "t1", &RunLogsQuery::new(100)).expect("parse");
+        let nodes: Vec<&str> = logs.events.iter().map(|e| e.node.as_str()).collect();
+        assert_eq!(
+            nodes,
+            [
+                "reviewer",
+                "writer",
+                "extractor",
+                "retriever",
+                "router",
+                "__start__"
+            ]
+        );
+        assert_eq!(
+            logs.events[2].writes["certifications"],
+            serde_json::json!(["SOC 2"])
+        );
+        assert!(logs.events.iter().all(|e| e.error.is_none()));
     }
 
     #[test]
