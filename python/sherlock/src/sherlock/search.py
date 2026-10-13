@@ -34,6 +34,7 @@ class Pruning:
     candidates: list[str]
     pruned: dict[str, str]  # node -> why it cannot be the cause
     untestable: list[str]  # nodes with no known-good behaviour: kept out of the search, never ruled out
+    widened: list[str] = field(default_factory=list)  # kept in the search only because a G0 clue widened it
 
     @property
     def exhaustive_trials(self) -> int:
@@ -45,8 +46,10 @@ class Pruning:
 
     def to_dict(self):
         return {"nodes_on_path": self.on_path, "candidates": self.candidates, "pruned": self.pruned,
-                "untestable": self.untestable, "exhaustive_trials": self.exhaustive_trials,
-                "search_space": self.search_space, "limitation": LIMITATION}
+                "untestable": self.untestable, "widened": self.widened, "exhaustive_trials": self.exhaustive_trials,
+                "search_space": self.search_space,
+                "pruned_ratio": round(len(self.pruned) / len(self.on_path), 3) if self.on_path else 0.0,
+                "limitation": LIMITATION}
 
 
 def _supersteps(history: list[dict]) -> list[list[dict]]:
@@ -59,13 +62,16 @@ def _supersteps(history: list[dict]) -> list[list[dict]]:
     return steps
 
 
-def plan_candidates(history: list[dict], known_good: dict, context: dict | None, output_key: str) -> Pruning:
+def plan_candidates(history: list[dict], known_good: dict, context: dict | None, output_key: str,
+                    same_output: set[str] | frozenset = frozenset(), widen: set[str] | frozenset = frozenset()) -> Pruning:
     """Conservative pruning from the recorded path.
 
     1. Ancestry: only nodes in a superstep up to the last writer of `output_key` can reach it, and in
        that superstep only the writers themselves (parallel nodes are independent). Nodes are
        over-included, never dropped, when ordering says "maybe" (FR-D2).
-    2. No-op restores: a node whose known-good patch leaves the run context unchanged would replay the
+    2. Same output as the passing run (`same_output`, FR-K1): the node wrote exactly what the known-good
+       run wrote, so it is not tested. A G0 clue that may widen (`widen`, FR-G0.5) brings it back.
+    3. No-op restores: a node whose known-good patch leaves the run context unchanged would replay the
        original, so it can neither be a cause nor part of a minimal set.
     Nodes with no known-good behaviour are `untestable`, not pruned.
     """
@@ -73,7 +79,7 @@ def plan_candidates(history: list[dict], known_good: dict, context: dict | None,
     on_path = list(dict.fromkeys(t["name"] for step in steps for t in step))
     writer_step = max((i for i, step in enumerate(steps)
                        if any(output_key in (t.get("result") or {}) for t in step)), default=None)
-    pruned, candidates, untestable = {}, [], []
+    pruned, candidates, untestable, widened = {}, [], [], []
     base = context or {}
     for i, step in enumerate(steps):
         for task in step:
@@ -86,11 +92,15 @@ def plan_candidates(history: list[dict], known_good: dict, context: dict | None,
                 pruned[node] = f"runs in parallel with the node that writes `{output_key}`; it cannot feed it"
             elif node not in known_good:
                 untestable.append(node)
+            elif node in same_output and node not in widen:
+                pruned[node] = "it wrote the same output as the passing run, so it is not tested (FR-K1)"
             elif apply_restore(context, known_good, [node]) == base:
                 pruned[node] = "restoring it changes nothing (its known-good behaviour is already in the run)"
             else:
                 candidates.append(node)
-    return Pruning(on_path, candidates, pruned, untestable)
+                if node in same_output:
+                    widened.append(node)
+    return Pruning(on_path, candidates, pruned, untestable, widened)
 
 
 # --- verdict labels ------------------------------------------------------------------------------------
@@ -152,11 +162,12 @@ def search(candidates: list[str], oracle, original_score: float | None, budget: 
             if clock() - t0 > budget.max_minutes * 60:
                 raise _Exhausted(f"the time budget of {budget.max_minutes:g} minute(s) was used up")
             restored = sorted(key, key=order.index)
+            started = clock()
             v = oracle(restored)
-            cache[key] = ({"restored": restored, "verdict": v.verdict, "label": label_of(v, original_score),
+            cache[key] = ({"n": len(cache) + 1, "restored": restored, "verdict": v.verdict, "label": label_of(v, original_score),
                            "score": score_of(v.check), "reason": v.reason, "fork_node": v.fork_node,
                            "fork_thread": v.fork_thread, "check": v.check,
-                           "cassette_miss": bool(v.evidence.get("cassette_miss"))}, v)
+                           "elapsed_s": round(clock() - started, 3), "cassette_miss": bool(v.evidence.get("cassette_miss"))}, v)
         return cache[key][0]
 
     minimal: list[frozenset] = []

@@ -128,15 +128,16 @@ def plan_fork(history: list[dict], restore: list[str]) -> ForkPlan:
 def apply_restore(context: dict | None, known_good: dict, restore: list[str]) -> dict:
     """The run context that gives each restored node its known-good behaviour.
 
-    `known_good[node]` maps context keys to a replacement value, or to {"$remove": [..]} to
-    drop items from a list-valued key. Patches compose over the original run's context.
+    `known_good[node]` maps context keys to a replacement value, or to {"$remove": [..], "$add": [..]}
+    to drop and append items of a list-valued key. Patches compose over the original run's context.
     """
     ctx = copy.deepcopy(context or {})
     for node in restore:
         for key, patch in known_good[node].items():
-            if isinstance(patch, dict) and set(patch) == {"$remove"}:
-                drop = patch["$remove"]
-                ctx[key] = [x for x in ctx.get(key, []) if x not in drop]
+            if isinstance(patch, dict) and patch and set(patch) <= {"$remove", "$add"}:
+                drop = patch.get("$remove", [])
+                kept = [x for x in ctx.get(key) or [] if x not in drop]
+                ctx[key] = kept + [x for x in patch.get("$add", []) if x not in kept]
             else:
                 ctx[key] = copy.deepcopy(patch)
     return ctx

@@ -221,3 +221,13 @@ def test_pruning_meets_nfr8_on_team_one():
 
 def test_search_space_is_all_nonempty_subsets_of_candidates():
     assert sum(1 for k in range(1, 3) for _ in combinations("ab", k)) == 3
+
+
+def test_same_output_nodes_are_pruned_unless_a_widening_clue_brings_them_back():
+    plain = plan_candidates(HISTORY, KG, CTX, "final_output", same_output={"retriever", "writer"})
+    assert "retriever" not in plain.candidates and "same output" in plain.pruned["retriever"] and plain.widened == []
+    wide = plan_candidates(HISTORY, KG, CTX, "final_output", same_output={"retriever"}, widen={"retriever"})
+    assert "retriever" in wide.candidates and wide.widened == ["retriever"]
+    # a widened node whose restore changes nothing is still not a candidate
+    still = plan_candidates(HISTORY, KG, {"faults": []}, "final_output", same_output={"retriever"}, widen={"retriever"})
+    assert "retriever" not in still.candidates

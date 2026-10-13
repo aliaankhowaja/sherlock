@@ -74,25 +74,46 @@ def _g3(args) -> int:
 
 
 def _diagnose(args) -> int:
-    from sherlock.checks import CheckError, load_checks
+    from sherlock.checks import CheckError
     from sherlock.diagnose import diagnose, write_artifact
     from sherlock.g3 import Client, G3Error, load_known_good
+    from sherlock.intake import checks_for, read_intake
     from sherlock.search import Budget
 
     try:
-        checks = load_checks(args.config)
+        sherlock_dir = Path(args.out or Path(args.cassette).parent)
+        record = read_intake(sherlock_dir, args.thread_id)
+        checks = checks_for(record, args.config)
         context = json.loads(args.context) if args.context else None
-        result = diagnose(Client(args.url, args.api_key), args.thread_id, load_known_good(args.known_good), checks,
-                          args.cassette, Budget(args.max_trials, args.max_minutes, args.max_size), context)
-        path = write_artifact(result, args.out or Path(args.cassette).parent)
+        known_good = load_known_good(args.known_good) if args.known_good else None
+        result = diagnose(Client(args.url, args.api_key), args.thread_id, known_good, checks, args.cassette,
+                          Budget(args.max_trials, args.max_minutes, args.max_size), context,
+                          good_runs=args.good_run or [], discover_good=args.discover_good,
+                          suspects=args.suspect or [], intake=record)
+        path = write_artifact(result, sherlock_dir)
     except (G3Error, CheckError, ValueError, OSError) as exc:
         print(f"sherlock-rec: {exc}", file=sys.stderr)
         return EXIT_ERROR
     print(json.dumps(result, indent=2))
     c = result["counts"]
     print(f"sherlock-rec: {result['reason']} ({c['fixes']} fix, {c['partly_helps']} partly, "
-          f"{c['does_not_help']} no help, {c['cannot_say']} cannot say of {c['total']} trials) -> {path}", file=sys.stderr)
+          f"{c['does_not_help']} no help, {c['cannot_say']} cannot say of {c['total']} trials; "
+          f"{len(result['clues'])} clue(s)) -> {path}", file=sys.stderr)
     return 0 if result["status"] == "found" else EXIT_ABSTAIN
+
+
+def _intake(args) -> int:
+    from sherlock.checks import CheckError
+    from sherlock.intake import write_intake
+
+    try:
+        expected = Path(args.expected_file).read_text(encoding="utf-8") if args.expected_file else args.expected
+        record = write_intake(args.dir, args.thread_id, expected=expected, check_file=args.check, note=args.note)
+    except (CheckError, OSError) as exc:
+        print(f"sherlock-rec: {exc}", file=sys.stderr)
+        return EXIT_ERROR
+    print(json.dumps(record, indent=2))
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -115,7 +136,15 @@ def main(argv: list[str] | None = None) -> int:
     dg = sub.add_parser("diagnose", help="find every minimal set of nodes whose restoration fixes a failed run "
                                          "(exit 0 found, 75 cannot say, 2 error); writes .sherlock/diagnoses/<thread>.json")
     dg.add_argument("--thread-id", required=True, help="the recorded failed run")
-    dg.add_argument("--known-good", required=True, help="JSON/YAML: node -> context patch giving its good behaviour")
+    dg.add_argument("--known-good", help="JSON/YAML: node -> context patch giving its good behaviour "
+                                         "(overrides what --good-run derives, per node)")
+    dg.add_argument("--good-run", action="append", metavar="THREAD",
+                    help="a prior successful run of the same input on this server; its recorded behaviour is the "
+                         "known-good source (repeatable; several are ranked, and disagreement abstains)")
+    dg.add_argument("--discover-good", action="store_true",
+                    help="also look for passing same-input runs of the same graph on the server (unconfirmed)")
+    dg.add_argument("--suspect", action="append", metavar="NODE[->NODE]",
+                    help="shortlist a node; the path check discards it unless it names a recorded arrow (repeatable)")
     dg.add_argument("-c", "--config", help="check file (default: sherlock.yaml found upward from cwd)")
     dg.add_argument("--url", default="http://127.0.0.1:2024", help="a server started with `sherlock-rec run --replay`")
     dg.add_argument("--api-key")
@@ -125,6 +154,14 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--max-minutes", type=float, default=10.0, help="hard cap on wall-clock time (default 10)")
     dg.add_argument("--max-size", type=int, default=3, help="largest set of nodes to try (default 3)")
     dg.add_argument("--out", help="artifact directory (default: the cassette's directory)")
+    it = sub.add_parser("intake", help="mark a run wrong (no node named), or give the output it should have had, "
+                                       "or a check file; `diagnose` picks the record up")
+    it.add_argument("--thread-id", required=True, help="the failed run")
+    it.add_argument("--expected", help="the output the run should have produced (fails if it differs)")
+    it.add_argument("--expected-file")
+    it.add_argument("--check", help="a check file Z (sherlock.yaml)")
+    it.add_argument("--note")
+    it.add_argument("--dir", default=".sherlock", help="Sherlock directory (default .sherlock)")
     run = sub.add_parser("run", help="run a command under the recorder")
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
     run.add_argument("--cassette", default=".sherlock/cassette.db")
@@ -139,6 +176,8 @@ def main(argv: list[str] | None = None) -> int:
         return _g3(args)
     if args.verb == "diagnose":
         return _diagnose(args)
+    if args.verb == "intake":
+        return _intake(args)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
     if not cmd:
         ap.error("run: missing command")
