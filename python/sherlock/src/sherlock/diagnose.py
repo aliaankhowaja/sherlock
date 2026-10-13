@@ -62,7 +62,9 @@ def _gather_sources(client, thread_id, graph_id, history, context, checks, good_
     if discover:
         found = client.request("POST", "/threads/search", {"metadata": {"graph_id": graph_id}, "limit": 50}) or []
         known = {g for g, _ in wanted} | {thread_id}
-        wanted += [(t["thread_id"], False) for t in found if t["thread_id"] not in known][:DISCOVER_CAP]
+        # Sherlock's own trial forks are never sources (they carry `sherlock_fork_of`).
+        own = [t for t in found if t["thread_id"] not in known and "sherlock_fork_of" not in (t.get("metadata") or {})]
+        wanted += [(t["thread_id"], False) for t in own][:DISCOVER_CAP]
     sources = []
     for gid, confirmed in wanted:
         try:

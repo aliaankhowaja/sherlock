@@ -24,7 +24,7 @@ class SrcServer(DiagServer):
 
     def request(self, method, path, body=None):
         if (method, path) == ("POST", "/threads/search"):
-            return [{"thread_id": g} for g in self.goods]
+            return [{"thread_id": "FORK", "metadata": {"sherlock_fork_of": "T"}}] + [{"thread_id": g} for g in self.goods]
         for gid, (history, ctx) in self.goods.items():
             if path == f"/threads/{gid}/history":
                 return history
