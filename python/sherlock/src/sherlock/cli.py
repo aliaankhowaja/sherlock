@@ -37,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
         ap.error("run: missing command")
     cassette = Path(args.cassette).resolve()
     mode = "replay" if args.replay else "record"
+    if mode == "record":
+        cassette.unlink(missing_ok=True)  # a fresh recording replaces the old one
     env = child_env(mode, cassette, args.match)
     # subprocess, not os.execl: execl on Windows detaches the child from the parent.
     return subprocess.call(cmd, env=env)

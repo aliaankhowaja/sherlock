@@ -15,14 +15,19 @@ def run_cli(*args, cwd, env_extra=None):
     )
 
 
-def test_run_prepends_bootstrap_dir_and_sets_mode(tmp_path):
-    code = "import json,os;print(json.dumps({k:os.environ.get(k) for k in ('PYTHONPATH','SHERLOCK_MODE','SHERLOCK_CASSETTE')}))"
-    p = run_cli("run", "--", sys.executable, "-c", code, cwd=tmp_path, env_extra={"PYTHONPATH": "/keep/me"})
+def test_child_env_prepends_bootstrap_dir_and_keeps_existing_path(tmp_path):
+    env = cli.child_env("record", tmp_path / "c.db", "hash", base={"PYTHONPATH": "/keep/me"})
+    parts = env["PYTHONPATH"].split(os.pathsep)
+    assert Path(parts[0]) == cli.BOOTSTRAP_DIR and "/keep/me" in parts
+    assert (cli.BOOTSTRAP_DIR / "sitecustomize.py").exists()
+    assert env["SHERLOCK_MODE"] == "record" and env["SHERLOCK_MATCH"] == "hash"
+
+
+def test_run_sets_mode_and_default_cassette_in_child(tmp_path):
+    code = "import json,os;print(json.dumps({k:os.environ.get(k) for k in ('SHERLOCK_MODE','SHERLOCK_CASSETTE')}))"
+    p = run_cli("run", "--", sys.executable, "-c", code, cwd=tmp_path)
     assert p.returncode == 0, p.stderr
     seen = json.loads(p.stdout.strip().splitlines()[-1])
-    parts = seen["PYTHONPATH"].split(os.pathsep)
-    assert Path(parts[0]) == cli.BOOTSTRAP_DIR
-    assert "/keep/me" in parts
     assert seen["SHERLOCK_MODE"] == "record"
     assert Path(seen["SHERLOCK_CASSETTE"]) == tmp_path / ".sherlock" / "cassette.db"
 

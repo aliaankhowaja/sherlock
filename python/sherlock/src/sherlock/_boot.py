@@ -2,7 +2,9 @@
 
 import os
 
-from sherlock import _hook
+from sherlock import _hook, shim_httpx
+from sherlock.cassette import Cassette
+from sherlock.runtime import Runtime
 
 MODES = ("record", "replay")
 
@@ -13,4 +15,5 @@ def bootstrap():
         return
     if mode not in MODES:
         raise ValueError(f"SHERLOCK_MODE={mode!r}, expected one of {MODES}")
-    _hook.install({})
+    rt = Runtime(Cassette(os.environ["SHERLOCK_CASSETTE"]), mode, os.environ.get("SHERLOCK_MATCH", "hash"))
+    _hook.install({"httpx": lambda m: shim_httpx.patch(m, rt)})
