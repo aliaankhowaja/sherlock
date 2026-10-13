@@ -3,7 +3,7 @@
 > **This is the live progress tracker.** Read it before starting work; update it before you stop.
 > Scope is set by [`sherlock-spec.md`](sherlock-spec.md), which governs. The status columns inside the spec are a 12 October snapshot — **live status lives here only.** Session rules (model, commits) are in [`../CLAUDE.md`](../CLAUDE.md).
 
-**Last updated:** 2026-10-14 · **Current phase:** 5 — surface (run page, verified colouring, evidence panel), not started · **Branch:** `phase-4` (Phase 4 done, branched off `phase-3`; merge, then branch `phase-5`)
+**Last updated:** 2026-10-14 · **Current phase:** 6 — evaluation, not started · **Branch:** `phase-5` (Phase 5 done, branched off `phase-4`; merge, then branch `phase-6`)
 
 ## How to update this file
 
@@ -22,8 +22,8 @@
 | 2 | Checks (Z) and the run-again test (G3) | ✅ done 2026-10-14 |
 | 3 | Minimality search, verdicts, budget | ✅ done 2026-10-14 |
 | 4 | G0, G2, intake, known-good sources | ✅ done 2026-10-14 |
-| 5 | Surface: run page, verified colouring, evidence panel | ⬜ next |
-| 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ⬜ |
+| 5 | Surface: run page, verified colouring, evidence panel | ✅ done 2026-10-14 |
+| 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ⬜ next |
 
 Legend: ✅ done · 🔨 in progress · ⬜ not started · ⛔ blocked
 
@@ -87,16 +87,30 @@ Code: `python/sherlock/src/sherlock/{clues,sources,intake,diagnose}.py` (+ `sear
 
 Not done in Phase 4: FR-K2 as an output paste (the `--known-good` file is a behaviour patch), FR-K3 interactive picker UI (CLI rule only), FR-G1, FR-D10, restoration other than the run `context` path, FR-I5/FR-U (Phase 5).
 
-## Next up — Phase 5: surface (spec 5.9, FR-U*)
+## Phase 5 — surface ✅
+
+Code: `crates/app-core/src/diagnosis.rs`, `crates/api` (`/api/diagnoses`, `/api/info`), `crates/cli` (`sherlock diagnoses`), `ui/src/{Guide,RunPage,parts,terms,share,route,api}`. Run: `./scripts/test.sh`; look: `sherlock serve --sherlock-dir harness/fixtures/sherlock-demo`.
+
+- [x] **P5.1 Artifact reader (app-core).** `parse_artifact` validates schema 1 (bad schema, bad status, "found" with no set, "abstain" with sets are all refused with a plain reason); `DiagnosisStore` lists newest first, reports broken files, guards ids — `1953ecb`; 6 tests, two on real artifacts.
+- [x] **P5.2 Verified node status.** culprit = in a minimal set; cleared = tested candidate in a complete search and in no set; unverified = pruned, untestable, in an unverified set or search incomplete; abstained = every node when the diagnosis abstained. Pruned is never "cleared" — `1953ecb`.
+- [x] **P5.3 API** — `GET /api/diagnoses`, `/api/diagnoses/{thread_id}` (400/404/422), `/api/info`; `serve --sherlock-dir` — `7879a0a`; 5 tests.
+- [x] **P5.4 CLI** — `sherlock diagnoses list|show [--json] [--sherlock-dir]` (CLI path first, rule 1) — `1790ef2`; 4 tests.
+- [x] **P5.5 UI** — home = four-step guide (pick failed run, pick known-good run, copy the exact `sherlock-rec diagnose` command, read the verdict) with empty/error states and a glossary; `/runs/:id` = verdict card, failed-check strip, per-node timeline coloured by verified status (glyph + words, not colour alone), evidence panel (known-good source, how much was tested, hints marked weaker, limits), trial log, read-only HTML and JSON download; old dashboard at `/explore` — `bee110a`. Lint and build green.
+- [x] **P5.6 Seeded demo (FR-U9 groundwork).** `python/sherlock/tests/seed_demo.py` ran the real pipeline (record on `langgraph dev`, restart under replay in the socket trap, `diagnose`) and wrote `harness/fixtures/sherlock-demo/diagnoses/` (two-cause {retriever, extractor} in 3 trials of 31; single {writer}; abstain `no_known_good`). Screenshots (headless Chrome via `playwright-cli`) in `docs/screenshots/`.
+- [x] **P5.7 Engine tweak.** Abstain artifacts now carry `pruning.nodes_on_path` so the run page can draw the path (nothing is claimed about it) — `1953ecb`; `tests/test_diagnose_sources.py`.
+
+Not done in Phase 5: FR-U5 (node input beside output), FR-U6 (a green `ok` span hiding a wrong answer; the page is a check-first view), FR-U7 health checklist, FR-U9 first screen is still the guide (the seed is opt-in via `--sherlock-dir`, not embedded), FR-U10, FR-U14 graph view, FR-I5 mark-wrong button, FR-K3 UI picker beyond the radio list, a button that starts `diagnose` (see Decision log), UI unit tests (no tooling in `ui/`).
+
+## Next up — Phase 6: evaluation (spec 5.10, FR-E)
 
 Plan stub; revise against the spec before starting.
 
-1. **Data contract:** the Rust `serve` reads `.sherlock/diagnoses/<thread_id>.json` (schema 1, additive) and `.sherlock/intake/<thread_id>.json`; no engine logic in Rust (rule 2 of `agents.md`). Add `GET /api/diagnoses`, `GET /api/diagnoses/:thread_id`.
-2. **Run page** `/runs/:id` (FR-I5): per-node timeline with verified colouring — node in a `minimal_sets` set (G3-verified) strong, clues weaker, pruned/untestable greyed with the reason from `pruning.pruned`.
-3. **Evidence panel:** clues (`clues[]`, visibly weaker than G3), known-good source used (`known_good_source`, `sources_considered`, `other_sources`), path check, check Z result, abstain reason and code (`reason`, `reason_code`), limitations.
-4. **Trial log:** `trials[]` (restored set, four labels, score, reason, elapsed), counts, pruning ratio (`pruning.pruned_ratio`, `trial_reduction`), budget.
-5. **Guided first-time-user flow:** pick a team and failed run, "Wrong" button (writes intake), pick a known-good run from `sources_considered`, then run `diagnose` (shell out to `sherlock-rec`) and show the result; empty/error states say what to run next.
-6. **Open for this phase:** how the UI starts a diagnose (spawn `sherlock-rec`, or show the command to copy); a Rust `sherlock diagnose` wrapper; live server requirement (`--replay`) must be explained in the UI.
+1. **Teams:** reach 4–6 demo teams (FR-E1). Add at least 2–3 more deterministic teams in `harness/` with fault injection through runtime `context`, and gold derived by restoring subsets (`gold_minimal_sets`). Vary shape: parallel branches, a loop, a tool-using node, a team with a single global prompt (the known `cannot_attribute` gap).
+2. **Gold and hidden set:** per team a visible set (tuned on) and a hidden set (never tuned on); record seeds and fault lists so results reproduce.
+3. **Baselines (FR-E4..):** read the spec for the exact list; implement them as plain scripts on the same artifacts (single-run LLM blame, last-error-node, delta-debugging-style without cache) with the same trial budget.
+4. **Hard slice:** chained two-cause, cache-miss and stochastic-node cases; report the abstain rate separately and never fold it into accuracy.
+5. **CI invariants:** same tape gives same verdict (NFR-1), original thread unchanged (NFR-2), zero live calls (NFR-3), every abstain has a reason (NFR-4), trial count within budget (NFR-9); one `./scripts/test.sh` stage.
+6. **Open for this phase:** measure the abstain rate on LLM-driven teams (open items on spec 1.2/9.1); regenerate the demo seed with `seed_demo.py` when the artifact schema changes.
 
 ## Requirement status
 
@@ -138,12 +152,23 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact |
 | FR-E3 | ✅ | Live `diagnose` results equal `gold_minimal_sets` for single, two-cause and writer runs (P3.6) |
 | FR-U13 | ✅ | Per-node timeline, errors first |
+| FR-U1 | 🔨 | `/runs/:id` is one page per diagnosed run (P5.5); the node list is a timeline, not a graph in the middle (FR-U14) |
+| FR-U2 | 🔨 | Judgment strip shows the failed check and its assertions, plus the intake note; "expected vs actual" text is not shown |
+| FR-U3 | ✅ | Nodes coloured by verified status (must change / not needed / not verified / cannot say), computed in `app-core` from the artifact, never by an LLM (P5.2) |
+| FR-U4 | 🔨 | Evidence panel and trial log show every trial and result; hints are marked weaker; G1 is not built |
+| FR-U8 | ✅ | Several minimal sets are all listed in the verdict and per node |
+| FR-U11 | 🔨 | The HTML export has no script and no buttons; there is no hosted share view |
+| FR-U12 | 🔨 | Diagnosis list with verdict per run; no question/actual-output columns |
+| FR-S4 | ✅ | Read-only HTML export (self-contained, offline) and the raw JSON |
+| NFR-4 | ✅ | Every abstain shows its sentence and code in the verdict card |
+| NFR-6 | ✅ | Every reported cause sits beside the trial log that backs it |
+| NFR-18 | ✅ | The export cannot run or fire anything; `serve` has no endpoint that starts a run or a tool |
 | FR-G0.1-G0.5 | ✅ | `clues.py`; clues are evidence, order the search and widen it only for error/empty/malformed/extractive/schema-invalid (P4.1). FR-G0.1 sees tool calls from the cassette only (no node attribution) |
 | FR-G2.1-G2.3 | ✅ | Path check on `--suspect`; deterministic, only rejects (P4.2) |
 | FR-I1-I4 | ✅ | `intake` records wrong / expected / check; marked-wrong runs are diagnosable once a check or known-good is added (P4.3) |
-| FR-I5 | ⬜ | One URL `/runs/:id` is Phase 5 |
+| FR-I5 | 🔨 | `/runs/:id` exists (P5.5); the "Wrong" button that writes intake does not (CLI `sherlock-rec intake` only) |
 | FR-K1, K5 | ✅ | Same-input prior success; per-node output comparison; context difference as behaviour (P4.4) |
-| FR-K3 | 🔨 | Picker rule in the CLI (closest, then newest; `--discover-good` is unconfirmed); no UI picker yet |
+| FR-K3 | 🔨 | Picker rule in the CLI (closest, then newest; `--discover-good` is unconfirmed); the UI has a plain radio list, not the ranked picker |
 | FR-K4 | ✅ | Successes that disagree abstain `sources_disagree` (P4.4) |
 | FR-K2 | 🔨 | Hand-written per-node behaviour patch (`--known-good`); pasting a node's output is not built |
 | FR-K6 | ✅ | A final answer is a check: `intake --expected` becomes Z, never a known-good source |
@@ -234,10 +259,20 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - **Intake lives next to the cassette** (`.sherlock/intake/`), read by `diagnose`; `-c` beats the intake record, which beats an auto-discovered `sherlock.yaml`. `--known-good` became optional; with no source at all `diagnose` abstains `no_known_good` (exit 75) instead of erroring.
   - **Artifact:** schema stays 1; fields were only added.
 
+- **2026-10-14 — Phase 5 build (autonomous).**
+  - **No "run diagnosis" button.** The UI shows the exact `sherlock-rec diagnose` command with a copy button. A button would make `serve` spawn a process from an HTTP request: any web page could post to `localhost` and start commands (no auth on `serve`), and a diagnosis needs a replay server the user starts anyway. Revisit with a token and a job queue if the demo needs it.
+  - **Colour rules live in `app-core`, not the UI.** Culprit only for a node in a G3-verified minimal set; cleared only for a tested candidate in a complete search; everything pruned or untested is "not verified" (skipped is not cleared); an abstain colours every node "cannot say". The reader refuses artifacts that contradict themselves (abstain with sets, found with none).
+  - **Artifact only, no live join.** The run page renders from the artifact alone (it works with LangGraph down and the export is self-contained). Node inputs and outputs from `/api/logs` are not shown (FR-U5 later).
+  - **Routing:** real paths (`/`, `/explore`, `/runs/:id`) with `history.pushState`; the existing SPA fallback serves them. No router dependency.
+  - **Share:** the export is the rendered report's HTML plus the page CSS, with every `data-noshare` element removed and no script. JSON is the raw artifact.
+  - **Demo seed:** checked in as `harness/fixtures/sherlock-demo/` (a `--sherlock-dir`), generated by the real pipeline, not hand-written. Thread ids in it do not exist on a fresh server, so the guide's run lists will not mark them as diagnosed.
+  - **`short(id)`** now shows `first8…last4`: UUIDv7 ids share their first 8 characters.
+
 ## Open items
 
 Beyond spec §10:
 
+- **Phase 5 gaps:** no UI test tooling (verified by lint, build, headless screenshots and API/CLI tests); `guide.png` was taken before the `short(id)` change; the guide never marks the seeded demo ids as diagnosed; `_early` abstains carry no `graph_id`, so the list shows `-` for them.
 - **Phase 4 gaps:** attribution by name prefix suits teams that name behaviour per node (team 1 does); teams with global prompts or a single `system_prompt` key will abstain `cannot_attribute` until interceptor-level restoration or a node-to-key map exists. Live-tested on team 1 only. Multi-source diagnosis multiplies trials. A Rust `sherlock diagnose` wrapper does not exist.
 - **Phase 1 smoke test:** all Phase 1 tests use the local stub; no real-provider smoke test was run (no keys). Which provider and key? *(Proposal; the team should confirm.)* Real SDK streaming (openai/anthropic over httpx) is unverified.
 - **Phase 3 gaps:** known-good is still a hand-written context patch, so only context-configurable behaviour can be restored; `diagnose` was only exercised on team 1 and a small LLM graph. `complete` is conservative (any untestable node or cassette miss makes it false).
@@ -249,6 +284,8 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 ## Session log
+
+- **2026-10-14** — Phase 5 complete on `phase-5` (5 commits): artifact reader with verified node status, `/api/diagnoses`, `sherlock diagnoses`, guided run flow, run page with trial log and read-only export, seeded demo from the real pipeline, screenshots. Rust: app-core 23, api 16, cli 21 tests; `seed_demo.py` ran live against `langgraph dev`; `./scripts/test.sh` green: 17 harness, 208 recorder (24 live), app-core 23, api 16, cli 21 tests, clippy and fmt.
 
 - **2026-10-14** — Phase 4 complete on `phase-4` (3 code commits + docs): G0 clues, G2 path check, ordering, intake, known-good from a prior success with picker and disagreement abstain; 208 recorder tests (24 live) and 17 harness tests green; on team 1 `diagnose --good-run` equals gold for single, writer and two-cause runs (1, 1, 3 trials of 31) with no hand-written patch. Rust untouched.
 - **2026-10-14** — Phase 3 complete on `phase-3` (3 code commits): pruning, minimality search, verdict labels, budget, `sherlock-rec diagnose` and the JSON artifact. 162 recorder tests (18 live) and 17 harness tests green; on team 1 `diagnose` equals gold for the single and two-cause runs (1 and 3 trials of 31) and abstains on the cache-miss case. Rust untouched.

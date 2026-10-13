@@ -26,6 +26,9 @@ cargo test -p api
 section "cli"
 cargo test -p cli
 
+section "demo smoke (seeded diagnoses render in the CLI)"
+cargo run -q -p cli -- diagnoses list --sherlock-dir harness/fixtures/sherlock-demo | grep -q "culprit set {retriever, extractor}"
+
 section "clippy + fmt"
 cargo clippy --all-targets -- -D warnings
 cargo fmt --check

@@ -11,7 +11,12 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     history (`POST /threads/{id}/history`) expanded to per-node events.
     No I/O inside: callers inject `LangGraphTransport`; real HTTP + `serve`
     endpoints live in `cli`/`api`.
+  - `diagnosis` module: reads and validates `.sherlock/diagnoses/<thread_id>.json` (schema 1) and computes one
+    verified status per node (`culprit` = in a G3-verified minimal set, `cleared` = tested in a complete search and in no set,
+    `unverified` = pruned/untested/undecided, `abstained` = the diagnosis said "cannot say"). Refuses contradictory artifacts.
+    The colour rules live here, never in the UI. `DiagnosisStore { sherlock_dir }` does the file reads.
 - `crates/cli/` — thin CLI controller over `app-core` (+ triggers `api` for `serve`). Primary interface.
+  `sherlock diagnoses list|show THREAD_ID [--json] [--sherlock-dir DIR]` prints verdicts; `serve --sherlock-dir DIR` (default `.sherlock`).
 - `crates/api/` — thin HTTP controller over `app-core`. Serves `ui/dist` via rust-embed, opens browser.
   - Proxies LangGraph for the dashboard: `GET /api/teams`, `GET /api/runs`,
     `GET /api/logs` (400 on missing `thread_id`, 502 + `{error}` JSON when
@@ -20,9 +25,17 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     When `LANGSMITH_API_KEY` is set (flag, env, or `.env`), `serve` and `ingest`
     read LangSmith traces instead (`--source langgraph` forces the local server).
     Team = `metadata.assistant_id`, run = `thread_id`, logs = runs in that thread.
+  - `GET /api/diagnoses` (list; empty list when none, broken files reported in `invalid`), `GET /api/diagnoses/{thread_id}`
+    (summary + verified `nodes` + raw `artifact`; 400 bad id, 404 missing, 422 invalid), `GET /api/info` (source, url,
+    sherlock_dir). Read-only: no endpoint starts a run, a diagnosis or a tool.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
-  - `/` is the ingestion dashboard: teams → runs → error-first per-node log
+  - `/explore` is the ingestion dashboard: teams → runs → error-first per-node log
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
+  - Paths (`history.pushState`, no router dep): `/` guided four-step flow (pick failed run, pick known-good run, copy the
+    `sherlock-rec diagnose` command, read the verdict) plus glossary; `/runs/:id` run page (verdict, failed check, nodes
+    coloured by verified status, evidence, trial log, read-only HTML/JSON download); `/explore` the ingestion dashboard.
+    Diagnosis is a copy-paste command, not a browser button (a web page must not be able to start commands).
+    Shared bits: `parts.tsx` (components), `terms.ts` (labels, glossary, command builder), `share.ts`, `api.ts`.
 - `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
   derivation, live-server spikes and fixtures. See `harness/README.md`.
 - `python/sherlock/` — Python engine for recording, checks and G3 (uv, 3.12; deps: pyyaml, jsonschema; the bootstrap itself is stdlib-only).
@@ -58,6 +71,8 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     (`intake.py`): writes `.sherlock/intake/<id>.json`. With none of the three it is the "Wrong" click (no node named). `diagnose`
     reads it next to the cassette: an expected output becomes an `equals` check; with no check anywhere it returns the clues and
     abstains `no_check`.
+  - `tests/seed_demo.py OUTDIR` regenerates the demo artifacts with the real pipeline (live `langgraph dev`, no provider);
+    the checked-in copy is `harness/fixtures/sherlock-demo/` (try `sherlock serve --sherlock-dir harness/fixtures/sherlock-demo`).
   - Tests use `tests/stub_server.py` (OpenAI-compatible stub), `tests/llm_team.py`, `tests/g3_team/llm_graph.py`; no real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
@@ -93,8 +108,16 @@ cd ui && npm run lint && npm run build   # fresh dist so api embeds it
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli
+cargo run -q -p cli -- diagnoses list --sherlock-dir harness/fixtures/sherlock-demo   # demo smoke
 cargo clippy --all-targets -- -D warnings
 cargo fmt --check
+```
+
+## CLI diagnoses
+
+```sh
+sherlock diagnoses list [--sherlock-dir DIR] [--json]
+sherlock diagnoses show THREAD_ID [--sherlock-dir DIR] [--json]
 ```
 
 ## CLI ingestion
