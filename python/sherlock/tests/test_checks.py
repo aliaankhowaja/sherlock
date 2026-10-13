@@ -122,3 +122,17 @@ def test_discovery_walks_up_and_override_wins(tmp_path):
     custom = tmp_path / "mine.yaml"
     custom.write_text("assert: [{type: contains, value: y}]\n")
     assert load_checks(custom, start=deep).assertions[0]["value"] == "y"
+
+
+def test_check_cli_exit_codes(tmp_path, capsys):
+    from sherlock.cli import main
+
+    cfg = tmp_path / "sherlock.yaml"
+    cfg.write_text("assert:\n  - {type: contains, value: ISO}\n  - {type: not-contains, value: SOC}\n")
+    assert main(["check", "-c", str(cfg), "--output", "ISO ok"]) == 0
+    assert json.loads(capsys.readouterr().out)["pass"] is True
+    assert main(["check", "-c", str(cfg), "--output", "ISO SOC"]) == 1
+    assert "expected the opposite" in capsys.readouterr().out
+    cfg.write_text("assert:\n  - {type: llm-rubric, value: nice}\n")
+    assert main(["check", "-c", str(cfg), "--output", "x"]) == 2
+    assert "unsupported assertion type: llm-rubric" in capsys.readouterr().err
