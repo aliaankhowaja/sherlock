@@ -11,6 +11,9 @@ section "ui"
 cd ui && npm run lint && npm run build
 cd ..
 
+section "harness (python)"
+(cd harness && uv run pytest -q)
+
 section "app-core"
 cargo test -p app-core
 

@@ -1,0 +1,22 @@
+[project]
+name = "sherlock-harness"
+version = "0.0.0"
+description = "Demo LangGraph teams, fault injection and integration spikes for Sherlock (spec FR-E)"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "langgraph>=1.2.5,<2",
+    "langgraph-checkpoint>=4",
+    "langgraph-cli[inmem]",
+    "langgraph-sdk",
+    "httpx",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

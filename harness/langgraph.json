@@ -1,0 +1,6 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "vendor_brief": "./sherlock_harness/teams/vendor_brief.py:graph"
+  }
+}
