@@ -3,7 +3,7 @@
 > **This is the live progress tracker.** Read it before starting work; update it before you stop.
 > Scope is set by [`sherlock-spec.md`](sherlock-spec.md), which governs. The status columns inside the spec are a 12 October snapshot — **live status lives here only.** Session rules (model, commits) are in [`../CLAUDE.md`](../CLAUDE.md).
 
-**Last updated:** 2026-10-14 · **Current phase:** 2 — checks (Z) and the run-again test (G3), not started · **Branch:** `phase-1` (Phase 1 done; merge, then branch `phase-2`)
+**Last updated:** 2026-10-14 · **Current phase:** 3 — minimality search, verdicts, budget, not started · **Branch:** `phase-2` (Phase 2 done, branched off `phase-1`; merge, then branch `phase-3`)
 
 ## How to update this file
 
@@ -19,8 +19,8 @@
 |---|---|---|
 | 0 | Unblock: fix ingestion, verify fork recipe and `__overwrite__`, demo team #1 | ✅ done 2026-10-13 |
 | 1 | Record and freeze: `sherlock run`, interceptors, cassette store, abort-on-miss | ✅ done 2026-10-14 |
-| 2 | Checks (Z) and the run-again test (G3) | ⬜ next |
-| 3 | Minimality search, verdicts, budget | ⬜ |
+| 2 | Checks (Z) and the run-again test (G3) | ✅ done 2026-10-14 |
+| 3 | Minimality search, verdicts, budget | ⬜ next |
 | 4 | G0, G2, intake, known-good sources | ⬜ |
 | 5 | Surface: run page, verified colouring, evidence panel | ⬜ |
 | 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ⬜ |
@@ -48,15 +48,29 @@ Package: `python/sherlock/` (own uv project, 48 tests). Run: `cd python/sherlock
 - [x] **P1.7 Replay + abstain** (FR-G3.5, NFR-3): a miss raises `CannotSay`, never a live call — `471c01d`; `tests/test_replay.py`, `tests/test_launcher.py`.
 - [x] **P1.8 Test target + exit criterion** — `32fe394`; `tests/test_exit_criterion.py` (JSON and SSE): record, stop the stub, replay with a socket trap (zero connection attempts, identical output), changed question exits 75 with `cannot say: request changed since recording`. Demo team: `tests/llm_team.py`; stub: `tests/stub_server.py`.
 
-## Next up — Phase 2: checks (Z) and the run-again test (spec §5.2 FR-C1–C6, FR-G3.1–G3.8)
+## Phase 2 — checks (Z) and the run-again test (G3) ✅
+
+Code: `python/sherlock/src/sherlock/{checks,g3,redact}.py`, CLI `sherlock-rec check|g3`. Run: `cd python/sherlock && uv run pytest -q` (120 tests incl. 10 live, about 2 min).
+
+- [x] **P2.0 Leftovers.** Console script renamed `sherlock-rec` — `bb90f8e`. FR-R8 deny-list redaction of stored requests — `c343ef8`; `tests/test_redact.py`. FR-R9 no-usable-history detection, in the G3 driver (`history_usable`; Rust ingestion untouched) — `f498a67`; `tests/test_g3_unit.py`.
+- [x] **P2.1 Check file and assertions** (FR-C1–C6, C9) — `a5ef2e8`; `tests/test_checks.py` (34): `sherlock.yaml` auto-discovery and `-c`, `file://` against the config dir, `not-` on every type, `is-json` with schema, per-assertion `{pass, score, reason}`.
+- [x] **P2.2 Per-trial replay, allowlist, replay marker** (FR-G3.5, G3.8) — `8589b3d`; `tests/test_trials.py`.
+- [x] **P2.3 G3 driver** (FR-G3.1–G3.5, G3.7, G3.9): fork, restore via `context`, resume, verify, apply Z — `f498a67`; `tests/test_g3_unit.py` (fake server on the real fixture).
+- [x] **P2.4 Live exit criterion** — `fa9570f`; `tests/test_g3_live.py`. Real `langgraph dev` recorded, restarted under `--replay` inside a socket trap (no non-loopback connection, stub provider stopped): single-fault run, restoring the faulty node returns **pass**; restoring router/retriever/writer/reviewer returns **fail**; the two-cause run needs {retriever, extractor}; a changed LLM request returns **abstain** (`request changed since recording`); CLI exit codes 0/1/75/2. The trap file stayed empty.
+- [x] **P2.5 Abstain fix** — `b0f4b0d`: `CannotSay` is now an `Exception` (see Decision log).
+
+Not done in Phase 2: FR-G3.10 limitation text; FR-C7/C8/C10/C11; interceptor-level restoration (§4.4 primary); a Rust `sherlock g3` wrapper (the engine is Python, see Decision log).
+
+## Next up — Phase 3: the search (spec §5.5, FR-D1–D9)
 
 Plan stub; revise against the spec before starting.
 
-1. **Checks (FR-C1–C6):** define Z for a run (pass/fail predicate), starting with demo team #1 and the LLM demo team.
-2. **Fork-and-resume driver (FR-G3.1–G3.4):** use the verified fork recipe (`spikes/2026-10-13-fork-recipe.md`) to restore one node's behaviour and re-run.
-3. **Behaviour-keyed cassettes (FR-G3.5):** recordings made under a given behaviour; a mismatch abstains. Phase 1 gives the mechanism; the key does not yet include the restored behaviour.
-4. **Side-effect allowlist and abort (FR-G3.6–G3.8):** LangGraph re-executes nodes after a fork; Phase 1 serves every tool from the cassette, with no allowlist yet.
-5. **Exit criterion:** set from the spec when the phase starts.
+1. **Pruning (FR-D1, D2):** candidate nodes from the recorded path (`tasks[]` and `next` give static order), conservative.
+2. **Search (FR-D3–D5, D13 optional):** singletons, then pairs; return every 1-minimal set via `run_g3` as the trial primitive. Reuse the replay server across trials (`Cassette.start_trial` resets consumption).
+3. **Verdicts and abstain reasons (FR-D6, D7, D11):** fixes / partly helps / doesn't help / cannot say; one-sentence abstain reason; counts with the trial log.
+4. **Budget (FR-D8, D9):** `--max-trials`, `--max-minutes`, documented cap on subset space; exhaustion is an abstain.
+5. **Check on gold:** compare against `gold_minimal_sets` in `harness/` on team 1 (single, two-cause, harmless fault). "Partly helps" needs a score from Z (assertion scores are already returned).
+6. **Open for this phase:** where the search lives (Python next to `g3.py`, as decided for Phase 2); how known-good is supplied until Phase 4 (FR-K); cost per trial (server startup is paid once, each trial is a few HTTP calls).
 
 ## Requirement status
 
@@ -71,15 +85,22 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-R5 | ✅ | SSE kept as the ordered chunk sequence (P1.4, P1.8) |
 | FR-R6 | ✅ | Chains the user's `sitecustomize` (P1.3) |
 | FR-R7 | ✅ | Bodies and tool I/O recorded in clear by default |
-| FR-R8 | 🔨 | Request headers are never stored; no body/PII deny-list yet |
-| FR-R9 | ⬜ | Not started: no detection of missing checkpoint history |
+| FR-R8 | ✅ | Headers never stored; stored requests redacted against a documented deny-list (`redact.py`, P2.0). Responses and tool outputs are kept verbatim (replay needs them) |
+| FR-R9 | 🔨 | G3 abstains on unusable history (P2.0); not yet in Rust ingestion or the UI |
 | FR-R10 | ✅ | Fixed for LangGraph ≥ 0.5 (P0.1) |
 | FR-R11 | 🔨 | LangSmith import, browse-only (`dd37b7d`) |
 | FR-E1 | 🔨 | Team 1 of 4–6 (`vendor_brief`) |
 | FR-E2 | 🔨 | Single and chained two-node faults on team 1 |
 | FR-E3 | 🔨 | Gold by restoring subsets (`gold_minimal_sets`), in-process, deterministic teams only |
-| FR-G3.1 | 🔨 | Fork-and-resume verified over HTTP; no product code yet |
-| FR-G3.5 | 🔨 | Replay serves only from the cassette and abstains on a miss (P1.7); not yet keyed to a restored behaviour |
+| FR-C1–C6 | ✅ | Check loader and assertions (P2.1). Also `icontains-all/any` (see Decision log) and FR-C9 |
+| FR-G3.1 | ✅ | `g3.py` forks over HTTP; original thread verified unchanged (P2.3, P2.4) |
+| FR-G3.2 | 🔨 | Known-good behaviour via a per-node context patch file; known-good sources are Phase 4 |
+| FR-G3.3, G3.4 | ✅ | Resume with `input: null` from the fork checkpoint; we never write post-fork outputs (P2.3) |
+| FR-G3.5 | ✅ | Calls served only from the cassette, miss abstains; the strict request hash already encodes the restored behaviour (P2.4: changed request abstains, unchanged request is served) |
+| FR-G3.6 | ✅ | Strict hash match, no cross-recording fill; a cassette holds one failed run's calls |
+| FR-G3.7 | ✅ | Prefix state and `next` compared, context and re-run of restored nodes verified, original unchanged; else "replay went off track" (P2.3) |
+| FR-G3.8 | ✅ | Replay never executes a tool; `--allow-tool` aborts any unlisted one (P2.2) |
+| FR-G3.9 | ✅ | Trials sent with `durability: "sync"` |
 | NFR-3 | 🔨 | No live call in replay for httpx and `BaseTool`; `urllib`/`requests`/`aiohttp`/raw sockets are not covered |
 | FR-U13 | ✅ | Per-node timeline, errors first |
 | FR-X5 | ✅ | `sherlock serve` |
@@ -105,6 +126,15 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
 - **2026-10-14 — httpx:** `Client._send_single_request` wraps `response.stream` after the transport returns, so replacing `response.stream` inside `HTTPTransport.handle_request` is safe. The replacement must subclass `httpx.SyncByteStream`/`AsyncByteStream`, or `iter_raw` raises.
 - **2026-10-14 — Windows:** `os.execl` does not replace the process (the parent returns at once), so the launcher uses `subprocess.call`.
 
+- **2026-10-14 — Phase 2 verified (live, langgraph-api 0.16.0):**
+  - `runs/wait` returns HTTP 200 with `{"__error__": {error, message}}` when a node raises. Check the body.
+  - A run's context is in `GET /threads/{id}/runs/{run_id}` under `kwargs.context`; a checkpoint's `metadata.run_id` links to it. Context keys are also flattened into checkpoint metadata.
+  - A node raising a `BaseException` kills the dev server's only worker: the run stays "running" and `runs/wait` never returns. An ordinary `Exception` fails the run cleanly.
+  - `langgraph dev` calls `pypi.org` at startup (a live call); `LANGGRAPH_NO_VERSION_CHECK=1` stops it. Found by the socket trap.
+  - `langgraph dev` persists threads to `.langgraph_api/`; stopping it with Ctrl-Break (Windows) flushes them, so a recorded thread survives a restart under `--replay`.
+  - The dev server makes no httpx or tool calls of its own: a replay server's cassette stayed at 0 calls and 0 abstains.
+  - A fork thread built from `tasks[].result` writes has the same `values` and `next` as the original fork point (prefix check passes on a real server).
+
 ## Decision log
 
 - **2026-10-12/13 — team meeting; spec by Ibraheem.** Final scope is `docs/sherlock-spec.md`. No live calls: cache or abstain. The 9 October brief is superseded on method.
@@ -121,12 +151,23 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - Replay serves every tool from the cassette; the side-effect allowlist is Phase 2 (FR-G3.8).
   - The test target lives in `python/sherlock/tests/` (not `harness/`); the LLM node uses httpx directly against the stub, with no provider SDK.
 
+- **2026-10-14 — Phase 2 build (autonomous).**
+  - **Engine stays in Python** (spec 4.1 puts it in Rust). Cassette, interceptors, harness and live-server fixtures are all Python; G3 is mostly HTTP and state plumbing, so a Rust engine would mean a Python-to-Rust bridge for no gain yet. `g3.py` and `checks.py` are plain modules that a PyO3 core can absorb later. The CLI is `sherlock-rec` for now; a Rust `sherlock g3` wrapper is open.
+  - **`CannotSay` is an `Exception`** (supersedes the Phase 1 BaseException choice). A BaseException hangs `langgraph dev`; swallowing is still caught because the abstain is stored in the cassette first and read back by the launcher and G3.
+  - **G3 does not start the server.** The user runs `sherlock-rec run --replay <server cmd>` against a recorded, persisted server. G3 refuses unless the cassette was marked by a replay process (`replay_sessions`), which guards against pointing it at a live-capable server (weak: the marker is not tied to a pid).
+  - **Restoration uses the run `context` path only** (spec 4.4 secondary). Known-good file per node: `{context_key: value | {"$remove": [...]}}`, composed over the original run's context (read from the run record). Interceptor-level restoration is not built.
+  - **Check file shape:** `assert:` or `defaultTest.assert:` (promptfoo); `tests:` is rejected; `output_key` (default `final_output`) names the state key to score. Spec says "eight assertions" but FR-C3 lists seven; added promptfoo's `icontains-all` and `icontains-any`.
+  - **Per-trial consumption:** `Cassette.start_trial()` bumps a counter that replay processes read on each lookup, so one replay server serves many trials. This closes the Phase 1 gap "replay consumption state is per process".
+  - **Redaction applies to the stored request only**; hash and responses are untouched, so replay is unchanged. Only email is covered as PII.
+  - **Abstain semantics:** G3 returns `abstain` (exit 75) for a cassette miss, a failed trial run, unusable history, an original that already passes Z, a missing known-good, and "replay went off track". Exit 2 is reserved for setup errors.
+  - Dev deps for tests: `langgraph-cli[inmem]`. Runtime deps added: `pyyaml`, `jsonschema`.
+
 ## Open items
 
 Beyond spec §10:
 
 - **Phase 1 smoke test:** all Phase 1 tests use the local stub; no real-provider smoke test was run (no keys). Which provider and key? *(Proposal; the team should confirm.)* Real SDK streaming (openai/anthropic over httpx) is unverified.
-- **Phase 1 gaps:** FR-R9 not done; body PII deny-list (FR-R8) not done; only httpx and `BaseTool` are intercepted (`requests`/`urllib`/`aiohttp` are not); replay consumption state is per process; `sherlock doctor` (FR-R12) not started.
+- **Phase 1 gaps:** only httpx and `BaseTool` are intercepted (`requests`/`urllib`/`aiohttp` are not); `sherlock doctor` (FR-R12) not started.
 - The spec cites governing documents in `causal-debugger/` that are not in this repo. Add or link them.
 - Competitors missing from spec §3: TraceSurgeon (`ahhbhishek/tracesurgeon`, MIT, LangGraph) and Agent-Casuality (PyPI `agent-casuality`). Review before mid-eval.
 - Spec §1.2 and §9.1 say most real bugs live in deterministic nodes; this is unsourced. Measure the abstain rate on real failures early.
@@ -135,6 +176,7 @@ Beyond spec §10:
 
 ## Session log
 
+- **2026-10-14** — Phase 2 complete on `phase-2` (7 atomic commits): checks, G3 driver, redaction, per-trial replay and allowlist, `sherlock-rec` rename; 120 recorder tests (10 live against `langgraph dev`) and 17 harness tests green. First real verdicts: pass, fail and abstain. Rust untouched.
 - **2026-10-14** — Phase 1 complete on `phase-1` (8 atomic commits): `python/sherlock` recorder, replay and abstain; 48 tests; harness suite still green.
 
 - **2026-10-13** — Phase 0 complete on `phase-0`:

@@ -25,12 +25,21 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
 - `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
   derivation, live-server spikes and fixtures. See `harness/README.md`.
-- `python/sherlock/` — Python recorder (uv, 3.12, stdlib-only runtime; `cd python/sherlock && uv run pytest -q`).
-  `sherlock-rec run [--replay] [--cassette PATH] [--match hash|sequence] <cmd>` puts `src/sherlock/_bootstrap`
-  (a `sitecustomize`) on `PYTHONPATH`. `_hook` patches modules on first import; `shim_httpx` and `shim_tools`
-  record or replay into the SQLite `cassette` (`.sherlock/cassette.db`). Replay never goes live; a miss raises
-  `CannotSay` and the launcher exits 75 with `cannot say: ...`. Tests use `tests/stub_server.py`
-  (OpenAI-compatible stub) and `tests/llm_team.py` (demo team). No real provider calls.
+- `python/sherlock/` — Python engine for recording, checks and G3 (uv, 3.12; deps: pyyaml, jsonschema; the bootstrap itself is stdlib-only).
+  Console script `sherlock-rec` (not `sherlock`, which is the Rust binary); `python -m sherlock` is the same.
+  `cd python/sherlock && uv run pytest -q` (includes live `langgraph dev` tests, about 2 min).
+  - `sherlock-rec run [--replay] [--cassette PATH] [--match hash|sequence] [--allow-tool NAME]... <cmd>` puts `src/sherlock/_bootstrap`
+    (a `sitecustomize`) on `PYTHONPATH`. `_hook` patches modules on first import; `shim_httpx` and `shim_tools`
+    record or replay into the SQLite `cassette` (`.sherlock/cassette.db`). Replay never goes live; a miss raises
+    `CannotSay` (an Exception, stored in the cassette) and the launcher exits 75 with `cannot say: ...`.
+    `--allow-tool` limits replay to read-safe tools (FR-G3.8). Stored requests are redacted (`redact.py`, FR-R8).
+  - `sherlock-rec check [-c sherlock.yaml] [--output TEXT | --output-file F | stdin]`: promptfoo-style assertions
+    (`checks.py`, FR-C1-C6; exit 0 pass, 1 fail, 2 error).
+  - `sherlock-rec g3 --thread-id ID --restore a,b --known-good FILE [-c sherlock.yaml] [--url URL] [--cassette PATH]`
+    (`g3.py`): fork a recorded run over HTTP, restore known-good behaviour via run `context`, resume from the cassette, apply Z.
+    Exit 0 pass, 1 fail, 75 abstain, 2 error. The server must be running under `sherlock-rec run --replay langgraph dev ...`;
+    G3 refuses otherwise. Known-good file: `{node: {context_key: value | {"$remove": [..]}}}` (see `harness/known_good/`).
+  - Tests use `tests/stub_server.py` (OpenAI-compatible stub), `tests/llm_team.py`, `tests/g3_team/llm_graph.py`; no real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
 
@@ -61,7 +70,7 @@ What it runs, in order:
 ```sh
 cd ui && npm run lint && npm run build   # fresh dist so api embeds it
 (cd harness && uv run pytest -q)   # demo teams + gold derivation
-(cd python/sherlock && uv run pytest -q)   # recorder, replay, exit criterion
+(cd python/sherlock && uv run pytest -q)   # recorder, checks, G3 (incl. live langgraph dev)
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli
