@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-13",
+  "server": {
+    "version": "0.16.0",
+    "langgraph_py_version": "1.2.15",
+    "flags": {
+      "assistants": true,
+      "crons": true,
+      "langsmith": false,
+      "langsmith_tracing_replicas": true,
+      "langsmith_tracing_session_on_runs": true
+    },
+    "host": {
+      "kind": "self-hosted",
+      "project_id": null,
+      "host_revision_id": null,
+      "revision_id": null,
+      "tenant_id": null
+    }
+  },
+  "results": [
+    {
+      "check": "two-cause run fails the check",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "clean run passes the check",
+      "expected": true,
+      "observed": true,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "checkpoint metadata has no `writes` key",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": "metadata keys seen: ['assistant_id', 'created_by', 'faults', 'graph_id', 'langgraph_api_url', 'langgraph_api_version', 'langgraph_auth_user_id', 'langgraph_host', 'langgraph_plan', 'langgraph_request_id', 'langgraph_version', 'parents', 'run_attempt', 'run_id', 'source', 'step', 'thread_id', 'user_id']"
+    },
+    {
+      "check": "diff-against-parent recovers node order",
+      "expected": [
+        "__start__",
+        "router",
+        "retriever",
+        "extractor",
+        "writer",
+        "reviewer"
+      ],
+      "observed": [
+        "__start__",
+        "router",
+        "retriever",
+        "extractor",
+        "writer",
+        "reviewer"
+      ],
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "supersteps without graph_id: 201 with error detail, no thread_id",
+      "expected": [
+        201,
+        true,
+        false
+      ],
+      "observed": [
+        201,
+        true,
+        false
+      ],
+      "ok": true,
+      "note": "{\"detail\":\"Thread 01a13657-817f-7252-b813-a9e0aee6ddf1 was created, but there were problems updating the state: Thread '01a13657-817f-7252-b813-a9e0aee6ddf1' ha"
+    },
+    {
+      "check": "first superstep as __input__ drops the input values",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": "use as_node='__start__' for the input superstep"
+    },
+    {
+      "check": "supersteps thread stops before retriever",
+      "expected": [
+        "retriever"
+      ],
+      "observed": [
+        "retriever"
+      ],
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "supersteps thread keeps the input",
+      "expected": "acme",
+      "observed": "acme",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "behaviour: restore {retriever} alone",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "behaviour: restore {extractor} alone",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "behaviour: restore {retriever, extractor}",
+      "expected": true,
+      "observed": true,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "behaviour trial is repeatable",
+      "expected": true,
+      "observed": true,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "as_node=retriever resumes at its successor",
+      "expected": [
+        "extractor"
+      ],
+      "observed": [
+        "extractor"
+      ],
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "output: restore retriever's message alone",
+      "expected": false,
+      "observed": false,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "output: restore extractor's message alone",
+      "expected": true,
+      "observed": true,
+      "ok": true,
+      "note": "message-level replay blames the extractor alone; behaviour-level needs both"
+    },
+    {
+      "check": "original thread history unchanged",
+      "expected": [
+        "1f1c72cc-d102-6ae0-8005-1e30848ab3fd",
+        "1f1c72cc-d0fb-65c8-8004-8ab8942ea300",
+        "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5",
+        "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37",
+        "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47",
+        "1f1c72cc-d0db-6ead-8000-b9b8de527597",
+        "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8"
+      ],
+      "observed": [
+        "1f1c72cc-d102-6ae0-8005-1e30848ab3fd",
+        "1f1c72cc-d0fb-65c8-8004-8ab8942ea300",
+        "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5",
+        "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37",
+        "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47",
+        "1f1c72cc-d0db-6ead-8000-b9b8de527597",
+        "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8"
+      ],
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "plain list update appends",
+      "expected": "probe",
+      "observed": "probe",
+      "ok": true,
+      "note": "6 notes after append"
+    },
+    {
+      "check": "__overwrite__ accepted over HTTP",
+      "expected": 200,
+      "observed": 200,
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "__overwrite__ replaces the list",
+      "expected": [
+        "replaced"
+      ],
+      "observed": [
+        "replaced"
+      ],
+      "ok": true,
+      "note": ""
+    },
+    {
+      "check": "config.configurable + context together is HTTP 400",
+      "expected": 400,
+      "observed": 400,
+      "ok": true,
+      "note": ""
+    }
+  ]
+}

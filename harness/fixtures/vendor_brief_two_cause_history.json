@@ -1,0 +1,497 @@
+[
+  {
+    "values": {
+      "vendor": "acme",
+      "source": "compliance_db",
+      "documents": [
+        "2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).",
+        "Data residency: all customer data is stored in the EU (Frankfurt)."
+      ],
+      "certifications": [
+        "SOC 2"
+      ],
+      "data_region": "EU",
+      "brief": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.",
+      "final_output": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.",
+      "notes": [
+        "router: compliance_db",
+        "retriever: 2 documents",
+        "extractor: SOC 2",
+        "writer: drafted brief",
+        "reviewer: approved"
+      ]
+    },
+    "next": [],
+    "tasks": [],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 5,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.807331+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d102-6ae0-8005-1e30848ab3fd",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0fb-65c8-8004-8ab8942ea300",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d102-6ae0-8005-1e30848ab3fd",
+    "parent_checkpoint_id": "1f1c72cc-d0fb-65c8-8004-8ab8942ea300"
+  },
+  {
+    "values": {
+      "vendor": "acme",
+      "source": "compliance_db",
+      "documents": [
+        "2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).",
+        "Data residency: all customer data is stored in the EU (Frankfurt)."
+      ],
+      "certifications": [
+        "SOC 2"
+      ],
+      "data_region": "EU",
+      "brief": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.",
+      "notes": [
+        "router: compliance_db",
+        "retriever: 2 documents",
+        "extractor: SOC 2",
+        "writer: drafted brief"
+      ]
+    },
+    "next": [
+      "reviewer"
+    ],
+    "tasks": [
+      {
+        "id": "80bdfaf7-78be-1fa1-a208-77f74db5ffe4",
+        "name": "reviewer",
+        "path": [
+          "__pregel_pull",
+          "reviewer"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "final_output": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.",
+          "notes": [
+            "reviewer: approved"
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 4,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.804333+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0fb-65c8-8004-8ab8942ea300",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0fb-65c8-8004-8ab8942ea300",
+    "parent_checkpoint_id": "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5"
+  },
+  {
+    "values": {
+      "vendor": "acme",
+      "source": "compliance_db",
+      "documents": [
+        "2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).",
+        "Data residency: all customer data is stored in the EU (Frankfurt)."
+      ],
+      "certifications": [
+        "SOC 2"
+      ],
+      "data_region": "EU",
+      "notes": [
+        "router: compliance_db",
+        "retriever: 2 documents",
+        "extractor: SOC 2"
+      ]
+    },
+    "next": [
+      "writer"
+    ],
+    "tasks": [
+      {
+        "id": "644b8486-fc56-a4c7-93ab-a639430ea3e6",
+        "name": "writer",
+        "path": [
+          "__pregel_pull",
+          "writer"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "brief": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.",
+          "notes": [
+            "writer: drafted brief"
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 3,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.800959+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0f3-61fc-8003-eda75a8d34f5",
+    "parent_checkpoint_id": "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37"
+  },
+  {
+    "values": {
+      "vendor": "acme",
+      "source": "compliance_db",
+      "documents": [
+        "2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).",
+        "Data residency: all customer data is stored in the EU (Frankfurt)."
+      ],
+      "notes": [
+        "router: compliance_db",
+        "retriever: 2 documents"
+      ]
+    },
+    "next": [
+      "extractor"
+    ],
+    "tasks": [
+      {
+        "id": "f17f7034-c4b7-ad14-f7c3-da99b156a77f",
+        "name": "extractor",
+        "path": [
+          "__pregel_pull",
+          "extractor"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "certifications": [
+            "SOC 2"
+          ],
+          "data_region": "EU",
+          "notes": [
+            "extractor: SOC 2"
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 2,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.798125+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0ec-6344-8002-4d8cfd5a2a37",
+    "parent_checkpoint_id": "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47"
+  },
+  {
+    "values": {
+      "vendor": "acme",
+      "source": "compliance_db",
+      "notes": [
+        "router: compliance_db"
+      ]
+    },
+    "next": [
+      "retriever"
+    ],
+    "tasks": [
+      {
+        "id": "df71412a-4103-7ffd-2162-20eff67afae8",
+        "name": "retriever",
+        "path": [
+          "__pregel_pull",
+          "retriever"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "documents": [
+            "2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).",
+            "Data residency: all customer data is stored in the EU (Frankfurt)."
+          ],
+          "notes": [
+            "retriever: 2 documents"
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 1,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.795129+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0db-6ead-8000-b9b8de527597",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0e4-6e3b-8001-1f9ca237bb47",
+    "parent_checkpoint_id": "1f1c72cc-d0db-6ead-8000-b9b8de527597"
+  },
+  {
+    "values": {
+      "vendor": "acme",
+      "notes": []
+    },
+    "next": [
+      "router"
+    ],
+    "tasks": [
+      {
+        "id": "cdf235d6-8bb6-9cdb-1b64-c88010144c7b",
+        "name": "router",
+        "path": [
+          "__pregel_pull",
+          "router"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "source": "compliance_db",
+          "notes": [
+            "router: compliance_db"
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "loop",
+      "step": 0,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.791454+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0db-6ead-8000-b9b8de527597",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0db-6ead-8000-b9b8de527597",
+    "parent_checkpoint_id": "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8"
+  },
+  {
+    "values": {
+      "notes": []
+    },
+    "next": [
+      "__start__"
+    ],
+    "tasks": [
+      {
+        "id": "455b3472-2ec3-4bc8-3607-81cf90e9b63e",
+        "name": "__start__",
+        "path": [
+          "__pregel_pull",
+          "__start__"
+        ],
+        "error": null,
+        "interrupts": [],
+        "checkpoint": null,
+        "state": null,
+        "result": {
+          "vendor": "acme"
+        }
+      }
+    ],
+    "metadata": {
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "graph_id": "vendor_brief",
+      "assistant_id": "ceebe086-90b2-5890-9347-b737e3a4e9d4",
+      "user_id": "",
+      "created_by": "system",
+      "run_attempt": 1,
+      "langgraph_version": "1.2.15",
+      "langgraph_api_version": "0.16.0",
+      "langgraph_plan": "enterprise",
+      "langgraph_host": "self-hosted",
+      "langgraph_api_url": "http://127.0.0.1:2024",
+      "run_id": "01a13657-7a20-7bd0-8127-6a1e860fb887",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "source": "input",
+      "step": -1,
+      "parents": {},
+      "langgraph_auth_user_id": "",
+      "langgraph_request_id": "894bdb6e-80d3-40e6-830d-de7168f308ae"
+    },
+    "created_at": "2026-10-13T17:37:45.790453+00:00",
+    "checkpoint": {
+      "checkpoint_id": "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8",
+      "thread_id": "01a13657-7a1c-7d83-9966-d6d6bac2c526",
+      "checkpoint_ns": ""
+    },
+    "parent_checkpoint": null,
+    "interrupts": [],
+    "checkpoint_id": "1f1c72cc-d0d9-6798-bfff-b5ee6f5669a8",
+    "parent_checkpoint_id": null
+  }
+]
