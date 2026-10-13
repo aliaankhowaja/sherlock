@@ -11,6 +11,8 @@ import sqlite3
 import time
 from pathlib import Path
 
+from sherlock.redact import redact_body
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS calls (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,7 +86,7 @@ class Cassette:
     def begin(self, kind, name, body: bytes) -> int:
         return self._run(
             "INSERT INTO calls(kind, name, key, request, started) VALUES (?,?,?,?,?)",
-            (kind, name, request_key(kind, name, body), body, time.time()), write=True)
+            (kind, name, request_key(kind, name, body), redact_body(body), time.time()), write=True)
 
     def finish(self, call_id, *, status, headers, is_sse, duration_ms, chunks):
         conn = self._conn()
