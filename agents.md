@@ -39,6 +39,11 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     (`g3.py`): fork a recorded run over HTTP, restore known-good behaviour via run `context`, resume from the cassette, apply Z.
     Exit 0 pass, 1 fail, 75 abstain, 2 error. The server must be running under `sherlock-rec run --replay langgraph dev ...`;
     G3 refuses otherwise. Known-good file: `{node: {context_key: value | {"$remove": [..]}}}` (see `harness/known_good/`).
+  - `sherlock-rec diagnose --thread-id ID --known-good FILE [-c sherlock.yaml] [--url URL] [--cassette PATH] [--max-trials 40] [--max-minutes 10] [--max-size 3] [--out DIR]`
+    (`diagnose.py` over `search.py`): prune candidates (`plan_candidates`), probe, then singletons, pairs and up to `--max-size`
+    nodes through `run_g3`; returns every 1-minimal set or an abstain with a reason code. Writes `.sherlock/diagnoses/<thread_id>.json`
+    (schema 1: `status`, `minimal_sets`, `unverified_sets`, `trials` with four labels, `counts`, `pruning`, `trial_reduction`, `budget`).
+    Exit 0 found, 75 cannot say, 2 error. Same server requirement as `g3`. `search.py` is pure and tested with a fake oracle.
   - Tests use `tests/stub_server.py` (OpenAI-compatible stub), `tests/llm_team.py`, `tests/g3_team/llm_graph.py`; no real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
@@ -70,7 +75,7 @@ What it runs, in order:
 ```sh
 cd ui && npm run lint && npm run build   # fresh dist so api embeds it
 (cd harness && uv run pytest -q)   # demo teams + gold derivation
-(cd python/sherlock && uv run pytest -q)   # recorder, checks, G3 (incl. live langgraph dev)
+(cd python/sherlock && uv run pytest -q)   # recorder, checks, G3, diagnose (incl. live langgraph dev)
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli

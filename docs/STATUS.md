@@ -3,7 +3,7 @@
 > **This is the live progress tracker.** Read it before starting work; update it before you stop.
 > Scope is set by [`sherlock-spec.md`](sherlock-spec.md), which governs. The status columns inside the spec are a 12 October snapshot — **live status lives here only.** Session rules (model, commits) are in [`../CLAUDE.md`](../CLAUDE.md).
 
-**Last updated:** 2026-10-14 · **Current phase:** 3 — minimality search, verdicts, budget, not started · **Branch:** `phase-2` (Phase 2 done, branched off `phase-1`; merge, then branch `phase-3`)
+**Last updated:** 2026-10-14 · **Current phase:** 4 — G0, G2, intake, known-good sources, not started · **Branch:** `phase-3` (Phase 3 done, branched off `phase-2`; merge, then branch `phase-4`)
 
 ## How to update this file
 
@@ -20,8 +20,8 @@
 | 0 | Unblock: fix ingestion, verify fork recipe and `__overwrite__`, demo team #1 | ✅ done 2026-10-13 |
 | 1 | Record and freeze: `sherlock run`, interceptors, cassette store, abort-on-miss | ✅ done 2026-10-14 |
 | 2 | Checks (Z) and the run-again test (G3) | ✅ done 2026-10-14 |
-| 3 | Minimality search, verdicts, budget | ⬜ next |
-| 4 | G0, G2, intake, known-good sources | ⬜ |
+| 3 | Minimality search, verdicts, budget | ✅ done 2026-10-14 |
+| 4 | G0, G2, intake, known-good sources | ⬜ next |
 | 5 | Surface: run page, verified colouring, evidence panel | ⬜ |
 | 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ⬜ |
 
@@ -61,16 +61,28 @@ Code: `python/sherlock/src/sherlock/{checks,g3,redact}.py`, CLI `sherlock-rec ch
 
 Not done in Phase 2: FR-G3.10 limitation text; FR-C7/C8/C10/C11; interceptor-level restoration (§4.4 primary); a Rust `sherlock g3` wrapper (the engine is Python, see Decision log).
 
-## Next up — Phase 3: the search (spec §5.5, FR-D1–D9)
+## Phase 3 — the search ✅
+
+Code: `python/sherlock/src/sherlock/{search,diagnose}.py`, CLI `sherlock-rec diagnose`. Run: `cd python/sherlock && uv run pytest -q` (162 tests incl. 18 live, about 2.5 min); `cd harness && uv run pytest -q` (17).
+
+- [x] **P3.1 Pruning** (FR-D1, D2): ancestry from the recorded supersteps plus no-op restores; nodes without known-good are `untestable`, never pruned — `1bcf3d4`; `tests/test_search.py`.
+- [x] **P3.2 Search** (FR-D3-D5, D13): feasibility probe, then singletons, pairs, up to `--max-size`; supersets of a passing set skipped; every 1-minimal set returned; each set tried once — `1bcf3d4`.
+- [x] **P3.3 Verdicts and abstain reasons** (FR-D6, D7, D11): four labels per trial, counts ("1 of 3"), trial log, reason codes `no_candidates | no_known_good | unrecorded_call | cannot_test | budget_exhausted | cutoff | not_fixable | already_passes | no_history` — `1bcf3d4`.
+- [x] **P3.4 Budget** (FR-D8, D9): `--max-trials 40`, `--max-minutes 10`, `--max-size 3`; exhaustion is an abstain (or a find marked incomplete) — `1bcf3d4`.
+- [x] **P3.5 `diagnose` and artifact**: `sherlock-rec diagnose --thread-id --known-good [-c] [--max-*]`, JSON at `.sherlock/diagnoses/<thread_id>.json` (schema 1, for the Phase 5 UI); exit 0 found, 75 cannot say, 2 error — `e5210e2`; `tests/test_diagnose_unit.py` (fake server).
+- [x] **P3.6 Live exit criterion** — `1f7c0c6`; `tests/test_g3_live.py` against a real `langgraph dev` in a socket trap: single fault returns {extractor} in 1 trial, chained run returns {retriever, extractor} in 3 trials with both singletons failing, both equal to the harness `gold_minimal_sets`; writer fault matches gold; harmless fault is `already_passes`; a changed LLM request abstains (`unrecorded_call`: "request changed since recording"); `--max-trials 2` abstains `budget_exhausted`; the trap file stayed empty.
+
+Not done in Phase 3: FR-D10 flakiness pre-check (S; trials replay the cassette, so they are deterministic), FR-D12 ordering (C), widening on an empty candidate set (open item 3). "Partly helps" is by Z score only.
+
+## Next up — Phase 4: G0, G2, intake, known-good sources (spec 5.4, 5.6, 5.8)
 
 Plan stub; revise against the spec before starting.
 
-1. **Pruning (FR-D1, D2):** candidate nodes from the recorded path (`tasks[]` and `next` give static order), conservative.
-2. **Search (FR-D3–D5, D13 optional):** singletons, then pairs; return every 1-minimal set via `run_g3` as the trial primitive. Reuse the replay server across trials (`Cassette.start_trial` resets consumption).
-3. **Verdicts and abstain reasons (FR-D6, D7, D11):** fixes / partly helps / doesn't help / cannot say; one-sentence abstain reason; counts with the trial log.
-4. **Budget (FR-D8, D9):** `--max-trials`, `--max-minutes`, documented cap on subset space; exhaustion is an abstain.
-5. **Check on gold:** compare against `gold_minimal_sets` in `harness/` on team 1 (single, two-cause, harmless fault). "Partly helps" needs a score from Z (assertion scores are already returned).
-6. **Open for this phase:** where the search lives (Python next to `g3.py`, as decided for Phase 2); how known-good is supplied until Phase 4 (FR-K); cost per trial (server startup is paid once, each trial is a few HTTP calls).
+1. **G0 (FR-G0.1-G0.5):** programmatic flags from the tape: schema-invalid tool calls, empty retrieval, malformed JSON, extractive tokens in the final output absent from upstream, loop detector. Clues only; they may widen the candidate list (feeds `plan_candidates`, which today only prunes). Decide open item 3 (empty candidates after widening).
+2. **G2 (FR-G2.1-G2.3):** a candidate must name a recorded arrow; no arrow, discard. Deterministic, only rejects.
+3. **Intake (FR-I1-I5):** FAIL via mismatch or check; "Wrong" click with no node named; a marked-wrong run becomes diagnosable once a check or known-good is added. Needs a run-intake record under `.sherlock/`.
+4. **Known-good sources (FR-K1-K6):** passing run of the same input compared node by node (FR-K1, test only differing nodes); pasted per-node output (K2); confirmed prior success (K3); two disagreeing successes abstain (K4). Today known-good is a hand-written per-node context patch (`--known-good`).
+5. **Open for this phase:** `diagnose` still restores only through run `context`; K1/K2 restore outputs, which needs interceptor-level or `as_node` restoration (spec 4.4 primary) and must not break FR-G3.3/G3.4.
 
 ## Requirement status
 
@@ -102,6 +114,14 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-G3.8 | ✅ | Replay never executes a tool; `--allow-tool` aborts any unlisted one (P2.2) |
 | FR-G3.9 | ✅ | Trials sent with `durability: "sync"` |
 | NFR-3 | 🔨 | No live call in replay for httpx and `BaseTool`; `urllib`/`requests`/`aiohttp`/raw sockets are not covered |
+| FR-D1, D2 | ✅ | Ancestry pruning from the recorded supersteps plus no-op restores; conservative; ratio reported (P3.1) |
+| FR-D3, D4, D5 | ✅ | Singletons, pairs, up to 3; every 1-minimal set returned, none collapsed; chained pair found with singletons failing (P3.2, P3.6) |
+| FR-D6, D7, D11 | ✅ | Four labels, first-class abstain with reason code and sentence, counts and trial log in the artifact (P3.3) |
+| FR-D8, D9 | ✅ | `--max-trials/--max-minutes/--max-size`; cutoff documented in `search.py` and the Decision log (P3.4) |
+| FR-D10, D12 | ⬜ | Flakiness pre-check and ordering not built (see Decision log) |
+| FR-D13 | ✅ | Sets of 3 by default; configurable with `--max-size` |
+| NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact |
+| FR-E3 | ✅ | Live `diagnose` results equal `gold_minimal_sets` for single, two-cause and writer runs (P3.6) |
 | FR-U13 | ✅ | Per-node timeline, errors first |
 | FR-X5 | ✅ | `sherlock serve` |
 | FR-X6 | ✅ | `sherlock ingest teams\|runs\|logs` |
@@ -162,11 +182,22 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - **Abstain semantics:** G3 returns `abstain` (exit 75) for a cassette miss, a failed trial run, unusable history, an original that already passes Z, a missing known-good, and "replay went off track". Exit 2 is reserved for setup errors.
   - Dev deps for tests: `langgraph-cli[inmem]`. Runtime deps added: `pyyaml`, `jsonschema`.
 
+- **2026-10-14 — Phase 3 build (autonomous).**
+  - **Subset cutoff (spec open item 2, FR-D9):** sets of at most 3 nodes (`--max-size`), at most 40 trials, at most 10 minutes, whichever first. Never enumerate 2^k: each set is tried once, supersets of a passing set are skipped. Sets of three (FR-D13, could) come free with the size cap.
+  - **Feasibility probe:** with 2+ candidates the first trial restores all of them. If that fails, nothing inside the candidates can pass, so the search abstains (`not_fixable`) after one trial. If it passes but no set within the cutoff does, the abstain is `cutoff`. Assumes restoring more never hurts (holds on team 1). It only shortcuts the negative case; positive results always come from a direct trial.
+  - **Pruning:** (1) ancestry: a node can reach `output_key` only if it ran in a superstep up to the last write of that key, and in that superstep only the writer itself (parallel nodes cannot feed it); with no writer found, nothing is pruned by ancestry. Read-dependencies are unknown, so earlier nodes are always kept. (2) no-op restore: if the node's known-good patch leaves the run context unchanged, a trial would replay the original, so the node cannot be a cause or part of a minimal set. Exact for the context path; uses the known-good file and recorded context, not the planted fault names.
+  - **Nodes with no known-good** are `untestable`, not pruned. They stay out of the search; a found set is still valid but the result is `complete: false` with a note, and a negative result is the abstain `no_known_good`.
+  - **Trial abstains:** a set whose trial abstains is "cannot say". A passing superset of such a set goes to `unverified_sets`, not `minimal_sets`, because minimality cannot be certified. With no certified set the result is an abstain (`unrecorded_call` when a cassette miss was seen, else `cannot_test`).
+  - **Result status:** `found` (every certified 1-minimal set; `complete` says whether every set up to the candidates was decided) or `abstain`. A budget stop after a find keeps the find with `complete: false`.
+  - **"Partly helps"** = Z failed but the mean assertion score rose above the original run's. No repeat trials: the cassette makes every trial deterministic, so FR-D10 (should) is left out. No widening on an empty candidate set (open item 3): it is an abstain until G0 exists in Phase 4.
+  - **Artifact:** `.sherlock/diagnoses/<thread_id>.json` next to the cassette (`--out` overrides), schema 1. `search.py` is pure (fake-oracle tested); `diagnose.py` wires G3 to it. G3 now tags cassette-miss abstains (`evidence.cassette_miss`).
+
 ## Open items
 
 Beyond spec §10:
 
 - **Phase 1 smoke test:** all Phase 1 tests use the local stub; no real-provider smoke test was run (no keys). Which provider and key? *(Proposal; the team should confirm.)* Real SDK streaming (openai/anthropic over httpx) is unverified.
+- **Phase 3 gaps:** known-good is still a hand-written context patch, so only context-configurable behaviour can be restored; `diagnose` was only exercised on team 1 and a small LLM graph. `complete` is conservative (any untestable node or cassette miss makes it false).
 - **Phase 1 gaps:** only httpx and `BaseTool` are intercepted (`requests`/`urllib`/`aiohttp` are not); `sherlock doctor` (FR-R12) not started.
 - The spec cites governing documents in `causal-debugger/` that are not in this repo. Add or link them.
 - Competitors missing from spec §3: TraceSurgeon (`ahhbhishek/tracesurgeon`, MIT, LangGraph) and Agent-Casuality (PyPI `agent-casuality`). Review before mid-eval.
@@ -176,6 +207,7 @@ Beyond spec §10:
 
 ## Session log
 
+- **2026-10-14** — Phase 3 complete on `phase-3` (3 code commits): pruning, minimality search, verdict labels, budget, `sherlock-rec diagnose` and the JSON artifact. 162 recorder tests (18 live) and 17 harness tests green; on team 1 `diagnose` equals gold for the single and two-cause runs (1 and 3 trials of 31) and abstains on the cache-miss case. Rust untouched.
 - **2026-10-14** — Phase 2 complete on `phase-2` (7 atomic commits): checks, G3 driver, redaction, per-trial replay and allowlist, `sherlock-rec` rename; 120 recorder tests (10 live against `langgraph dev`) and 17 harness tests green. First real verdicts: pass, fail and abstain. Rust untouched.
 - **2026-10-14** — Phase 1 complete on `phase-1` (8 atomic commits): `python/sherlock` recorder, replay and abstain; 48 tests; harness suite still green.
 
