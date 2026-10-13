@@ -239,7 +239,7 @@ def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks:
     if cassette is not None:
         fresh = cassette.abstains()[seen:]
         if fresh:
-            return abstain(fresh[0], **base)
+            return abstain(fresh[0], **base, evidence={"cassette_miss": True})
     if isinstance(result, dict) and "__error__" in result:
         error = result["__error__"]
         return abstain(f"the trial run failed: {error.get('error')}: {error.get('message')}", **base)
