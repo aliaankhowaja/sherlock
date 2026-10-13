@@ -1,0 +1,3560 @@
+{
+  "by_team": {
+    "invoice_pipeline": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.286,
+        "mean_jaccard": 0.5,
+        "n": 7,
+        "wrong": 5
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.143,
+        "mean_jaccard": 0.286,
+        "n": 7,
+        "wrong": 6
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.143,
+        "mean_jaccard": 0.286,
+        "n": 7,
+        "wrong": 6
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.143,
+        "n": 7,
+        "wrong": 7
+      },
+      "sherlock": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 7,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 7,
+        "wrong": 0
+      }
+    },
+    "order_desk": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.143,
+        "n": 7,
+        "wrong": 7
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.143,
+        "n": 7,
+        "wrong": 7
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.143,
+        "n": 7,
+        "wrong": 7
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.143,
+        "mean_jaccard": 0.286,
+        "n": 7,
+        "wrong": 6
+      },
+      "sherlock": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 7,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 7,
+        "wrong": 0
+      }
+    },
+    "support_bot": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.75,
+        "mean_jaccard": 0.875,
+        "n": 8,
+        "wrong": 2
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.312,
+        "n": 8,
+        "wrong": 6
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.312,
+        "n": 8,
+        "wrong": 6
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.125,
+        "mean_jaccard": 0.188,
+        "n": 8,
+        "wrong": 7
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 7,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 8,
+        "wrong": 0
+      }
+    },
+    "vendor_brief": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.222,
+        "mean_jaccard": 0.278,
+        "n": 9,
+        "wrong": 7
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.222,
+        "mean_jaccard": 0.222,
+        "n": 9,
+        "wrong": 7
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.222,
+        "mean_jaccard": 0.222,
+        "n": 9,
+        "wrong": 7
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.222,
+        "mean_jaccard": 0.278,
+        "n": 9,
+        "wrong": 7
+      },
+      "sherlock": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 9,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 9,
+        "wrong": 0
+      }
+    }
+  },
+  "cases": [
+    {
+      "expect_abstain": false,
+      "faults": [
+        "router.wrong_source"
+      ],
+      "gold": [
+        [
+          "router"
+        ]
+      ],
+      "hard": false,
+      "id": "vendor_brief:router.wrong_source",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extractor"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.8,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "writer.stale_template"
+      ],
+      "gold": [
+        [
+          "writer"
+        ]
+      ],
+      "hard": false,
+      "id": "vendor_brief:writer.stale_template",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.8,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "reviewer.false_block"
+      ],
+      "gold": [
+        [
+          "reviewer"
+        ]
+      ],
+      "hard": false,
+      "id": "vendor_brief:reviewer.false_block",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.8,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "retriever.drop_latest",
+        "extractor.legacy_pattern"
+      ],
+      "gold": [
+        [
+          "extractor",
+          "retriever"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:retriever.drop_latest+extractor.legacy_pattern",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "extractor",
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "visible",
+      "tags": [
+        "two_cause",
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "retriever.reverse_order",
+        "writer.stale_template"
+      ],
+      "gold": [
+        [
+          "writer"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:retriever.reverse_order+writer.stale_template",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "no_bulk_discount"
+      ],
+      "gold": [
+        [
+          "pricing"
+        ]
+      ],
+      "hard": false,
+      "id": "order_desk:no_bulk_discount",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.75,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "qty_off_by_one"
+      ],
+      "gold": [
+        [
+          "parse"
+        ]
+      ],
+      "hard": false,
+      "id": "order_desk:qty_off_by_one",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.75,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "stale_inventory",
+        "drops_shipping_line"
+      ],
+      "gold": [
+        [
+          "assemble",
+          "stock"
+        ]
+      ],
+      "hard": true,
+      "id": "order_desk:stale_inventory+drops_shipping_line",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "stock"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "assemble",
+                "stock"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "visible",
+      "tags": [
+        "two_cause"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "normalize.stale_rate"
+      ],
+      "gold": [
+        [
+          "normalize"
+        ]
+      ],
+      "hard": false,
+      "id": "invoice_pipeline:normalize.stale_rate",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "normalize"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.75,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "extract.comma_split",
+        "normalize.trust_parsed"
+      ],
+      "gold": [
+        [
+          "extract"
+        ],
+        [
+          "normalize"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:extract.comma_split+normalize.trust_parsed",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "extract"
+              ],
+              [
+                "normalize"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "or_fix",
+        "last_step_ok"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "extract.comma_split",
+        "post.round_down"
+      ],
+      "gold": [
+        [
+          "post"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:extract.comma_split+post.round_down",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "silent_decoy"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "fmt.shout"
+      ],
+      "gold": [
+        [
+          "fmt"
+        ]
+      ],
+      "hard": false,
+      "id": "support_bot:fmt.shout",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.667,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "prep.truncate"
+      ],
+      "gold": [
+        [
+          "prep"
+        ]
+      ],
+      "hard": false,
+      "id": "support_bot:prep.truncate",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.667,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "ask.terse_instruction"
+      ],
+      "gold": [
+        [
+          "ask"
+        ]
+      ],
+      "hard": false,
+      "id": "support_bot:ask.terse_instruction",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.667,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "visible",
+      "tags": [
+        "last_step_ok"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": true,
+      "faults": [
+        "prep.truncate",
+        "ask.terse_instruction"
+      ],
+      "gold": [
+        [
+          "ask",
+          "prep"
+        ]
+      ],
+      "hard": true,
+      "id": "support_bot:prep.truncate+ask.terse_instruction",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "unrecorded_call",
+            "status": "abstain"
+          },
+          "reason": "unrecorded_call"
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 2,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.333,
+        "reason_code": "unrecorded_call",
+        "status": "abstain",
+        "trials_used": 3,
+        "unverified_sets": [
+          [
+            "prep",
+            "ask"
+          ]
+        ]
+      },
+      "size": 2,
+      "split": "visible",
+      "tags": [
+        "two_cause",
+        "abstain_by_design",
+        "last_step_ok"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "retriever.reverse_order",
+        "router.wrong_source"
+      ],
+      "gold": [
+        [
+          "router"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:retriever.reverse_order+router.wrong_source",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extractor"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "retriever.drop_latest",
+        "router.wrong_source"
+      ],
+      "gold": [
+        [
+          "retriever",
+          "router"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:retriever.drop_latest+router.wrong_source",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extractor"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "retriever",
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause",
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "extractor.legacy_pattern",
+        "retriever.reverse_order"
+      ],
+      "gold": [
+        [
+          "extractor"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:extractor.legacy_pattern+retriever.reverse_order",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "extractor"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "retriever.reverse_order",
+        "reviewer.false_block"
+      ],
+      "gold": [
+        [
+          "reviewer"
+        ]
+      ],
+      "hard": true,
+      "id": "vendor_brief:retriever.reverse_order+reviewer.false_block",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 31,
+        "pruned_ratio": 0.6,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy"
+      ],
+      "team": "vendor_brief"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "drops_shipping_line",
+        "no_bulk_discount"
+      ],
+      "gold": [
+        [
+          "assemble",
+          "pricing"
+        ]
+      ],
+      "hard": true,
+      "id": "order_desk:drops_shipping_line+no_bulk_discount",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "assemble",
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "no_bulk_discount",
+        "verbose_notes"
+      ],
+      "gold": [
+        [
+          "pricing"
+        ]
+      ],
+      "hard": true,
+      "id": "order_desk:no_bulk_discount+verbose_notes",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "qty_off_by_one",
+        "stale_inventory"
+      ],
+      "gold": [
+        [
+          "parse",
+          "stock"
+        ]
+      ],
+      "hard": true,
+      "id": "order_desk:qty_off_by_one+stale_inventory",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "parse",
+                "stock"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause",
+        "last_step_ok"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "no_bulk_discount",
+        "qty_off_by_one"
+      ],
+      "gold": [
+        [
+          "parse",
+          "pricing"
+        ]
+      ],
+      "hard": true,
+      "id": "order_desk:no_bulk_discount+qty_off_by_one",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "stock"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "parse",
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause",
+        "last_step_ok"
+      ],
+      "team": "order_desk"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "normalize.stale_rate",
+        "post.round_down"
+      ],
+      "gold": [
+        [
+          "normalize",
+          "post"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:normalize.stale_rate+post.round_down",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "normalize",
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "post.round_down",
+        "validate.reject_large"
+      ],
+      "gold": [
+        [
+          "post",
+          "validate"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:post.round_down+validate.reject_large",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post",
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "normalize.trust_parsed",
+        "validate.reject_large"
+      ],
+      "gold": [
+        [
+          "validate"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:normalize.trust_parsed+validate.reject_large",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.75,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "normalize.stale_rate",
+        "validate.reject_large"
+      ],
+      "gold": [
+        [
+          "normalize",
+          "validate"
+        ]
+      ],
+      "hard": true,
+      "id": "invoice_pipeline:normalize.stale_rate+validate.reject_large",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "normalize"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "normalize",
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 15,
+        "pruned_ratio": 0.5,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause",
+        "last_step_ok"
+      ],
+      "team": "invoice_pipeline"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "ask.terse_instruction",
+        "fmt.trailing_newline"
+      ],
+      "gold": [
+        [
+          "ask"
+        ]
+      ],
+      "hard": true,
+      "id": "support_bot:ask.terse_instruction+fmt.trailing_newline",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.333,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "fmt.shout",
+        "prep.truncate"
+      ],
+      "gold": [
+        [
+          "fmt",
+          "prep"
+        ]
+      ],
+      "hard": true,
+      "id": "support_bot:fmt.shout+prep.truncate",
+      "methods": {
+        "g0_only": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt",
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.333,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 2,
+      "split": "hidden",
+      "tags": [
+        "two_cause"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "fmt.trailing_newline",
+        "prep.truncate"
+      ],
+      "gold": [
+        [
+          "prep"
+        ]
+      ],
+      "hard": true,
+      "id": "support_bot:fmt.trailing_newline+prep.truncate",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.333,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 3,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [
+        "silent_decoy",
+        "last_step_ok"
+      ],
+      "team": "support_bot"
+    },
+    {
+      "expect_abstain": false,
+      "faults": [
+        "fmt.shout",
+        "fmt.trailing_newline"
+      ],
+      "gold": [
+        [
+          "fmt"
+        ]
+      ],
+      "hard": false,
+      "id": "support_bot:fmt.shout+fmt.trailing_newline",
+      "methods": {
+        "g0_only": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "last_node": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "paste_and_play": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "random_node": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
+        "sherlock": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        }
+      },
+      "sherlock": {
+        "cannot_say_trials": 0,
+        "exhaustive_trials": 7,
+        "pruned_ratio": 0.667,
+        "reason_code": "ok",
+        "status": "found",
+        "trials_used": 1,
+        "unverified_sets": []
+      },
+      "size": 1,
+      "split": "hidden",
+      "tags": [],
+      "team": "support_bot"
+    }
+  ],
+  "failures": [],
+  "invariants": {
+    "artifact_violations": {},
+    "original_thread_unchanged": true,
+    "replay_network_attempts": []
+  },
+  "schema": 1,
+  "seed": 20261014,
+  "summary": {
+    "all": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 10,
+        "exact_of_answered": 0.323,
+        "mean_jaccard": 0.452,
+        "n": 31,
+        "wrong": 21
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.161,
+        "mean_jaccard": 0.242,
+        "n": 31,
+        "wrong": 26
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.161,
+        "mean_jaccard": 0.242,
+        "n": 31,
+        "wrong": 26
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.129,
+        "mean_jaccard": 0.226,
+        "n": 31,
+        "wrong": 27
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 30,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 31,
+        "wrong": 0
+      }
+    },
+    "hard": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.19,
+        "mean_jaccard": 0.381,
+        "n": 21,
+        "wrong": 17
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.095,
+        "mean_jaccard": 0.214,
+        "n": 21,
+        "wrong": 19
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.095,
+        "mean_jaccard": 0.214,
+        "n": 21,
+        "wrong": 19
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.19,
+        "mean_jaccard": 0.333,
+        "n": 21,
+        "wrong": 17
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 20,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 21,
+        "wrong": 0
+      }
+    },
+    "hidden": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.406,
+        "n": 16,
+        "wrong": 12
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.125,
+        "mean_jaccard": 0.25,
+        "n": 16,
+        "wrong": 14
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.125,
+        "mean_jaccard": 0.25,
+        "n": 16,
+        "wrong": 14
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 3,
+        "exact_of_answered": 0.188,
+        "mean_jaccard": 0.312,
+        "n": 16,
+        "wrong": 13
+      },
+      "sherlock": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 16,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 16,
+        "wrong": 0
+      }
+    },
+    "last_step_ok": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.286,
+        "mean_jaccard": 0.357,
+        "n": 21,
+        "wrong": 15
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.0,
+        "n": 21,
+        "wrong": 21
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.0,
+        "n": 21,
+        "wrong": 21
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.19,
+        "mean_jaccard": 0.262,
+        "n": 21,
+        "wrong": 17
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 20,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 21,
+        "wrong": 0
+      }
+    },
+    "one_node": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 10,
+        "exact_of_answered": 0.5,
+        "mean_jaccard": 0.5,
+        "n": 20,
+        "wrong": 10
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.25,
+        "n": 20,
+        "wrong": 15
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.25,
+        "n": 20,
+        "wrong": 15
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.2,
+        "mean_jaccard": 0.2,
+        "n": 20,
+        "wrong": 16
+      },
+      "sherlock": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 20,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 20,
+        "wrong": 0
+      }
+    },
+    "two_node": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.364,
+        "n": 11,
+        "wrong": 11
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.227,
+        "n": 11,
+        "wrong": 11
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.227,
+        "n": 11,
+        "wrong": 11
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.273,
+        "n": 11,
+        "wrong": 11
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 10,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 11,
+        "wrong": 0
+      }
+    },
+    "visible": {
+      "g0_only": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.4,
+        "mean_jaccard": 0.5,
+        "n": 15,
+        "wrong": 9
+      },
+      "last_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 3,
+        "exact_of_answered": 0.2,
+        "mean_jaccard": 0.233,
+        "n": 15,
+        "wrong": 12
+      },
+      "paste_and_play": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 3,
+        "exact_of_answered": 0.2,
+        "mean_jaccard": 0.233,
+        "n": 15,
+        "wrong": 12
+      },
+      "random_node": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.067,
+        "mean_jaccard": 0.133,
+        "n": 15,
+        "wrong": 14
+      },
+      "sherlock": {
+        "abstain": 1,
+        "abstain_reasons": {
+          "unrecorded_call": 1
+        },
+        "exact": 14,
+        "exact_of_answered": 1.0,
+        "mean_jaccard": 1.0,
+        "n": 15,
+        "wrong": 0
+      }
+    }
+  },
+  "teams": [
+    "invoice_pipeline",
+    "order_desk",
+    "support_bot",
+    "vendor_brief"
+  ],
+  "trials": {
+    "exhaustive_on_found": 538,
+    "fewer_pct": 87.4,
+    "used_on_found": 68
+  }
+}
