@@ -13,6 +13,33 @@ enum Commands {
     Serve(ServeArgs),
     /// Ingest data from a LangGraph API server
     Ingest(IngestArgs),
+    /// Read diagnoses written by `sherlock-rec diagnose`
+    Diagnoses(DiagnosesArgs),
+}
+
+#[derive(Args, Debug)]
+struct DiagnosesArgs {
+    /// Sherlock state directory; diagnoses are read from `<dir>/diagnoses/`
+    #[arg(long, global = true, default_value = ".sherlock")]
+    sherlock_dir: std::path::PathBuf,
+
+    /// Print JSON instead of text
+    #[arg(long, global = true, default_value_t = false)]
+    json: bool,
+
+    #[command(subcommand)]
+    command: DiagnosesCommands,
+}
+
+#[derive(Subcommand, Debug)]
+enum DiagnosesCommands {
+    /// List diagnoses, newest first
+    List,
+    /// Show one diagnosis: verdict, per-node status, trial log
+    Show {
+        /// Thread id of the diagnosed run
+        thread_id: String,
+    },
 }
 
 #[derive(Args, Debug)]
@@ -48,6 +75,10 @@ struct ServeArgs {
     /// LangSmith API origin
     #[arg(long, default_value = "https://api.smith.langchain.com")]
     langsmith_url: String,
+
+    /// Sherlock state directory; diagnoses are read from `<dir>/diagnoses/`
+    #[arg(long, default_value = ".sherlock")]
+    sherlock_dir: std::path::PathBuf,
 }
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -93,8 +124,30 @@ async fn main() -> anyhow::Result<()> {
                 langgraph_api_key: args.langgraph_api_key,
                 langsmith_api_key,
                 langsmith_url: args.langsmith_url,
+                sherlock_dir: args.sherlock_dir,
             })
             .await?;
+        }
+        Commands::Diagnoses(args) => {
+            let store = app_core::diagnosis::DiagnosisStore::new(&args.sherlock_dir);
+            match args.command {
+                DiagnosesCommands::List => {
+                    let list = store.list();
+                    if args.json {
+                        println!("{}", render_json(&list)?);
+                    } else {
+                        print!("{}", render_diagnosis_list(&list));
+                    }
+                }
+                DiagnosesCommands::Show { thread_id } => {
+                    let diagnosis = store.get(&thread_id)?;
+                    if args.json {
+                        println!("{}", render_json(&diagnosis)?);
+                    } else {
+                        print!("{}", render_diagnosis(&diagnosis));
+                    }
+                }
+            }
         }
         Commands::Ingest(args) => {
             let langsmith_key = resolve_langsmith_key(args.langsmith_api_key);
@@ -350,9 +403,178 @@ fn render_json(value: &impl serde::Serialize) -> anyhow::Result<String> {
     Ok(serde_json::to_string_pretty(value)?)
 }
 
+fn set_text(sets: &[Vec<String>]) -> String {
+    sets.iter()
+        .map(|s| format!("{{{}}}", s.join(", ")))
+        .collect::<Vec<_>>()
+        .join(" and ")
+}
+
+/// One line per diagnosis: the verdict in words, not a bare status.
+fn render_diagnosis_list(list: &app_core::diagnosis::DiagnosisList) -> String {
+    let mut out = String::new();
+    if list.diagnoses.is_empty() {
+        out.push_str(&format!(
+            "No diagnoses in {}.\nCreate one with `sherlock-rec diagnose --thread-id <failed run> --good-run <passing run>`.\n",
+            list.dir
+        ));
+    }
+    for d in &list.diagnoses {
+        let verdict = if d.status == "found" {
+            format!("culprit set {}", set_text(&d.minimal_sets))
+        } else {
+            format!(
+                "cannot say ({})",
+                d.reason_code.as_deref().unwrap_or("abstain")
+            )
+        };
+        out.push_str(&format!(
+            "{}  {}  {}\n",
+            d.thread_id,
+            d.graph_id.as_deref().unwrap_or("-"),
+            verdict
+        ));
+    }
+    for bad in &list.invalid {
+        out.push_str(&format!("INVALID {}: {}\n", bad.file, bad.error));
+    }
+    out
+}
+
+fn render_diagnosis(d: &app_core::diagnosis::Diagnosis) -> String {
+    use app_core::diagnosis::NodeStatus;
+    let s = &d.summary;
+    let mut out = format!("Run {}\n", s.thread_id);
+    if s.status == "found" {
+        out.push_str(&format!(
+            "Verdict: restoring {} to known-good makes the run pass{}.\n",
+            set_text(&s.minimal_sets),
+            if s.complete {
+                ""
+            } else {
+                " (search incomplete)"
+            }
+        ));
+    } else {
+        out.push_str(&format!("Verdict: cannot say. {}\n", s.reason));
+    }
+    if let (Some(used), Some(fewer)) = (s.trials_used, s.fewer_pct) {
+        out.push_str(&format!(
+            "Trials: {used} ({fewer}% fewer than trying every subset)\n"
+        ));
+    }
+    out.push_str("\nNodes (verified status only):\n");
+    for n in &d.nodes {
+        let label = match n.status {
+            NodeStatus::Culprit => "CULPRIT   ",
+            NodeStatus::Cleared => "cleared   ",
+            NodeStatus::Unverified => "unverified",
+            NodeStatus::Abstained => "cannot say",
+        };
+        out.push_str(&format!("  {label}  {}  {}\n", n.node, n.reason));
+    }
+    if let Some(trials) = d.artifact["trials"].as_array() {
+        out.push_str("\nTrial log:\n");
+        for t in trials {
+            out.push_str(&format!(
+                "  #{} restore {{{}}} -> {}: {}\n",
+                t["n"],
+                t["restored"]
+                    .as_array()
+                    .map(|a| a
+                        .iter()
+                        .filter_map(|v| v.as_str())
+                        .collect::<Vec<_>>()
+                        .join(", "))
+                    .unwrap_or_default(),
+                t["label"].as_str().unwrap_or("?"),
+                t["reason"].as_str().unwrap_or("")
+            ));
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const DEMO: &str = "../../harness/fixtures/sherlock-demo";
+
+    #[test]
+    fn diagnoses_commands_parse() {
+        let cli = parse(&["sherlock", "diagnoses", "list", "--json"]);
+        let Commands::Diagnoses(args) = cli.command else {
+            panic!("expected diagnoses");
+        };
+        assert!(args.json && matches!(args.command, DiagnosesCommands::List));
+        assert_eq!(args.sherlock_dir, std::path::PathBuf::from(".sherlock"));
+        let cli = parse(&["sherlock", "diagnoses", "show", "t1", "--sherlock-dir", "x"]);
+        let Commands::Diagnoses(args) = cli.command else {
+            panic!("expected diagnoses");
+        };
+        assert!(
+            matches!(args.command, DiagnosesCommands::Show { ref thread_id } if thread_id == "t1")
+        );
+        assert_eq!(args.sherlock_dir, std::path::PathBuf::from("x"));
+        assert!(Cli::try_parse_from(["sherlock", "diagnoses", "show"]).is_err());
+    }
+
+    #[test]
+    fn serve_takes_a_sherlock_dir() {
+        let cli = parse(&["sherlock", "serve", "--sherlock-dir", "demo"]);
+        let Commands::Serve(args) = cli.command else {
+            panic!("expected serve");
+        };
+        assert_eq!(args.sherlock_dir, std::path::PathBuf::from("demo"));
+    }
+
+    #[test]
+    fn list_text_says_the_verdict_and_the_empty_state_says_what_to_run() {
+        let list = app_core::diagnosis::DiagnosisStore::new(DEMO).list();
+        let text = render_diagnosis_list(&list);
+        assert!(
+            text.contains("culprit set {retriever, extractor}"),
+            "{text}"
+        );
+        assert!(text.contains("culprit set {writer}"), "{text}");
+        assert!(text.contains("cannot say (no_known_good)"), "{text}");
+        let empty = app_core::diagnosis::DiagnosisStore::new("nowhere").list();
+        let text = render_diagnosis_list(&empty);
+        assert!(text.contains("No diagnoses") && text.contains("sherlock-rec diagnose"));
+    }
+
+    #[test]
+    fn show_text_has_verdict_verified_nodes_and_trial_log() {
+        let list = app_core::diagnosis::DiagnosisStore::new(DEMO).list();
+        let id = &list
+            .diagnoses
+            .iter()
+            .find(|d| d.minimal_sets.iter().any(|s| s.len() == 2))
+            .unwrap()
+            .thread_id;
+        let d = app_core::diagnosis::DiagnosisStore::new(DEMO)
+            .get(id)
+            .unwrap();
+        let text = render_diagnosis(&d);
+        assert!(text.contains("restoring {retriever, extractor} to known-good makes the run pass"));
+        assert!(text.contains("CULPRIT") && text.contains("unverified"));
+        assert!(text.contains("Trial log:") && text.contains("#3"));
+        assert!(
+            !text.contains("cleared"),
+            "pruned nodes must not be cleared: {text}"
+        );
+        let abstain = list
+            .diagnoses
+            .iter()
+            .find(|d| d.status == "abstain")
+            .unwrap();
+        let d = app_core::diagnosis::DiagnosisStore::new(DEMO)
+            .get(&abstain.thread_id)
+            .unwrap();
+        let text = render_diagnosis(&d);
+        assert!(text.contains("Verdict: cannot say.") && !text.contains("CULPRIT"));
+    }
 
     fn parse(args: &[&str]) -> Cli {
         Cli::try_parse_from(args).expect("cli should parse")
