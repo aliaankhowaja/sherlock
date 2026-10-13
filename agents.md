@@ -38,12 +38,26 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
   - `sherlock-rec g3 --thread-id ID --restore a,b --known-good FILE [-c sherlock.yaml] [--url URL] [--cassette PATH]`
     (`g3.py`): fork a recorded run over HTTP, restore known-good behaviour via run `context`, resume from the cassette, apply Z.
     Exit 0 pass, 1 fail, 75 abstain, 2 error. The server must be running under `sherlock-rec run --replay langgraph dev ...`;
-    G3 refuses otherwise. Known-good file: `{node: {context_key: value | {"$remove": [..]}}}` (see `harness/known_good/`).
-  - `sherlock-rec diagnose --thread-id ID --known-good FILE [-c sherlock.yaml] [--url URL] [--cassette PATH] [--max-trials 40] [--max-minutes 10] [--max-size 3] [--out DIR]`
+    G3 refuses otherwise. Known-good file: `{node: {context_key: value | {"$remove": [..], "$add": [..]}}}` (see `harness/known_good/`).
+  - `sherlock-rec diagnose --thread-id ID [--good-run THREAD]... [--discover-good] [--known-good FILE] [--suspect NODE[->NODE]]... [-c sherlock.yaml] [--url URL] [--cassette PATH] [--max-trials 40] [--max-minutes 10] [--max-size 3] [--out DIR]`
     (`diagnose.py` over `search.py`): prune candidates (`plan_candidates`), probe, then singletons, pairs and up to `--max-size`
     nodes through `run_g3`; returns every 1-minimal set or an abstain with a reason code. Writes `.sherlock/diagnoses/<thread_id>.json`
-    (schema 1: `status`, `minimal_sets`, `unverified_sets`, `trials` with four labels, `counts`, `pruning`, `trial_reduction`, `budget`).
-    Exit 0 found, 75 cannot say, 2 error. Same server requirement as `g3`. `search.py` is pure and tested with a fake oracle.
+    (schema 1, additive: `status`, `minimal_sets`, `unverified_sets`, `trials` (with `n`, `elapsed_s`), `counts`, `pruning` (with
+    `pruned_ratio`), `trial_reduction`, `budget`, plus `clues`, `path_check`, `known_good_source`, `sources_considered`,
+    `other_sources`, `intake`). Exit 0 found, 75 cannot say, 2 error. Same server requirement as `g3`.
+    `search.py`, `clues.py`, `sources.py` are pure and tested without a server.
+    - Known-good: `--good-run` names a prior successful run of the same input (`sources.py`): nodes with the same output are
+      skipped, the run-context difference becomes a per-node patch (context items are attributed to a node by name prefix,
+      e.g. `retriever.drop_latest`; anything else abstains `cannot_attribute`). Several successes are ranked (fewest differing
+      nodes, then newest), each searched, disagreement abstains `sources_disagree`. `--known-good FILE` still works and overrides
+      the derived patch per node. `--discover-good` also lists unconfirmed same-graph runs (never Sherlock's own forks).
+    - G0 clues (`clues.py`): node errors, empty values, malformed JSON, loops, extractive tokens, tool-call errors, differs-from-passing-run.
+      They are evidence (`strength: "clue"`), order the search, and widen it only when marked `widens`. G2 (`--suspect`): a suspect
+      needs a recorded arrow on the tape or it is discarded; none left abstains `path_check_failed`.
+  - `sherlock-rec intake --thread-id ID [--expected TEXT | --expected-file F | --check FILE] [--note T] [--dir .sherlock]`
+    (`intake.py`): writes `.sherlock/intake/<id>.json`. With none of the three it is the "Wrong" click (no node named). `diagnose`
+    reads it next to the cassette: an expected output becomes an `equals` check; with no check anywhere it returns the clues and
+    abstains `no_check`.
   - Tests use `tests/stub_server.py` (OpenAI-compatible stub), `tests/llm_team.py`, `tests/g3_team/llm_graph.py`; no real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
