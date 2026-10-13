@@ -88,3 +88,11 @@ def test_hook_patch_error_does_not_break_import(tmp_path, monkeypatch, capsys):
     finally:
         sys.meta_path.remove(finder)
         sys.modules.pop("fake_lib_b", None)
+
+
+def test_replay_bootstrap_failure_aborts_instead_of_running_unprotected(tmp_path):
+    (tmp_path / "afile").write_text("not a directory")
+    env = cli.child_env("replay", tmp_path / "afile" / "c.db", "hash")
+    p = subprocess.run([sys.executable, "-c", "print('went live')"], env=env, capture_output=True, text=True)
+    assert p.returncode == cli.EXIT_ABSTAIN
+    assert "went live" not in p.stdout and "cannot say" in p.stderr

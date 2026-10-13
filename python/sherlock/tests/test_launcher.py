@@ -39,3 +39,26 @@ def test_run_passes_through_exit_code(tmp_path):
 
 def test_run_without_command_is_a_usage_error(tmp_path):
     assert run_cli("run", cwd=tmp_path).returncode == 2
+
+
+SWALLOW = """
+import httpx
+try:
+    httpx.get("http://127.0.0.1:9/never-recorded")
+except BaseException as e:      # user code that swallows everything
+    print("swallowed", type(e).__name__)
+"""
+
+
+def test_replay_without_a_cassette_says_cannot_say(tmp_path):
+    p = run_cli("run", "--replay", sys.executable, "-c", "print('ran')", cwd=tmp_path)
+    assert p.returncode == cli.EXIT_ABSTAIN
+    assert "cannot say" in p.stderr and "ran" not in p.stdout
+
+
+def test_replay_abstain_is_reported_even_if_user_code_swallows_it(tmp_path):
+    assert run_cli("run", sys.executable, "-c", "pass", cwd=tmp_path).returncode == 0  # empty cassette
+    p = run_cli("run", "--replay", sys.executable, "-c", SWALLOW, cwd=tmp_path)
+    assert "swallowed CannotSay" in p.stdout
+    assert p.returncode == cli.EXIT_ABSTAIN
+    assert "cannot say: never recorded" in p.stderr

@@ -41,6 +41,10 @@ def _main():
 
         _boot.bootstrap()
     except Exception as exc:
+        if os.environ.get("SHERLOCK_MODE") == "replay":
+            # Unprotected replay could go live (NFR-3): abort instead of carrying on.
+            print(f"sherlock: cannot say: replay bootstrap failed ({exc!r})", file=sys.stderr)
+            os._exit(75)
         print(f"sherlock: bootstrap failed, running unrecorded: {exc!r}", file=sys.stderr)
 
 

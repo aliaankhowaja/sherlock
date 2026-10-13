@@ -63,9 +63,12 @@ class StubServer:
         return self
 
     def stop(self):
+        if self._thread is None:
+            return
         self._srv.shutdown()
         self._srv.server_close()
         self._thread.join(timeout=5)
+        self._thread = None
 
     def __enter__(self):
         return self.start()

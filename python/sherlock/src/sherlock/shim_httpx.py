@@ -89,8 +89,34 @@ def patch(httpx, rt):
             finally:
                 self._rec.finish()
 
+    class SyncReplay(httpx.SyncByteStream):
+        def __init__(self, chunks):
+            self._chunks = chunks
+
+        def __iter__(self):
+            yield from self._chunks
+
+    class AsyncReplay(httpx.AsyncByteStream):
+        def __init__(self, chunks):
+            self._chunks = chunks
+
+        async def __aiter__(self):
+            for chunk in self._chunks:
+                yield chunk
+
+    def replayed(request, stream_cls):
+        """Build the recorded response, or abstain. Never falls through to the real transport."""
+        row = rt.lookup("http", f"{request.method} {request.url}", request.content)
+        try:
+            return httpx.Response(row["status"], headers=[tuple(h) for h in row["headers"]],
+                                  stream=stream_cls(rt.cassette.chunks(row["id"])), request=request)
+        except Exception as exc:
+            rt.abstain(f"could not rebuild the recorded response ({exc!r})")
+
     def handle_request(self, request):
         request.read()
+        if rt.replaying:
+            return replayed(request, SyncReplay)
         call_id = _begin(rt, request)
         response = orig_sync(self, request)
         if call_id is not None:
@@ -99,6 +125,8 @@ def patch(httpx, rt):
 
     async def handle_async_request(self, request):
         await request.aread()
+        if rt.replaying:
+            return replayed(request, AsyncReplay)
         call_id = _begin(rt, request)
         response = await orig_async(self, request)
         if call_id is not None:

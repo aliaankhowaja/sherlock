@@ -36,6 +36,17 @@ def _finish(rt, call_id, t0, status, payload):
         warn("recording a tool result", exc)
 
 
+def _replayed(rt, name, tool_input):
+    row = rt.lookup("tool", name, _body(tool_input))
+    blob = rt.cassette.chunks(row["id"])[0]
+    if not blob:
+        rt.abstain(f"recorded output of tool {name} cannot be rebuilt (not picklable)")
+    value = pickle.loads(blob)
+    if row["status"] == 1:
+        raise value
+    return value
+
+
 def patch(module, rt):
     BaseTool = module.BaseTool
     if getattr(BaseTool.run, "_sherlock_orig", None):
@@ -43,6 +54,8 @@ def patch(module, rt):
     orig_run, orig_arun = BaseTool.run, BaseTool.arun
 
     def run(self, tool_input, *args, **kwargs):
+        if rt.replaying:
+            return _replayed(rt, self.name, tool_input)
         call_id, t0 = _begin(rt, self.name, tool_input), time.perf_counter()
         try:
             result = orig_run(self, tool_input, *args, **kwargs)
@@ -55,6 +68,8 @@ def patch(module, rt):
         return result
 
     async def arun(self, tool_input, *args, **kwargs):
+        if rt.replaying:
+            return _replayed(rt, self.name, tool_input)
         call_id, t0 = _begin(rt, self.name, tool_input), time.perf_counter()
         try:
             result = await orig_arun(self, tool_input, *args, **kwargs)
