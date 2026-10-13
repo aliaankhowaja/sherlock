@@ -3,7 +3,7 @@
 > **This is the live progress tracker.** Read it before starting work; update it before you stop.
 > Scope is set by [`sherlock-spec.md`](sherlock-spec.md), which governs. The status columns inside the spec are a 12 October snapshot — **live status lives here only.** Session rules (model, commits) are in [`../CLAUDE.md`](../CLAUDE.md).
 
-**Last updated:** 2026-10-14 · **Current phase:** 6 — evaluation, not started · **Branch:** `phase-5` (Phase 5 done, branched off `phase-4`; merge, then branch `phase-6`)
+**Last updated:** 2026-10-14 · **Current phase:** 6 — evaluation done; the planned phases are complete · **Branch:** `phase-6` (branched off `phase-5`; merge phases 0-6 in order)
 
 ## How to update this file
 
@@ -23,7 +23,7 @@
 | 3 | Minimality search, verdicts, budget | ✅ done 2026-10-14 |
 | 4 | G0, G2, intake, known-good sources | ✅ done 2026-10-14 |
 | 5 | Surface: run page, verified colouring, evidence panel | ✅ done 2026-10-14 |
-| 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ⬜ next |
+| 6 | Evaluation: remaining teams, baselines, hidden set, CI invariants | ✅ done 2026-10-14 |
 
 Legend: ✅ done · 🔨 in progress · ⬜ not started · ⛔ blocked
 
@@ -101,16 +101,26 @@ Code: `crates/app-core/src/diagnosis.rs`, `crates/api` (`/api/diagnoses`, `/api/
 
 Not done in Phase 5: FR-U5 (node input beside output), FR-U6 (a green `ok` span hiding a wrong answer; the page is a check-first view), FR-U7 health checklist, FR-U9 first screen is still the guide (the seed is opt-in via `--sherlock-dir`, not embedded), FR-U10, FR-U14 graph view, FR-I5 mark-wrong button, FR-K3 UI picker beyond the radio list, a button that starts `diagnose` (see Decision log), UI unit tests (no tooling in `ui/`).
 
-## Next up — Phase 6: evaluation (spec 5.10, FR-E)
+## Phase 6 — evaluation ✅
 
-Plan stub; revise against the spec before starting.
+- [x] **P6.1 Four demo teams (FR-E1, E2).** `vendor_brief`, `order_desk` (parallel branches, unprefixed fault flags), `invoice_pipeline` (redundant repair path: two gold sets) and `support_bot` (LLM node calling a local echo stub, the honest-abstain team); single, chained and decoy faults — `03e1725`; `harness/tests/test_catalog.py` (48 harness tests).
+- [x] **P6.2 Gold by restoration (FR-E3).** Generic `gold_minimal_sets(team, faults)` in `harness/sherlock_harness/catalog.py`; `test_decoy_fault_is_not_gold`, `test_redundant_repair_gives_two_minimal_sets`.
+- [x] **P6.3 `cannot_attribute` gap.** `--node-map FILE` / `node_map=` maps a context item or key to its node, checked before the name-prefix rule; unclaimed items still abstain — `7e5776f`; `tests/test_sources.py`. `order_desk` (flags like `stale_inventory`) diagnoses exactly with it.
+- [x] **P6.4 Baselines, scoring, hard slice, hidden set (FR-E4 partly, E5, E6).** `last_node`, `random_node`, `g0_only`, `paste_and_play`; exact / wrong / abstain + Jaccard; seeded hidden set (seed 20261014, 4 per team) disjoint from the 15 visible cases; hard-slice tags defined in `catalog.py` before any method ran — `9612ee3`, `03e1725`; `tests/test_evaluation.py`.
+- [x] **P6.5 Runner and results (FR-E7).** `python/sherlock/eval/run_eval.py` records real `langgraph dev` runs, replays in a socket trap, diagnoses 31 cases and writes `docs/eval/results.{json,md}`; Sherlock 30 exact, 0 wrong, 1 abstain (`unrecorded_call`, the by-design LLM case); best baseline 10 exact; 68 trials vs 538 exhaustive (87.4% fewer) — `6f1473d`. Regenerated and diffed identical in 3 separate process runs.
+- [x] **P6.6 CI invariants.** The gate's "evaluation" stage fails on any network attempt in replay, any original thread changed by forks, any abstain naming culprits or lacking a reason, or any difference from the committed table; `tests/test_eval_results.py` re-checks the committed file offline (incl. paste-and-play failing every two-cause case, FR-E8) — `1fb062b`.
+- [x] **P6.7 `docs/eval/README.md`** with the §9.1 limitations first, method, results and what was not done.
 
-1. **Teams:** reach 4–6 demo teams (FR-E1). Add at least 2–3 more deterministic teams in `harness/` with fault injection through runtime `context`, and gold derived by restoring subsets (`gold_minimal_sets`). Vary shape: parallel branches, a loop, a tool-using node, a team with a single global prompt (the known `cannot_attribute` gap).
-2. **Gold and hidden set:** per team a visible set (tuned on) and a hidden set (never tuned on); record seeds and fault lists so results reproduce.
-3. **Baselines (FR-E4..):** read the spec for the exact list; implement them as plain scripts on the same artifacts (single-run LLM blame, last-error-node, delta-debugging-style without cache) with the same trial budget.
-4. **Hard slice:** chained two-cause, cache-miss and stochastic-node cases; report the abstain rate separately and never fold it into accuracy.
-5. **CI invariants:** same tape gives same verdict (NFR-1), original thread unchanged (NFR-2), zero live calls (NFR-3), every abstain has a reason (NFR-4), trial count within budget (NFR-9); one `./scripts/test.sh` stage.
-6. **Open for this phase:** measure the abstain rate on LLM-driven teams (open items on spec 1.2/9.1); regenerate the demo seed with `seed_demo.py` when the artifact schema changes.
+Gate `./scripts/test.sh` green 2026-10-14: 48 harness, 228 recorder (24 live), evaluation stage (31 cases, reproducible), app-core 23, api 16, cli 21 tests, clippy, fmt.
+
+## Remaining / not built
+
+- FR-E9 (live time-travel without call blocking must fail the two-cause case), the plain-LLM-guess and plain-retry baselines, G0+G2 as a separate row: not built (see `docs/eval/README.md`).
+- No real-provider or real-failure evaluation; the LLM team uses a deterministic echo stub, so stochastic sampling is not measured. The "most real bugs are in deterministic nodes" claim is still unmeasured.
+- Phase 5 leftovers: FR-U5 (node input beside output), FR-U6, FR-U7, FR-U9 first screen; Rust `sherlock diagnose` wrapper; `sherlock doctor` (FR-R12).
+- Interceptors cover httpx and `BaseTool` only.
+
+For the team: (1) decide the mid-evaluation date and the required demo; (2) pick a provider and key for one real smoke test; (3) say whether a shared-cassette cross-case contamination check (see Decision log) should become a permanent test; (4) add the missing `causal-debugger/` governing documents and review TraceSurgeon / Agent-Casuality before mid-eval.
 
 ## Requirement status
 
@@ -129,9 +139,15 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-R9 | 🔨 | G3 abstains on unusable history (P2.0); not yet in Rust ingestion or the UI |
 | FR-R10 | ✅ | Fixed for LangGraph ≥ 0.5 (P0.1) |
 | FR-R11 | 🔨 | LangSmith import, browse-only (`dd37b7d`) |
-| FR-E1 | 🔨 | Team 1 of 4–6 (`vendor_brief`) |
-| FR-E2 | 🔨 | Single and chained two-node faults on team 1 |
-| FR-E3 | 🔨 | Gold by restoring subsets (`gold_minimal_sets`), in-process, deterministic teams only |
+| FR-E1 | ✅ | Four teams in `harness/`, one an LLM-node team (P6.1) |
+| FR-E2 | ✅ | Single, chained, decoy and OR (redundant-repair) faults across the four teams (P6.1) |
+| FR-E3 | ✅ | Gold by restoring subsets (`catalog.gold_minimal_sets`), in-process oracle; also the live-vs-gold agreement in the results table (P6.2, P6.5) |
+| FR-E4 | 🔨 | Four cheap baselines on the same tapes and Z: last node, random node, G0 only, paste-and-play. Not built: plain LLM guess, plain retry, G0+G2 row |
+| FR-E5 | ✅ | Exact, Jaccard, abstain rate, split one-node / two-node (`results.md`) |
+| FR-E6 | ✅ | Hard slice tags defined in `catalog.py` before any method ran |
+| FR-E7 | ✅ | Same tapes, new processes: identical minimal sets (gate `--check`) |
+| FR-E8 | ✅ | `paste_and_play` fails every two-cause case (`test_eval_results.py`) |
+| FR-E9 | ⬜ | Live time-travel baseline not built |
 | FR-C1–C6 | ✅ | Check loader and assertions (P2.1). Also `icontains-all/any` (see Decision log) and FR-C9 |
 | FR-G3.1 | ✅ | `g3.py` forks over HTTP; original thread verified unchanged (P2.3, P2.4) |
 | FR-G3.2 | ✅ | Known-good behaviour via a per-node context patch, written by hand or derived from a prior success (P4.4); output-level restore not built |
@@ -141,7 +157,7 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-G3.7 | ✅ | Prefix state and `next` compared, context and re-run of restored nodes verified, original unchanged; else "replay went off track" (P2.3) |
 | FR-G3.8 | ✅ | Replay never executes a tool; `--allow-tool` aborts any unlisted one (P2.2) |
 | FR-G3.9 | ✅ | Trials sent with `durability: "sync"` |
-| NFR-3 | 🔨 | No live call in replay for httpx and `BaseTool`; `urllib`/`requests`/`aiohttp`/raw sockets are not covered |
+| NFR-3 | 🔨 | No live call in replay for httpx and `BaseTool`; `urllib`/`requests`/`aiohttp`/raw sockets are not covered. The eval gate runs replay in a socket trap and fails on any attempt |
 | FR-D1, D2 | ✅ | Ancestry pruning from the recorded supersteps plus no-op restores; conservative; ratio reported (P3.1) |
 | FR-D3, D4, D5 | ✅ | Singletons, pairs, up to 3; every 1-minimal set returned, none collapsed; chained pair found with singletons failing (P3.2, P3.6) |
 | FR-D6, D7, D11 | ✅ | Four labels, first-class abstain with reason code and sentence, counts and trial log in the artifact (P3.3) |
@@ -149,7 +165,7 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-D10 | ⬜ | Flakiness pre-check not built: trials replay the cassette, so they are deterministic (see Decision log) |
 | FR-D12 | ✅ | Candidates ordered by clue weight (loop, error, extractive, differs-from-passing-run); speed only (P4.5) |
 | FR-D13 | ✅ | Sets of 3 by default; configurable with `--max-size` |
-| NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact |
+| NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact. Across all four teams, 68 trials vs 538: 87.4% fewer (`docs/eval/results.md`) |
 | FR-E3 | ✅ | Live `diagnose` results equal `gold_minimal_sets` for single, two-cause and writer runs (P3.6) |
 | FR-U13 | ✅ | Per-node timeline, errors first |
 | FR-U1 | 🔨 | `/runs/:id` is one page per diagnosed run (P5.5); the node list is a timeline, not a graph in the middle (FR-U14) |
@@ -210,6 +226,13 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - Extractive check, open item 6: 0 false positives over all 64 fault subsets of team 1 (`tests/test_clues.py`). This says little about LLM teams, which paraphrase and compute numbers; measure there in Phase 6.
   - Live diagnose from a prior success equals `gold_minimal_sets` for the single (extractor), writer and two-cause (retriever + extractor) runs; the two-cause run takes 3 trials of 31.
 
+- **2026-10-14 — Phase 6 verified (live, `langgraph dev` under `sherlock-rec run --replay`, no provider):**
+  - On four teams and 31 cases (15 visible, 16 seeded hidden), `diagnose` from the failed run plus one passing run equals the in-process gold on 30; the 31st (`support_bot:prep.truncate+ask.terse_instruction`) abstains `unrecorded_call`. Zero wrong claims. Baselines: g0_only 10 exact, last_node 5, paste_and_play 5, random_node 4 (`docs/eval/results.md`).
+  - Redundant repair path (`invoice_pipeline`): either `extract` or `normalize` alone fixes the run, and `diagnose` returns both minimal sets.
+  - A cassette shared by several LLM-team cases turned the never-recorded combination (spec 9.1) into a hit: the first run of the eval showed no abstain at all. Giving each LLM-team case its own lab and cassette fixed it. A real engineer's cassette holds whatever was recorded, so on a busy cassette Sherlock may resolve more than the single-case run does; that is honest (the call was recorded) but changes the abstain rate.
+  - Whole table regenerated in 3 separate process runs (new ports, thread ids, temp dirs): byte-identical `results.json`. One eval takes about 5 minutes.
+  - Building an httpx client costs about 0.75 s on this Windows machine (SSL context), which dominates LLM-team runs.
+
 ## Decision log
 
 - **2026-10-12/13 — team meeting; spec by Ibraheem.** Final scope is `docs/sherlock-spec.md`. No live calls: cache or abstain. The 9 October brief is superseded on method.
@@ -267,13 +290,22 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - **Share:** the export is the rendered report's HTML plus the page CSS, with every `data-noshare` element removed and no script. JSON is the raw artifact.
   - **Demo seed:** checked in as `harness/fixtures/sherlock-demo/` (a `--sherlock-dir`), generated by the real pipeline, not hand-written. Thread ids in it do not exist on a fresh server, so the guide's run lists will not mark them as diagnosed.
   - **`short(id)`** now shows `first8…last4`: UUIDv7 ids share their first 8 characters.
+- **2026-10-14 — Phase 6 build (autonomous).**
+  - **Node map instead of a smarter attribution.** `--node-map FILE` (`{context item or key: node}`) is the whole fix for the `cannot_attribute` gap. The alternatives (guess from which node's output differs, or split a global key) would claim causes the data does not support. The harness derives the map from each team's fault catalogue; it is used only to restore, never to build gold.
+  - **Cases and slices.** 15 visible cases picked by hand; hidden = seeded sample (seed 20261014, 4 per team) of 1- and 2-fault combinations not in the visible list that still fail Z. Hard slice = `two_cause`, `or_fix`, `silent_decoy`, `abstain_by_design`; `last_step_ok` separate. `expect_abstain` is a rule (LLM team, faults on two nodes that both change the model request), not a per-case judgment.
+  - **Scoring.** exact / wrong claim / abstain, never merged; Jaccard over the union of named nodes, answered cases only. A baseline predicts a collection of node sets like Sherlock does, so the cause definition is shared (spec 9.3).
+  - **Baselines kept cheap.** last node, seeded random node, G0 clues only, paste-and-play. Plain LLM guess needs a model and key; plain retry adds no information; FR-E9 would need a live-fallback implementation. Listed as not built.
+  - **Runner is a script, not a `sherlock-rec` verb.** It needs the harness and the live-test server helpers, which are not part of the installed package; the pure parts (baselines, scoring, checks) live in `src/sherlock/evaluation.py`.
+  - **One lab for all deterministic teams, one lab per LLM-team case** (see Verified facts on cassette contamination).
+  - **Gate cost.** The evaluation stage adds about 5 minutes to `./scripts/test.sh` and is the reproducibility check; `tests/test_eval_results.py` is the fast offline half.
 
 ## Open items
 
 Beyond spec §10:
 
+- **Phase 6 gaps:** the evaluation is synthetic (our teams, our planted faults, an echo stub for the LLM team) and small (31 cases), so 30 of 31 exact says the pipeline matches the in-process oracle, not that real failures are diagnosed. The hidden set is hidden from tuning only. Not built: FR-E9, plain-LLM-guess and plain-retry baselines. Gate time grew by about 5 minutes. See `docs/eval/README.md`.
 - **Phase 5 gaps:** no UI test tooling (verified by lint, build, headless screenshots and API/CLI tests); `guide.png` was taken before the `short(id)` change; the guide never marks the seeded demo ids as diagnosed; `_early` abstains carry no `graph_id`, so the list shows `-` for them.
-- **Phase 4 gaps:** attribution by name prefix suits teams that name behaviour per node (team 1 does); teams with global prompts or a single `system_prompt` key will abstain `cannot_attribute` until interceptor-level restoration or a node-to-key map exists. Live-tested on team 1 only. Multi-source diagnosis multiplies trials. A Rust `sherlock diagnose` wrapper does not exist.
+- **Phase 4 gaps:** attribution by name prefix suits teams that name behaviour per node (team 1 does); teams with global prompts or a single `system_prompt` key abstain `cannot_attribute` unless the engineer supplies `--node-map` (Phase 6); there is no automatic way to split a shared key between nodes. Now live-tested on four teams. Multi-source diagnosis multiplies trials. A Rust `sherlock diagnose` wrapper does not exist.
 - **Phase 1 smoke test:** all Phase 1 tests use the local stub; no real-provider smoke test was run (no keys). Which provider and key? *(Proposal; the team should confirm.)* Real SDK streaming (openai/anthropic over httpx) is unverified.
 - **Phase 3 gaps:** known-good is still a hand-written context patch, so only context-configurable behaviour can be restored; `diagnose` was only exercised on team 1 and a small LLM graph. `complete` is conservative (any untestable node or cassette miss makes it false).
 - **Phase 1 gaps:** only httpx and `BaseTool` are intercepted (`requests`/`urllib`/`aiohttp` are not); `sherlock doctor` (FR-R12) not started.
@@ -284,6 +316,8 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 ## Session log
+
+- **2026-10-14** — Phase 6 complete on `phase-6` (5 code/doc commits): demo teams 2-4, `--node-map`, baselines and scoring, `eval/run_eval.py`, committed results table and README, gate stage. 31 cases: Sherlock 30 exact, 0 wrong, 1 honest abstain; best baseline 10 exact; reproducible across 3 runs. `./scripts/test.sh` green: 48 harness, 228 recorder (24 live), eval stage, app-core 23, api 16, cli 21 tests, clippy and fmt.
 
 - **2026-10-14** — Phase 5 complete on `phase-5` (5 commits): artifact reader with verified node status, `/api/diagnoses`, `sherlock diagnoses`, guided run flow, run page with trial log and read-only export, seeded demo from the real pipeline, screenshots. Rust: app-core 23, api 16, cli 21 tests; `seed_demo.py` ran live against `langgraph dev`; `./scripts/test.sh` green: 17 harness, 208 recorder (24 live), app-core 23, api 16, cli 21 tests, clippy and fmt.
 
