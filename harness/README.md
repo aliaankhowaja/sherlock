@@ -15,6 +15,9 @@ uv run pytest      # in-process tests, no server needed
 | Path | What it is |
 |---|---|
 | `sherlock_harness/teams/vendor_brief.py` | Demo team #1: five deterministic nodes and its check Z. Loaded by path by `langgraph dev`, so it must not import the rest of the package |
+| `sherlock_harness/teams/{order_desk,invoice_pipeline,support_bot}.py` | Demo teams #2 (parallel branches, unprefixed fault flags), #3 (redundant repair path, two gold sets), #4 (LLM node calling the echo stub; the honest-abstain team) |
+| `sherlock_harness/catalog.py` | All four teams, their faults and node maps; generic `gold_minimal_sets()`; visible cases, the seeded hidden set and the hard-slice tags (FR-E1..E6) |
+| `sherlock_harness/stub.py` | Deterministic OpenAI-compatible echo server for team #4 (loopback only) |
 | `sherlock_harness/faults.py` | Fault catalogue; `run_team()`; `gold_minimal_sets()`, which derives gold by restoring subsets (FR-E3) |
 | `langgraph.json` | Serves the demo teams with `langgraph dev` |
 | `spikes/` | Scripts that check spec claims against a live server; results in `spikes/results/` |

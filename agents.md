@@ -36,8 +36,9 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     coloured by verified status, evidence, trial log, read-only HTML/JSON download); `/explore` the ingestion dashboard.
     Diagnosis is a copy-paste command, not a browser button (a web page must not be able to start commands).
     Shared bits: `parts.tsx` (components), `terms.ts` (labels, glossary, command builder), `share.ts`, `api.ts`.
-- `harness/` — Python (uv, 3.12): demo LangGraph teams with fault injection, gold
-  derivation, live-server spikes and fixtures. See `harness/README.md`.
+- `harness/` — Python (uv, 3.12): four demo LangGraph teams (`vendor_brief`, `order_desk`, `invoice_pipeline`, `support_bot` = the LLM-node team)
+  with fault injection, gold derivation, seeded visible/hidden cases and hard-slice tags (`sherlock_harness/catalog.py`), live-server spikes and
+  fixtures. See `harness/README.md`.
 - `python/sherlock/` — Python engine for recording, checks and G3 (uv, 3.12; deps: pyyaml, jsonschema; the bootstrap itself is stdlib-only).
   Console script `sherlock-rec` (not `sherlock`, which is the Rust binary); `python -m sherlock` is the same.
   `cd python/sherlock && uv run pytest -q` (includes live `langgraph dev` tests, about 2 min).
@@ -73,6 +74,13 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     abstains `no_check`.
   - `tests/seed_demo.py OUTDIR` regenerates the demo artifacts with the real pipeline (live `langgraph dev`, no provider);
     the checked-in copy is `harness/fixtures/sherlock-demo/` (try `sherlock serve --sherlock-dir harness/fixtures/sherlock-demo`).
+  - `sherlock-rec diagnose --node-map FILE` (`{context item or key: node}`) attributes run-context differences no node name claims
+    (an unprefixed fault flag, a global prompt); otherwise they still abstain `cannot_attribute`.
+  - `src/sherlock/evaluation.py` (pure): baselines (`last_node`, `random_node`, `g0_only`, `paste_and_play`), scoring (exact / wrong / abstain,
+    Jaccard) and artifact honesty checks. `eval/run_eval.py [--out DIR | --check results.json]` is the Phase 6 runner: records a passing run per
+    team and a failing run per case against the echo stub, replays in a socket trap, runs `diagnose` and the baselines, writes
+    `docs/eval/results.{json,md}` (read `docs/eval/README.md` first). `--check` regenerates and diffs (about 5 min); exit 1 on any invariant,
+    expectation or reproducibility failure. `tests/test_eval_results.py` re-checks the committed results offline.
   - Tests use `tests/stub_server.py` (OpenAI-compatible stub), `tests/llm_team.py`, `tests/g3_team/llm_graph.py`; no real provider calls.
 - `docs/` — `sherlock-spec.md` (scope; governs), `STATUS.md` (live progress),
   `spikes/` (dated findings from checking spec claims against real software).
@@ -105,6 +113,7 @@ What it runs, in order:
 cd ui && npm run lint && npm run build   # fresh dist so api embeds it
 (cd harness && uv run pytest -q)   # demo teams + gold derivation
 (cd python/sherlock && uv run pytest -q)   # recorder, checks, G3, diagnose (incl. live langgraph dev)
+(cd python/sherlock && uv run python eval/run_eval.py --check ../../docs/eval/results.json)   # evaluation: reproducible table + invariants
 cargo test -p app-core
 cargo test -p api
 cargo test -p cli

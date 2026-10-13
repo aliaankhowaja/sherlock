@@ -17,6 +17,9 @@ section "harness (python)"
 section "recorder (python/sherlock)"
 (cd python/sherlock && uv run pytest -q)
 
+section "evaluation (4 teams x fault cases, baselines, invariants; regenerates and diffs docs/eval/results.json, ~5 min)"
+(cd python/sherlock && uv run python eval/run_eval.py --check ../../docs/eval/results.json)
+
 section "app-core"
 cargo test -p app-core
 
