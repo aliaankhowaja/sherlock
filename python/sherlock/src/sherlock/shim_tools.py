@@ -37,6 +37,8 @@ def _finish(rt, call_id, t0, status, payload):
 
 
 def _replayed(rt, name, tool_input):
+    if rt.allow_tools is not None and name not in rt.allow_tools:
+        rt.abstain(f"tool {name} is not on the read-safe allowlist; a trial never fires an unlisted tool")
     row = rt.lookup("tool", name, _body(tool_input))
     blob = rt.cassette.chunks(row["id"])[0]
     if not blob:

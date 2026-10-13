@@ -35,6 +35,12 @@ CREATE TABLE IF NOT EXISTS chunks (
 CREATE TABLE IF NOT EXISTS abstains (
   id INTEGER PRIMARY KEY AUTOINCREMENT, reason TEXT NOT NULL, at REAL NOT NULL
 );
+CREATE TABLE IF NOT EXISTS trials (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, at REAL NOT NULL
+);
+CREATE TABLE IF NOT EXISTS replay_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, pid INTEGER NOT NULL, at REAL NOT NULL
+);
 """
 # calls.kind: 'http' | 'tool'.  calls.name: 'POST <url>' or the tool name.
 # calls.status: HTTP status; for tools 0 = returned, 1 = raised.
@@ -132,6 +138,21 @@ class Cassette:
 
     def add_abstain(self, reason):
         self._run("INSERT INTO abstains(reason, at) VALUES (?,?)", (reason, time.time()), write=True)
+
+    def start_trial(self) -> int:
+        """Begin a new trial: replay processes see the new id and hand recordings out afresh."""
+        return self._run("INSERT INTO trials(at) VALUES (?)", (time.time(),), write=True)
+
+    def trial_id(self) -> int:
+        row = self._run("SELECT MAX(id) AS m FROM trials", one=True)
+        return row["m"] or 0
+
+    def mark_replay(self, pid):
+        """A process serving this cassette in replay mode has started (G3 refuses to run without one)."""
+        self._run("INSERT INTO replay_sessions(pid, at) VALUES (?,?)", (pid, time.time()), write=True)
+
+    def replay_sessions(self) -> int:
+        return self._run("SELECT COUNT(*) AS n FROM replay_sessions", one=True)["n"]
 
     def abstains(self):
         return [r["reason"] for r in self._run("SELECT reason FROM abstains ORDER BY id")]

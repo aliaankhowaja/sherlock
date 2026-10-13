@@ -16,7 +16,11 @@ def bootstrap():
         return
     if mode not in MODES:
         raise ValueError(f"SHERLOCK_MODE={mode!r}, expected one of {MODES}")
-    rt = Runtime(Cassette(os.environ["SHERLOCK_CASSETTE"]), mode, os.environ.get("SHERLOCK_MATCH", "hash"))
+    allow = os.environ.get("SHERLOCK_ALLOW_TOOLS")
+    rt = Runtime(Cassette(os.environ["SHERLOCK_CASSETTE"]), mode, os.environ.get("SHERLOCK_MATCH", "hash"),
+                 None if allow is None else [t.strip() for t in allow.split(",") if t.strip()])
+    if rt.replaying:
+        rt.cassette.mark_replay(os.getpid())
 
     def guarded(patch):
         def apply(module):

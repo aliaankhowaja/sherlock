@@ -14,7 +14,7 @@ PKG_ROOT = PKG_DIR.parent
 EXIT_ABSTAIN = 75  # EX_TEMPFAIL: "cannot say"  # makes `import sherlock` work in a child on another interpreter
 
 
-def child_env(mode: str, cassette: Path, match: str, base: dict | None = None) -> dict:
+def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, allow_tools=None) -> dict:
     env = dict(os.environ if base is None else base)
     old = env.get("PYTHONPATH")
     env["PYTHONPATH"] = os.pathsep.join(
@@ -23,6 +23,8 @@ def child_env(mode: str, cassette: Path, match: str, base: dict | None = None) -
     env["SHERLOCK_MODE"] = mode
     env["SHERLOCK_CASSETTE"] = str(cassette)
     env["SHERLOCK_MATCH"] = match
+    if allow_tools is not None:
+        env["SHERLOCK_ALLOW_TOOLS"] = ",".join(allow_tools)
     return env
 
 
@@ -33,6 +35,8 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
     run.add_argument("--cassette", default=".sherlock/cassette.db")
     run.add_argument("--match", choices=["hash", "sequence"], default="hash")
+    run.add_argument("--allow-tool", action="append", metavar="NAME",
+                     help="replay: serve only these read-safe tools; any other tool aborts (repeatable)")
     run.add_argument("cmd", nargs=argparse.REMAINDER)
     args = ap.parse_args(argv)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
@@ -45,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
     elif not cassette.exists():
         print(f"sherlock: cannot say: no recording at {cassette}", file=sys.stderr)
         return EXIT_ABSTAIN
-    env = child_env(mode, cassette, args.match)
+    env = child_env(mode, cassette, args.match, allow_tools=args.allow_tool)
     # subprocess, not os.execl: execl on Windows detaches the child from the parent.
     code = subprocess.call(cmd, env=env)
     if mode == "replay":

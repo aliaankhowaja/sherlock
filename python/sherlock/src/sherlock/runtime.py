@@ -15,11 +15,15 @@ class CannotSay(BaseException):
 
 
 class Runtime:
-    def __init__(self, cassette: Cassette, mode: str, match: str = "hash"):
+    def __init__(self, cassette: Cassette, mode: str, match: str = "hash", allow_tools=None):
         self.cassette = cassette
         self.mode = mode
         self.match = match
+        # None: every recorded tool may be served. A list: only these read-safe tools; any other
+        # tool aborts the trial (FR-G3.8). Replay never executes a tool either way.
+        self.allow_tools = None if allow_tools is None else set(allow_tools)
         self.consumed: set[int] = set()
+        self.trial = None
         self._lock = threading.Lock()
 
     @property
@@ -39,6 +43,9 @@ class Runtime:
         """Replay: the recorded call for this request, or abstain. Never returns None, never goes live."""
         key = request_key(kind, name, body)
         with self._lock:
+            trial = self.cassette.trial_id()
+            if trial != self.trial:  # G3 started a new trial: recordings are available again
+                self.trial, self.consumed = trial, set()
             row = self.cassette.find(kind, key, self.consumed)
             if row is None and self.match == "sequence":
                 row = self.cassette.next_by_name(kind, name, self.consumed)
