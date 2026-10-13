@@ -127,6 +127,7 @@ def team1(tmp_path_factory):
         ("llm", "llm_brief", {"question": QUESTION}, ["fmt.shout"]),
         ("harmless", "vendor_brief", {"vendor": "acme"}, ["retriever.reverse_order"]),
         ("writer", "vendor_brief", {"vendor": "acme"}, ["writer.stale_template"]),
+        ("good", "vendor_brief", {"vendor": "acme"}, []),  # a prior success (Phase 4 known-good source)
     ])
 
 
@@ -302,3 +303,77 @@ def test_diagnose_cli_writes_the_artifact_and_exits_by_result(team1, llm_miss, t
     assert miss.returncode == 75 and artifact.exists(), miss.stderr
     assert json.loads(artifact.read_text())["status"] == "abstain"
     assert cli(team1, "two", tmp_path / "nope.json", HARNESS / "sherlock.yaml")[0].returncode == 2
+
+
+# --- Phase 4 exit criterion: from a failed run + a prior success, no hand-written patch ------------------------
+
+def dxg(lab, key, checks, good, **kw):
+    return diagnose(lab["client"], lab["threads"][key], None, checks, lab["cassette"], Budget(),
+                    good_runs=[lab["threads"][g] for g in good], **kw)
+
+
+def test_phase4_two_cause_from_a_prior_success_matches_gold(team1, z1):
+    r = dxg(team1, "two", z1, ["good"])
+    both = ["retriever.drop_latest", "extractor.legacy_pattern"]
+    assert r["status"] == "found" and found(r) == gold(both) == {frozenset({"retriever", "extractor"})}
+    assert r["known_good_source"]["thread_id"] == team1["threads"]["good"] and r["known_good_source"]["confirmed"]
+    assert r["counts"]["total"] == 3 and r["pruning"]["candidates"] == ["retriever", "extractor"]
+    assert r["pruning"]["pruned_ratio"] >= 0.6 and r["complete"] is True
+    assert ("differs_from_passing_run", "extractor") in {(c["kind"], c["node"]) for c in r["clues"]}
+    assert all(c["strength"] == "clue" for c in r["clues"]) and Cassette(team1["cassette"]).abstains() == []
+
+
+@pytest.mark.parametrize("key,faults,expect", [
+    ("single", ["extractor.legacy_pattern"], {frozenset({"extractor"})}),
+    ("writer", ["writer.stale_template"], {frozenset({"writer"})}),
+])
+def test_phase4_single_faults_from_a_prior_success_match_gold(team1, z1, key, faults, expect):
+    r = dxg(team1, key, z1, ["good"])
+    assert r["status"] == "found" and found(r) == gold(faults) == expect and r["counts"]["total"] == 1
+
+
+def test_phase4_two_agreeing_successes_and_discovery(team1, z1):
+    r = dxg(team1, "two", z1, ["good", "harmless"])  # the harmless-fault run also passes Z
+    assert r["status"] == "found" and found(r) == {frozenset({"retriever", "extractor"})}
+    assert len(r["sources_considered"]) == 2 and len(r["other_sources"]) == 1
+    d = dxg(team1, "two", z1, [])  # no named run: nothing to go on
+    assert d["reason_code"] == "no_known_good"
+    d = diagnose(team1["client"], team1["threads"]["two"], None, z1, team1["cassette"], Budget(), discover_good=True)
+    assert d["status"] == "found", (d["reason"], d["sources_considered"])
+    assert d["known_good_source"]["confirmed"] is False
+    assert found(d) == {frozenset({"retriever", "extractor"})}
+
+
+def test_phase4_a_failed_prior_run_is_not_a_source_and_g2_rejects_invented_suspects(team1, z1):
+    r = dxg(team1, "two", z1, ["single"])  # `single` fails Z, so it is no success
+    assert r["status"] == "abstain" and r["reason_code"] == "no_known_good" and "does not pass the check" in r["reason"]
+    g2 = dxg(team1, "two", z1, ["good"], suspects=["planner"])
+    assert g2["status"] == "abstain" and g2["reason_code"] == "path_check_failed" and g2["trials"] == []
+    assert "planner never ran" in g2["reason"]
+    ok = dxg(team1, "two", z1, ["good"], suspects=["retriever", "extractor"])
+    assert found(ok) == {frozenset({"retriever", "extractor"})} and ok["path_check"]["kept"] == ["retriever", "extractor"]
+
+
+def test_phase4_cli_mark_wrong_then_diagnose_from_a_prior_success(team1, tmp_path):
+    work = team1["work"] / ".sherlock"
+    tid, good = team1["threads"]["two"], team1["threads"]["good"]
+    base = [sys.executable, "-m", "sherlock"]
+
+    def run(*args, cwd=tmp_path):
+        return subprocess.run([*base, *args], capture_output=True, text=True, cwd=cwd)
+
+    mark = run("intake", "--thread-id", tid, "--dir", str(work), "--note", "brief cites an expired certificate")
+    assert mark.returncode == 0 and json.loads(mark.stdout)["kind"] == "wrong"
+    common = ["diagnose", "--url", team1["url"], "--thread-id", tid, "--cassette", str(team1["cassette"])]
+    bare = run(*common, "--good-run", good)  # marked wrong, no check anywhere: clues only
+    out = json.loads(bare.stdout)
+    assert bare.returncode == 75 and out["reason_code"] == "no_check" and out["intake"]["kind"] == "wrong"
+    done = run(*common, "--good-run", good, "-c", str(HARNESS / "sherlock.yaml"))
+    res = json.loads(done.stdout)
+    assert done.returncode == 0, done.stderr
+    assert res["minimal_sets"] == [["retriever", "extractor"]] and res["known_good_source"]["thread_id"] == good
+    assert json.loads((work / "diagnoses" / f"{tid}.json").read_text()) == res
+    none = run(*common, "-c", str(HARNESS / "sherlock.yaml"))
+    assert none.returncode == 75 and json.loads(none.stdout)["reason_code"] == "no_known_good"
+    bad = run(*common, "--suspect", "planner", "--good-run", good, "-c", str(HARNESS / "sherlock.yaml"))
+    assert bad.returncode == 75 and json.loads(bad.stdout)["reason_code"] == "path_check_failed"
