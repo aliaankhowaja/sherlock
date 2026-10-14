@@ -202,6 +202,72 @@ pub(crate) async fn start(
     ))
 }
 
+#[derive(Deserialize)]
+pub(crate) struct IntakeRequest {
+    failed_thread_id: String,
+    expected: Option<String>,
+    note: Option<String>,
+}
+
+/// `POST /api/intake` (the "Wrong" button): record that a listed run gave a wrong answer, by running
+/// the fixed `sherlock-rec intake` argv. 200 `{command, output}`; 400 bad id / unlisted run / too long.
+pub(crate) async fn intake(
+    State(state): State<AppState>,
+    Json(req): Json<IntakeRequest>,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    let project = state.run.project.clone().ok_or_else(|| {
+        status(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "the Wrong button is off: start `sherlock serve` with --project DIR (a recorded project)",
+        )
+    })?;
+    let argv = project
+        .intake_argv(
+            &req.failed_thread_id,
+            req.expected.as_deref(),
+            req.note.as_deref(),
+        )
+        .map_err(ApiError::bad_request)?;
+    let runs = fetch_runs(&state, &app_core::ingestion::TeamRunsQuery::new(RUNS_LIMIT))
+        .map_err(ApiError::bad_gateway)?;
+    let listed = runs.iter().find(|r| r.thread_id == req.failed_thread_id);
+    match listed {
+        None => return Err(ApiError::bad_request("the server lists no such run")),
+        Some(r) if r.metadata.get("sherlock_fork_of").is_some() => {
+            return Err(ApiError::bad_request(
+                "that is one of Sherlock's own trial runs",
+            ));
+        }
+        Some(_) => {}
+    }
+    let (program, args) = argv.split_first().expect("argv has a program");
+    let run = tokio::process::Command::new(program)
+        .args(args)
+        .stdin(std::process::Stdio::null())
+        .kill_on_drop(true)
+        .output();
+    let out = tokio::time::timeout(std::time::Duration::from_secs(30), run)
+        .await
+        .map_err(|_| status(StatusCode::BAD_GATEWAY, "`sherlock-rec intake` timed out"))?
+        .map_err(|e| {
+            status(
+                StatusCode::BAD_GATEWAY,
+                format!("could not start `{program}`: {e} (pass --sherlock-rec PATH to serve)"),
+            )
+        })?;
+    let text = |b: &[u8]| String::from_utf8_lossy(b).trim().to_string();
+    if !out.status.success() {
+        return Err(status(
+            StatusCode::UNPROCESSABLE_ENTITY,
+            format!("intake failed: {}", text(&out.stderr)),
+        ));
+    }
+    Ok(Json(serde_json::json!({
+        "command": app_core::runner::display_command(&argv),
+        "output": text(&out.stdout),
+    })))
+}
+
 /// `GET /api/jobs/{id}`: the job so far (poll it).
 pub(crate) async fn job(
     State(state): State<AppState>,

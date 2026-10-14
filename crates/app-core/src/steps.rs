@@ -74,6 +74,10 @@ pub struct RunSteps {
     pub final_state: Map<String, Value>,
     /// Something the reader should know (e.g. topology unavailable, so no kinds).
     pub note: Option<String>,
+    /// Is the recording usable? (FR-U7, FR-R9)
+    pub health: crate::health::Health,
+    /// The LangGraph server's version from `GET /info` (NFR-23); None when it did not say.
+    pub server_version: Option<String>,
 }
 
 /// A size-capped copy: long strings cut, long lists and maps shortened (same caps as `--progress`).
@@ -373,7 +377,17 @@ pub fn parse_steps(
         steps,
         edges,
         note: None,
+        health: crate::health::check(history),
+        server_version: None,
     })
+}
+
+/// `GET /info` -> its `version`, if the server says one.
+pub fn server_version(transport: &dyn LangGraphTransport) -> Option<String> {
+    let info = transport.get_json("/info").ok()?;
+    info.get("version")
+        .and_then(Value::as_str)
+        .map(str::to_string)
 }
 
 /// Read one recorded run's history and the team's topology, then expand it into steps.
@@ -389,7 +403,12 @@ pub fn fetch_run_steps(
         &thread_history_path(thread_id),
         serde_json::json!({ "limit": HISTORY_LIMIT }),
     )?;
-    let first = parse_steps(thread_id, &history, None)?;
+    let version = server_version(transport);
+    let with_version = |r: RunSteps| RunSteps {
+        server_version: version.clone(),
+        ..r
+    };
+    let first = with_version(parse_steps(thread_id, &history, None)?);
     let Some(assistant_id) = first.assistant_id.clone() else {
         return Ok(RunSteps { note: Some("the run does not name its team, so node kinds and hand-off edges are not from the graph".into()), ..first });
     };
@@ -397,7 +416,11 @@ pub fn fetch_run_steps(
         .get_json(&graph_path(&assistant_id))
         .and_then(|raw| layout(&raw))
     {
-        Ok(graph) => parse_steps(thread_id, &history, Some(&graph)),
+        Ok(graph) => Ok(with_version(parse_steps(
+            thread_id,
+            &history,
+            Some(&graph),
+        )?)),
         Err(e) => Ok(RunSteps {
             note: Some(format!(
                 "could not read the team's graph ({e:#}); node kinds are unknown and hand-offs are inferred from step order"

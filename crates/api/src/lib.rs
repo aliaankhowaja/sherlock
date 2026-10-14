@@ -470,7 +470,12 @@ async fn logs(
 /// What the guided steps need to build a runnable command: which server the
 /// runs come from and where diagnoses are read.
 async fn info(State(state): State<AppState>) -> impl IntoResponse {
+    let server_version = match &state.upstream {
+        Upstream::LangGraph(t) => app_core::steps::server_version(t.as_ref()),
+        Upstream::LangSmith(_) => None,
+    };
     Json(serde_json::json!({
+        "server_version": server_version,
         "source": state.source.0,
         "url": state.source.1,
         "sherlock_dir": state.sherlock_dir.display().to_string(),
@@ -543,6 +548,7 @@ pub fn build_router(state: AppState) -> axum::Router {
         .route("/api/runs/{thread_id}/steps", get(views::run_steps))
         .route("/api/teams/{assistant_id}/graph", get(views::team_graph))
         .route("/api/diagnose", axum::routing::post(run::start))
+        .route("/api/intake", axum::routing::post(run::intake))
         .route("/api/jobs", get(run::jobs))
         .route("/api/jobs/{id}", get(run::job))
         .fallback(serve_ui)
@@ -908,6 +914,15 @@ pub(crate) mod tests {
                 .unwrap()
                 .contains("sherlock-demo")
         );
+    }
+
+    #[tokio::test]
+    async fn info_records_the_langgraph_server_version() {
+        let (state, _) = state_with(&[("/info", serde_json::json!({"version": "0.4.1"}))]);
+        let (_, json) = get(build_router(state), "/api/info").await;
+        assert_eq!(json["server_version"], "0.4.1");
+        let (_, json) = get(build_router(demo_state()), "/api/info").await;
+        assert!(json["server_version"].is_null());
     }
 
     #[tokio::test]

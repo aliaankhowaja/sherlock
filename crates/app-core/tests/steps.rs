@@ -168,6 +168,9 @@ impl LangGraphTransport for Fake {
         Ok(history())
     }
     fn get_json(&self, path: &str) -> anyhow::Result<Value> {
+        if path == "/info" {
+            return Ok(json!({"version": "0.4.1"}));
+        }
         assert!(path.starts_with("/assistants/") && path.ends_with("/graph"));
         self.graph
             .clone()

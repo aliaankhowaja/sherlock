@@ -261,3 +261,54 @@ fn loopback_authorities_are_recognised() {
     ));
     assert!(!loopback_authority("evil.example", None));
 }
+
+async fn intake(state: &AppState, headers: &[(&str, &str)], body: Value) -> (StatusCode, Value) {
+    call(state, "POST", "/api/intake", headers, Some(body)).await
+}
+
+#[tokio::test]
+async fn intake_needs_the_token_and_the_run_button() {
+    let (state, token) = on("intake-guard");
+    let body = json!({"failed_thread_id": "f-1", "expected": "42"});
+    let (status, _) = intake(&state, &[], body.clone()).await;
+    assert_eq!(status, StatusCode::FORBIDDEN);
+    let (status, _) = intake(
+        &state,
+        &[(TOKEN_HEADER, &token), ("origin", "http://evil.example")],
+        body.clone(),
+    )
+    .await;
+    assert_eq!(status, StatusCode::FORBIDDEN);
+    let (off, _) = state_with(&routes());
+    let t = off.run.token.clone();
+    let (status, _) = intake(&off, &[(TOKEN_HEADER, &t)], body).await;
+    assert_eq!(status, StatusCode::SERVICE_UNAVAILABLE);
+}
+
+#[tokio::test]
+async fn intake_refuses_bad_ids_unlisted_runs_and_trial_runs() {
+    let (state, token) = on("intake-ids");
+    let h = [(TOKEN_HEADER, token.as_str())];
+    for id in ["../x", "nope", "t-1"] {
+        let (status, _) = intake(&state, &h, json!({"failed_thread_id": id})).await;
+        assert_eq!(status, StatusCode::BAD_REQUEST, "{id}");
+    }
+    let long = "x".repeat(app_core::runner::INTAKE_TEXT_MAX + 1);
+    let (status, _) = intake(
+        &state,
+        &h,
+        json!({"failed_thread_id": "f-1", "expected": long}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+}
+
+#[tokio::test]
+async fn intake_on_a_listed_run_tries_the_fixed_command() {
+    let (state, token) = on("intake-run");
+    let h = [(TOKEN_HEADER, token.as_str())];
+    let (status, json) = intake(&state, &h, json!({"failed_thread_id": "f-1"})).await;
+    // the test program does not exist: the failure is reported in plain words, not a panic
+    assert_eq!(status, StatusCode::BAD_GATEWAY);
+    assert!(json["error"].as_str().unwrap().contains("could not start"));
+}

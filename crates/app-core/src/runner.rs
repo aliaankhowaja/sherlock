@@ -31,6 +31,9 @@ pub struct Pick {
     pub good: String,
 }
 
+/// Longest free text the intake endpoint accepts.
+pub const INTAKE_TEXT_MAX: usize = 2000;
+
 /// A LangGraph-style id: letters, digits, `-`, `_`, `.`; at most 64 chars; no leading `.` or `-`.
 pub fn id_ok(id: &str) -> bool {
     !id.is_empty()
@@ -172,6 +175,42 @@ impl Project {
         .collect();
         if let Some(map) = self.node_map_file(&pick.graph_id) {
             argv.extend(["--node-map".to_string(), path_str(&map)]);
+        }
+        Ok(argv)
+    }
+
+    /// `sherlock-rec intake` for one failed run (the "Wrong" button): what the answer should have
+    /// been, and a note. Free text is one argv element each, never parsed by a shell.
+    pub fn intake_argv(
+        &self,
+        thread_id: &str,
+        expected: Option<&str>,
+        note: Option<&str>,
+    ) -> Result<Vec<String>, String> {
+        if !id_ok(thread_id) {
+            return Err(format!("`{thread_id}` is not a valid id"));
+        }
+        let mut argv: Vec<String> = [
+            self.program.as_str(),
+            "intake",
+            "--thread-id",
+            thread_id,
+            "--dir",
+            &path_str(&self.sherlock_dir),
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+        for (flag, text) in [("--expected", expected), ("--note", note)] {
+            if let Some(t) = text.filter(|t| !t.is_empty()) {
+                if t.len() > INTAKE_TEXT_MAX {
+                    return Err(format!(
+                        "{} is too long (max {INTAKE_TEXT_MAX} bytes)",
+                        &flag[2..]
+                    ));
+                }
+                argv.extend([flag.to_string(), t.to_string()]);
+            }
         }
         Ok(argv)
     }

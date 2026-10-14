@@ -170,3 +170,34 @@ fn the_demo_lab_and_a_plain_project_are_discovered_from_the_sherlock_dir() {
     );
     assert_eq!(Project::discover(&temp("discover-none")), None);
 }
+
+#[test]
+fn the_intake_argv_is_fixed_and_carries_free_text_as_single_arguments() {
+    let p = Project {
+        dir: PathBuf::from("/p"),
+        program: "sherlock-rec".into(),
+        langgraph_url: "http://x".into(),
+        sherlock_dir: PathBuf::from("/out"),
+    };
+    let argv = p
+        .intake_argv("f-1", Some("a; rm -rf /"), Some("wrong total"))
+        .unwrap();
+    assert_eq!(
+        argv,
+        [
+            "sherlock-rec",
+            "intake",
+            "--thread-id",
+            "f-1",
+            "--dir",
+            "/out",
+            "--expected",
+            "a; rm -rf /",
+            "--note",
+            "wrong total"
+        ]
+    );
+    assert_eq!(p.intake_argv("f-1", None, None).unwrap().len(), 6);
+    assert!(p.intake_argv("../x", None, None).is_err());
+    assert!(p.intake_argv("f-1", Some(&"x".repeat(5000)), None).is_err());
+}

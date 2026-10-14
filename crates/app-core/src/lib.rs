@@ -1,4 +1,5 @@
 pub mod diagnosis;
+pub mod health;
 pub mod ingestion;
 pub mod jobs;
 pub mod langsmith;
