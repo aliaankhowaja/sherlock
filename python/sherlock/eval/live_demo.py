@@ -3,7 +3,7 @@
     cd python/sherlock
     uv run python eval/live_demo.py OUTDIR      # prints the server URL, then waits until Ctrl-C
 
-Same workflow as `run_eval.py` (record on `langgraph dev`, restart under replay in the socket trap, run `diagnose`),
+Same workflow as `run_eval.py` over all seven teams, the three 30+ node ones included (record on `langgraph dev`, restart under replay in the socket trap, run `diagnose`),
 but the replay server stays up so its thread ids exist, and diagnoses are written to OUTDIR/diagnoses/.
 OUTDIR/lab is also a Sherlock project (cassette, one check and node map per team under checks/), so the web app can
 run a diagnosis itself. Then:
@@ -20,11 +20,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_eval import Budget, Checks, Client, diagnose, write_artifact, _lab, TEAMS, build_cases  # noqa: E402
 
 DIAGNOSE = [("vendor_brief", ["retriever.drop_latest", "extractor.legacy_pattern"]),
-            ("vendor_brief", ["writer.stale_template"]),
             ("order_desk", ["stale_inventory", "drops_shipping_line"]),
             ("invoice_pipeline", ["extract.comma_split", "normalize.trust_parsed"]),
-            ("support_bot", ["prep.truncate", "ask.terse_instruction"])]
-UNDIAGNOSED = [("order_desk", ["qty_off_by_one"])]
+            ("support_bot", ["prep.truncate", "ask.terse_instruction"]),
+            # the large teams (30+ nodes): AND across parallel branches, redundant repair, a crashing node
+            ("support_desk", ["customer_lookup.stale_cache", "urgency.threshold_off"]),
+            ("support_desk", ["pii_redact.miss_card", "compliance_check.skip_pii_scan"]),
+            ("support_desk", ["order_lookup.timeout"]),
+            ("loan_underwriting", ["employer_verify.stale_registry", "risk_score.min_balance_x4"]),
+            ("loan_underwriting", ["fraud_velocity.threshold_one", "fraud_device.default_device"]),
+            ("revenue_report", ["sign_flip", "sum_abs"]),
+            ("revenue_report", ["always_warn"])]
+UNDIAGNOSED = [("support_desk", ["refund_calc.cap_off", "rerank.ascending"]),
+               ("loan_underwriting", ["limit_check.stale_exposure"]),
+               ("revenue_report", ["wrong_prior", "no_dampening"])]
 
 
 def write_project(lab: Path) -> None:

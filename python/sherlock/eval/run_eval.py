@@ -24,7 +24,8 @@ ROOT = HERE.parents[2]
 HARNESS = ROOT / "harness"
 sys.path[:0] = [str(HARNESS), str(HERE.parent / "tests"), str(HERE.parent / "src")]
 
-from sherlock_harness.catalog import SEED, TEAMS, build_cases  # noqa: E402
+from g1_stub import ShortlistStub  # noqa: E402
+from sherlock_harness.catalog import BIG_TEAMS, HARMLESS, SEED, TEAMS, Case, build_cases  # noqa: E402
 from sherlock_harness.stub import EchoStub  # noqa: E402
 from test_g3_live import LAUNCHER, Server, http  # noqa: E402
 
@@ -45,6 +46,11 @@ SLICES = {
     "two_node": lambda r: r["size"] >= 2,
     "last_step_ok": lambda r: "last_step_ok" in r["tags"],
 }
+
+# Gate probes on one failed run per large team: (a node on the path that is not the cause, a node that never ran).
+PROBES = {"support_desk:customer_lookup.stale_cache": ("rerank", "escalate"),
+          "loan_underwriting:policy_rules.dti_limit_low": ("dti_calc", "approve_terms"),
+          "revenue_report:always_warn": ("forecast_next", "clean_pass")}
 
 
 def _lab(work: Path, cases):
@@ -83,17 +89,52 @@ def _history(client, tid):
     return client.request("POST", f"/threads/{tid}/history", {"limit": 1000})
 
 
+def _gate_probes(client, c, tid, team, checks, cassette, good, decoy, ghost):
+    """G1 nominates a wrong node first; G2 gets a shortlist with a node that never ran, then only such a node; no
+    known-good run at all. Each has an expected outcome, so a regression in a gate shows up as a failed probe."""
+    gold = c.gold
+    names = sorted({n for g in gold for n in g})
+    out = []
+
+    def run(name, expect, ok, **kw):
+        kw.setdefault("good_runs", [good])
+        art = diagnose(client, tid, None, checks, cassette, Budget(), node_map=team.node_map, **kw)
+        gs = art.get("gate_summary") or {}
+        out.append({"case": c.id, "probe": name, "expect": expect, "status": art["status"],
+                    "reason_code": art.get("reason_code"), "minimal_sets": art.get("minimal_sets", []),
+                    "trials_used": (art.get("budget") or {}).get("trials_used", 0),
+                    "g1_nominated": gs.get("g1_nominated", 0), "g2_cut": gs.get("g2_cut", 0), "ok": ok(art)})
+
+    exact = lambda a: a["status"] == "found" and sorted(a["minimal_sets"]) == sorted(gold)
+    with ShortlistStub([decoy] + names) as stub:
+        run("g1_wrong_node_first", "exact answer; G1 only reorders", exact,
+            g1={"url": stub.url, "model": "stub", "samples": 1})
+    run("g2_cuts_ghost", "exact answer; the node that never ran is cut",
+        lambda a: exact(a) and (a.get("gate_summary") or {}).get("g2_cut", 0) >= 1, suspects=names + [ghost])
+    run("g2_all_cut", "abstain (the only suspect names no recorded arrow)",
+        lambda a: a["status"] == "abstain" and not a.get("minimal_sets"), suspects=[ghost])
+    run("no_known_good", "abstain no_known_good", lambda a: a.get("reason_code") == "no_known_good", good_runs=[])
+    return out
+
+
 def _run_group(cases, seed):
     """One lab for `cases`: record, restart under replay, diagnose each, score against the baselines."""
     work = Path(tempfile.mkdtemp(prefix="sherlock-eval-"))
     server, good, failed, cassette = _lab(work, cases)
-    rows, artifacts, unchanged = [], [], []
+    rows, artifacts, unchanged, probes = [], [], [], []
     try:
         client = Client(server.url)
         for c in cases:
             team = TEAMS[c.team]
             checks = Checks(team.check, "final_output", work, work / "sherlock.yaml")
             tid = failed[c.id]
+            if c.split == "probe":  # planted but harmless: the run passes, a diagnosis must say so
+                art = diagnose(client, tid, None, checks, cassette, Budget(), good_runs=[good[c.team]],
+                               node_map=team.node_map)
+                probes.append({"case": c.id, "probe": "harmless", "expect": "already_passes", "status": art["status"],
+                               "reason_code": art.get("reason_code"), "minimal_sets": [], "trials_used": 0,
+                               "g1_nominated": 0, "g2_cut": 0, "ok": art.get("reason_code") == "already_passes"})
+                continue
             before = _history(client, tid)
             art = diagnose(client, tid, None, checks, cassette, Budget(), good_runs=[good[c.team]],
                            node_map=team.node_map)
@@ -107,6 +148,10 @@ def _run_group(cases, seed):
             for name, fn in BASELINES.items():
                 preds[name] = fn(after, good_hist, checks, rng=rng)
             red = art.get("trial_reduction") or {}
+            gold_nodes = {n for g in c.gold for n in g}
+            clue_nodes = sorted({k["node"] for k in art.get("clues", []) if k.get("node")})
+            if c.id in PROBES:
+                probes += _gate_probes(client, c, tid, team, checks, cassette, good[c.team], *PROBES[c.id])
             rows.append({**c.to_dict(),
                          "methods": {m: score(c.gold, preds[m]) | {"prediction": preds[m]} for m in METHODS},
                          "sherlock": {"status": art["status"], "reason_code": art.get("reason_code"),
@@ -114,27 +159,38 @@ def _run_group(cases, seed):
                                       "exhaustive_trials": red.get("exhaustive_trials", 0),
                                       "pruned_ratio": (art.get("pruning") or {}).get("pruned_ratio"),
                                       "unverified_sets": art.get("unverified_sets", []),
+                                      "on_path": len((art.get("pruning") or {}).get("nodes_on_path", [])),
+                                      "candidates": len((art.get("pruning") or {}).get("candidates", [])),
+                                      "clue_nodes": clue_nodes, "g0_hit": bool(gold_nodes & set(clue_nodes)),
+                                      "gate": art.get("gate_summary"),
                                       "cannot_say_trials": (art.get("counts") or {}).get("cannot_say", 0)}})
     finally:
         server.stop()
     attempts = (work / "net_attempts.txt").read_text().splitlines() if (work / "net_attempts.txt").exists() else []
     shutil.rmtree(work, ignore_errors=True)
-    return rows, artifacts, unchanged, attempts
+    return rows, artifacts, unchanged, attempts, probes
 
 
-def run_eval(seed: int = SEED) -> dict:
-    cases = build_cases(seed)
-    # Teams with no model call share one lab (their cassette is empty, so it cannot leak anything). Every LLM-team
-    # case gets its own lab and cassette holding only its own good and failed tapes: a shared cassette would hold
-    # other cases' requests and turn the never-recorded combinations (spec 9.1) into hits.
-    groups = [[c for c in cases if not TEAMS[c.team].llm]] + [[c] for c in cases if TEAMS[c.team].llm]
-    rows, artifacts, unchanged, net_attempts = [], [], [], []
+def run_eval(seed: int = SEED, only: set | None = None) -> dict:
+    cases = [c for c in build_cases(seed) if not only or c.team in only]
+    probe_cases = [Case(t, f, "probe") for t, f in HARMLESS if not only or t in only]
+    # A case shares the common lab unless it changes the model request in two nodes: its restore-one-of-two trials
+    # then ask for a request that was never recorded (spec 9.1), and a shared cassette holding another case's tape
+    # would turn that into a hit. Those cases get their own lab and a cassette with only their own tapes. A case with
+    # one request-changing fault cannot leak into another: each such tape is also what restoring that node asks for.
+    def alone(c):
+        team = TEAMS[c.team]
+        return team.llm and len({team.faults[f].node for f in c.faults} & team.request_nodes) >= 2
+
+    groups = [[c for c in cases + probe_cases if not alone(c)]] + [[c] for c in cases if alone(c)]
+    rows, artifacts, unchanged, net_attempts, probes = [], [], [], [], []
     for group in groups:
-        r, a, u, n = _run_group(group, seed)
+        r, a, u, n, p = _run_group(group, seed)
         rows += r
         artifacts += a
         unchanged += u
         net_attempts += n
+        probes += p
     order = {c.id: i for i, c in enumerate(cases)}
     rows.sort(key=lambda r: order[r["id"]])
     summary = {s: {m: summarize(rows, m, pick) for m in METHODS} for s, pick in SLICES.items()}
@@ -145,6 +201,7 @@ def run_eval(seed: int = SEED) -> dict:
         "by_team": {t: {m: summarize(rows, m, lambda r, t=t: r["team"] == t) for m in METHODS} for t in sorted(TEAMS)},
         "trials": {"used_on_found": used, "exhaustive_on_found": exhaustive,
                    "fewer_pct": round(100 * (1 - used / exhaustive), 1) if exhaustive else 0.0},
+        "probes": probes, "scale": scale_table(rows),
         "invariants": {
             "replay_network_attempts": net_attempts,
             "original_thread_unchanged": all(ok for _, ok in unchanged),
@@ -153,6 +210,26 @@ def run_eval(seed: int = SEED) -> dict:
     }
     results["failures"] = expectations(results)
     return results
+
+
+def scale_table(rows) -> dict:
+    """Per team: pipeline size, trials used against exhaustive, what each gate removed (cases with an answer)."""
+    out = {}
+    for t in sorted({r["team"] for r in rows}):
+        mine = [r for r in rows if r["team"] == t]
+        done = [r for r in mine if r["sherlock"]["trials_used"]]
+        gs = [r["sherlock"]["gate"] or {} for r in mine]
+        out[t] = {"nodes": len(TEAMS[t].nodes), "cases": len(mine),
+                  "nodes_on_path_max": max(r["sherlock"]["on_path"] for r in mine),
+                  "trials_max": max((r["sherlock"]["trials_used"] for r in mine), default=0),
+                  "trials_mean": round(sum(r["sherlock"]["trials_used"] for r in done) / len(done), 1) if done else 0,
+                  "exhaustive_max": max(r["sherlock"]["exhaustive_trials"] for r in mine),
+                  "candidates_mean": round(sum(r["sherlock"]["candidates"] for r in mine) / len(mine), 1),
+                  "pruned_by_ancestry": sum(g.get("pruned_by_ancestry", 0) for g in gs),
+                  "pruned_other": sum(g.get("pruned_other", 0) for g in gs),
+                  "g0_clue_hits": sum(r["sherlock"]["g0_hit"] for r in mine),
+                  "g3_trials": sum(r["sherlock"]["trials_used"] for r in mine)}
+    return out
 
 
 def expectations(res: dict) -> list[str]:
@@ -172,6 +249,10 @@ def expectations(res: dict) -> list[str]:
                 bad.append(f"{r['id']}: expected an honest abstain, got {s['outcome']}")
         elif s["outcome"] != "exact":
             bad.append(f"{r['id']}: expected an exact answer, got {s['outcome']} ({s['reason'] or s['prediction']})")
+    for p in res["probes"]:
+        if not p["ok"]:
+            bad.append(f"gate probe {p['probe']} on {p['case']}: expected {p['expect']}, got {p['status']} "
+                       f"{p['reason_code'] or p['minimal_sets']}")
     for sl in ("all", "hard"):
         mine = res["summary"][sl]["sherlock"]
         for m in BASELINES:
@@ -203,6 +284,21 @@ def render(res: dict) -> str:
     for t, ms in res["by_team"].items():
         s = ms["sherlock"]
         out.append(f"| {t} | {s['n']} | {s['exact']} | {s['wrong']} | {s['abstain']} | {s['abstain_reasons'] or '-'} |")
+    out += ["", "## Scale: trials used against exhaustive enumeration, per team", "",
+            "| team | nodes | cases | max nodes on a path | exhaustive (max) | max trials | mean trials (answered) | mean candidates | "
+            "pruned by ancestry | pruned other (same output / no-op restore) | G0 clue named a gold node | G3 trials |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for team, s in res["scale"].items():
+        out.append(f"| {team} | {s['nodes']} | {s['cases']} | {s['nodes_on_path_max']} | "
+                   f"2^{s['nodes_on_path_max']} - 1 = {s['exhaustive_max']:,} | {s['trials_max']} | {s['trials_mean']} | "
+                   f"{s['candidates_mean']} | {s['pruned_by_ancestry']} | {s['pruned_other']} | "
+                   f"{s['g0_clue_hits']} / {s['cases']} | {s['g3_trials']} |")
+    out += ["", "## Gate probes (one failed run per large team, plus the harmless runs)", "",
+            "| case | probe | expected | got | trials | G1 nominated | G2 cut | ok |\n|---|---|---|---|---|---|---|---|"]
+    for p in res["probes"]:
+        got = p["reason_code"] or "{" + "}, {".join(", ".join(s) for s in p["minimal_sets"]) + "}"
+        out.append(f"| {p['case']} | {p['probe']} | {p['expect']} | {p['status']}: {got} | {p['trials_used']} | "
+                   f"{p['g1_nominated']} | {p['g2_cut']} | {'yes' if p['ok'] else 'NO'} |")
     tr = res["trials"]
     out += ["", "## Trials and pruning (Sherlock, cases with an answer)", "",
             f"{tr['used_on_found']} trials against {tr['exhaustive_on_found']} for exhaustive enumeration "
@@ -229,9 +325,10 @@ def main() -> int:
     ap.add_argument("--out", help="write results.json and results.md here")
     ap.add_argument("--check", help="regenerate and compare with this results.json (exit 1 on any difference)")
     ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--only", help="comma-separated teams (a quick partial run; never use with --check)")
     args = ap.parse_args()
     try:
-        res = run_eval(args.seed)
+        res = run_eval(args.seed, set(args.only.split(",")) if args.only else None)
     except Exception as exc:  # infrastructure, not a result
         print(f"eval: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2

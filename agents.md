@@ -45,7 +45,7 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     progress events (`jobFrames`), log panel, current input -> output (`Kv.tsx`), node card (`NodeCard.tsx`).
     The run button (`POST /api/diagnose`) shows only when `/api/info` says `run.enabled`; the command is always in a
     collapsible. Shared bits: `model.ts` (API shapes, glyph paths), `terms.ts`, `share.ts`, `api.ts`, `jobs.ts`.
-- `harness/` — Python (uv, 3.12): four demo LangGraph teams (`vendor_brief`, `order_desk`, `invoice_pipeline`, `support_bot` = the LLM-node team)
+- `harness/` — Python (uv, 3.12): seven demo LangGraph teams: the small `vendor_brief`, `order_desk`, `invoice_pipeline`, `support_bot` (LLM node) and three 30+ node ones built with `teams/_kit.py` (`support_desk` 33 nodes, `loan_underwriting` 32, `revenue_report` 33; parallel branches, conditional routes, tool and LLM-stub nodes)
   with fault injection, gold derivation, seeded visible/hidden cases and hard-slice tags (`sherlock_harness/catalog.py`), live-server spikes and
   fixtures. See `harness/README.md`.
 - `python/sherlock/` — Python engine for recording, checks and G3 (uv, 3.12; deps: pyyaml, jsonschema; the bootstrap itself is stdlib-only).
@@ -98,7 +98,7 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     abstains `no_check`.
   - `tests/seed_demo.py OUTDIR` regenerates the demo artifacts with the real pipeline (live `langgraph dev`, no provider);
     the checked-in copy is `harness/fixtures/sherlock-demo/` (try `sherlock serve --sherlock-dir harness/fixtures/sherlock-demo`).
-  - `eval/live_demo.py OUTDIR` records the four demo teams, diagnoses five failed runs (two-cause, single, redundant fix, abstain) with the real pipeline,
+  - `eval/live_demo.py OUTDIR` records all seven demo teams, diagnoses eleven failed runs (small and 30+ node teams: two-cause, AND across branches, redundant fix, crash, route change) and leaves three undiagnosed with the real pipeline,
     writes `OUTDIR/diagnoses/` and leaves the replay server running (prints `SERVER <url>`), so the web app can be tried end to end:
     `sherlock serve --langgraph-url <url> --sherlock-dir OUTDIR`. Ctrl-C stops it.
   - `sherlock-rec diagnose --node-map FILE` (`{context item or key: node}`) attributes run-context differences no node name claims

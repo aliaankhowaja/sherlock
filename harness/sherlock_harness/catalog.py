@@ -94,7 +94,7 @@ TEAMS: dict[str, Team] = {t.name: t for t in (
     Team("loan_underwriting", loan_underwriting, _kit_faults(loan_underwriting), loan_underwriting.INPUT, llm=True,
          request_nodes=frozenset({"letter_draft"})),
     Team("revenue_report", revenue_report, _kit_faults(revenue_report), revenue_report.INPUT, llm=True,
-         request_nodes=frozenset({"report_request", "narrative_llm"})),
+         request_nodes=frozenset({"narrative_llm"})),
 )}
 BIG_TEAMS = ("support_desk", "loan_underwriting", "revenue_report")
 
