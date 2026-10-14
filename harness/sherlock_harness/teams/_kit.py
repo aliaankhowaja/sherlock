@@ -68,18 +68,21 @@ class Pipeline:
         for spec in self._specs:
             builder.add_node(spec["name"], self._wrap(spec), metadata={"kind": self.kinds[spec["name"]]})
         routed = {(s["name"], dst) for s in self._specs if s["to"] for dst in s["to"].values()}  # router edges
+        # Fan-in. A list edge `add_edge([a, b], n)` is a join channel whose steps show no tasks in the server's
+        # history, so Sherlock could not see the node. Instead `n` is wired (plain edges) from the predecessors that
+        # finish last: every shallower predecessor has already written its state, so `n` runs once, right after
+        # all of them, which is what a join means here.
+        depth: dict[str, int] = {}
         for spec in self._specs:
             name = spec["name"]
-            srcs = [s for s in spec["after"] if (s, name) not in routed]
-            if len(spec["after"]) == 1 and not srcs:
-                pass  # reached only through its router's conditional edge
-            elif not srcs and not spec["any_of"]:
+            preds = [s for s in spec["after"] if (s, name) not in routed] + spec["any_of"]
+            if len(spec["after"]) > 1:
+                last = max(depth[s] for s in spec["after"])
+                preds = [s for s in spec["after"] if depth[s] == last] + spec["any_of"]
+            depth[name] = 1 + max((depth[s] for s in spec["after"] + spec["any_of"]), default=0)
+            if not preds and not spec["after"]:
                 builder.add_edge(START, name)
-            elif len(srcs) == 1:
-                builder.add_edge(srcs[0], name)
-            elif srcs:
-                builder.add_edge(srcs, name)
-            for src in spec["any_of"]:
+            for src in preds:
                 builder.add_edge(src, name)
             if spec["route"]:
                 builder.add_conditional_edges(name, spec["route"], spec["to"])
