@@ -98,3 +98,38 @@ def test_artifact_is_json_under_the_cassette_dir(cassette):
     saved = json.loads(path.read_text())
     assert saved["thread_id"] == "T" and saved["schema"] == 1 and saved["minimal_sets"] == [["extractor"]]
     assert saved["limitations"] and saved["check"]["pass"] is False and saved["created"]
+
+
+def test_interrupt_in_history_abstains_interrupt_unsupported(cassette):  # FR-G3.10
+    import copy
+
+    history = copy.deepcopy(HISTORY)
+    history[1]["tasks"].append({"name": "human", "result": None, "interrupts": [{"value": "approve?"}]})
+    r = go(DiagServer(["retriever.drop_latest"], original=history), cassette)
+    assert r["status"] == "abstain" and r["reason_code"] == "interrupt_unsupported" and r["trials"] == []
+    assert any("interrupt" in x for x in r["limitations"])
+
+
+def test_limitations_state_interrupt_resumes_out_of_scope(cassette):  # FR-G3.10
+    r = go(DiagServer(["extractor.legacy_pattern"]), cassette)
+    assert any("interrupt" in x and "v1" in x for x in r["limitations"])
+
+
+def test_pasted_known_good_output_for_one_node_is_recorded_as_pasted(cassette):  # FR-K2
+    server = DiagServer(["extractor.legacy_pattern"])
+    r = go(server, cassette, pasted_nodes=["extractor"],
+           kg={"extractor": {"faults": {"$remove": ["extractor.legacy_pattern"]}}})
+    assert r["status"] == "found" and r["minimal_sets"] == [["extractor"]]
+    assert r["known_good_source"] == {"kind": "pasted", "confirmed": True, "nodes": ["extractor"]}
+
+
+def test_parse_pasted_reads_inline_json_and_files(tmp_path):  # FR-K2
+    from sherlock.cli import parse_pasted
+
+    f = tmp_path / "w.json"
+    f.write_text('{"faults": {"$remove": ["w.bug"]}}')
+    got = parse_pasted(['extractor={"faults": {"$remove": ["e.bug"]}}', f"writer=@{f}"])
+    assert got == {"extractor": {"faults": {"$remove": ["e.bug"]}}, "writer": {"faults": {"$remove": ["w.bug"]}}}
+    for bad in ["nonode", "n=[1]", "n="]:
+        with pytest.raises(ValueError):
+            parse_pasted([bad])

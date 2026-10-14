@@ -32,6 +32,8 @@ LIMITATIONS = [
     "is not configurable through context cannot be restored",
     "trials are served only from the recorded cassette; a set that needs a call that was never recorded "
     "is reported as 'cannot say', never guessed",
+    "human-in-the-loop / interrupt resumes are out of scope for v1 (FR-G3.10): a run whose history shows an "
+    "interrupt is not diagnosed, it abstains interrupt_unsupported",
     "clues (G0) are weaker than a G3 trial: they order the search and may widen it, they never decide",
 ]
 NEW_FIELDS = {"clues": [], "path_check": None, "known_good_source": None, "sources_considered": [],
@@ -148,7 +150,8 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
 def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | None, cassette_path: Path | str,
              budget: Budget | None = None, context: dict | None = None, clock=time.monotonic, *,
              good_runs=(), discover_good: bool = False, suspects=(), intake: dict | None = None,
-             node_map: dict[str, str] | None = None, progress=None, g1: dict | None = None) -> dict:
+             node_map: dict[str, str] | None = None, progress=None, g1: dict | None = None,
+             pasted_nodes=()) -> dict:
     """Run the whole diagnosis and return the result artifact (a JSON-able dict).
 
     Known-good comes from `known_good` (a hand-written per-node context patch), from prior successful runs
@@ -158,6 +161,10 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     `suspects` is an optional shortlist that the G2 path check must accept. `checks` None means the run was
     marked wrong with no check yet: the result is the G0 clues and an abstain.
 
+    `pasted_nodes` names the nodes of `known_good` that the user pasted by hand (FR-K2); the artifact records
+    that source as "pasted". The pasted value is the node's known-good behaviour, restored through the run
+    context like any other; a downstream node's recorded output is never pasted back (FR-G3.4).
+
     `g1` ({url, model, samples, key}) switches on the optional G1 shortlist (gates.py); None leaves it off.
 
     `progress(event)` (optional) hears each step as it happens: `start`, `check`, `sources`, `plan`, then per trial
@@ -166,7 +173,7 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     """
     emit = progress or (lambda _event: None)
     result = _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
-                       discover_good, suspects, intake, node_map, emit, g1)
+                       discover_good, suspects, intake, node_map, emit, g1, list(pasted_nodes))
     emit({"event": "done", "status": result["status"], "reason_code": result.get("reason_code"),
           "reason": result.get("reason"), "minimal_sets": result.get("minimal_sets", []),
           "trials_used": (result.get("budget") or {}).get("trials_used", 0)})
@@ -174,7 +181,7 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
 
 
 def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
-              discover_good, suspects, intake, node_map, emit, g1_config=None) -> dict:
+              discover_good, suspects, intake, node_map, emit, g1_config=None, pasted=()) -> dict:
     budget = budget or Budget()
     cassette_path = Path(cassette_path)
     known_good = known_good or {}
@@ -188,6 +195,10 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
     problem = history_usable(history)
     if problem:
         return _early(thread_id, "no_history", problem, created=created, intake=intake)
+    if any(t.get("interrupts") for s in history for t in s.get("tasks") or []):
+        return _early(thread_id, "interrupt_unsupported",
+                      "the run's history shows an interrupt (human-in-the-loop); resuming those is out of scope for v1",
+                      created=created, intake=intake)
     clues = history_clues(history, checks.output_key if checks else "final_output") + _tool_clues(cassette_path)
     on_path = list(dict.fromkeys(t["name"] for step in _supersteps(history) for t in step))
     shown = [c.to_dict() for c in clues]
@@ -258,7 +269,8 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
             "trial_reduction": {"exhaustive_trials": exhaustive, "trials_used": used,
                                 "fewer_pct": round(100 * (1 - used / exhaustive), 1) if exhaustive else 0.0},
             "clues": [c.to_dict() for c in unit_clues], "path_check": path.to_dict() if path else None,
-            "known_good_source": source.to_dict() if source else {"kind": "file", "confirmed": True},
+            "known_good_source": source.to_dict() if source else (
+                {"kind": "pasted", "confirmed": True, "nodes": sorted(pasted)} if pasted else {"kind": "file", "confirmed": True}),
             "sources_considered": early["sources_considered"],
             "other_sources": [{"thread_id": o[0].thread_id, "status": o[1]["status"],
                                "minimal_sets": o[1]["minimal_sets"], "reason_code": o[1]["reason_code"]}

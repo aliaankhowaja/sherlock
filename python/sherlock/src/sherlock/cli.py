@@ -83,6 +83,26 @@ def jsonl_progress(stream):
     return emit
 
 
+def parse_pasted(items) -> dict:
+    """FR-K2: `NODE=@file.json` or `NODE='{"key": value}'` -> {node: known-good behaviour patch}."""
+    import yaml
+
+    out = {}
+    for item in items or []:
+        node, sep, raw = item.partition("=")
+        if not sep or not node.strip() or not raw.strip():
+            raise ValueError(f"--known-good-output expects NODE=@file.json or NODE=<json>, got {item!r}")
+        text = Path(raw[1:]).read_text(encoding="utf-8") if raw.startswith("@") else raw
+        try:
+            value = yaml.safe_load(text)
+        except yaml.YAMLError as exc:
+            raise ValueError(f"--known-good-output {node}: not valid JSON: {exc}") from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"--known-good-output {node}: expected a mapping of context keys to values")
+        out[node.strip()] = value
+    return out
+
+
 def _diagnose(args) -> int:
     from sherlock.checks import CheckError
     from sherlock.diagnose import diagnose, write_artifact
@@ -96,6 +116,8 @@ def _diagnose(args) -> int:
         checks = checks_for(record, args.config)
         context = json.loads(args.context) if args.context else None
         known_good = load_known_good(args.known_good) if args.known_good else None
+        pasted = parse_pasted(args.known_good_output)
+        known_good = {**(known_good or {}), **pasted} if pasted else known_good
         node_map = load_node_map(args.node_map) if args.node_map else None
         if bool(args.g1_url) != bool(args.g1_model):
             raise ValueError("G1 needs both --g1-url and --g1-model (or neither)")
@@ -105,7 +127,8 @@ def _diagnose(args) -> int:
                           Budget(args.max_trials or 40, args.max_minutes, args.max_size, auto=args.max_trials is None), context,
                           good_runs=args.good_run or [], discover_good=args.discover_good,
                           suspects=args.suspect or [], intake=record, node_map=node_map,
-                          progress=jsonl_progress(sys.stderr) if args.progress else None, g1=g1)
+                          progress=jsonl_progress(sys.stderr) if args.progress else None, g1=g1,
+                          pasted_nodes=list(pasted))
         path = write_artifact(result, sherlock_dir)
     except (G3Error, CheckError, ValueError, OSError) as exc:
         print(f"sherlock-rec: {exc}", file=sys.stderr)
@@ -166,10 +189,14 @@ def main(argv: list[str] | None = None) -> int:
     g3.add_argument("--cassette", default=".sherlock/cassette.db")
     g3.add_argument("--context", help="JSON run context to start from (default: the original run's)")
     dg = sub.add_parser("diagnose", help="find every minimal set of nodes whose restoration fixes a failed run "
-                                         "(exit 0 found, 75 cannot say, 1 error); writes .sherlock/diagnoses/<thread>.json")
+                                         "(exit 0 found, 75 cannot say, 1 error); writes .sherlock/diagnoses/<thread>.json. "
+                                         "Interrupt (human-in-the-loop) resumes are out of scope for v1")
     dg.add_argument("--thread-id", required=True, help="the recorded failed run")
     dg.add_argument("--known-good", help="JSON/YAML: node -> context patch giving its good behaviour "
                                          "(overrides what --good-run derives, per node)")
+    dg.add_argument("--known-good-output", action="append", metavar="NODE=@FILE|JSON",
+                    help="a known-good behaviour pasted by hand for one node, as a JSON mapping of run-context keys "
+                         "(repeatable; wins over --known-good and --good-run for that node; recorded as 'pasted')")
     dg.add_argument("--node-map", help="JSON/YAML: context item or key -> node, for behaviour not named after its node "
                                        "(e.g. a global prompt); without it such a difference abstains cannot_attribute")
     dg.add_argument("--good-run", action="append", metavar="THREAD",
