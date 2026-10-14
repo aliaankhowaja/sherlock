@@ -139,3 +139,119 @@
 .gn.st-abstained {
   color: var(--abstain);
 }
+
+/* large teams: a fixed window you pan and zoom, with an overview */
+.gwrap {
+  position: relative;
+}
+.gtools {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.gtools button,
+.gtools input {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  font-size: 13px;
+  cursor: pointer;
+}
+.gtools input {
+  width: 160px;
+  cursor: text;
+}
+.gtools button:hover {
+  border-color: var(--ink);
+}
+.gtools [aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--panel);
+  border-color: var(--ink);
+}
+.graph.graph-big {
+  min-width: 0;
+  max-height: none;
+  height: clamp(320px, 58vh, 560px);
+  cursor: grab;
+}
+.graph.graph-big:active {
+  cursor: grabbing;
+}
+.gbg {
+  fill: transparent;
+}
+.gband rect {
+  fill: rgba(20, 25, 23, 0.035);
+  stroke: var(--rule);
+  stroke-dasharray: 2 3;
+  cursor: pointer;
+}
+.gband text {
+  font: 700 11px var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--mute);
+}
+.gn-stack {
+  fill: none;
+  stroke: #8d968f;
+}
+.gn.is-dim {
+  opacity: 0.3;
+}
+.gwrap.is-big .gn.st-unverified {
+  opacity: 0.5;
+}
+.gn.is-match rect {
+  stroke: var(--signal);
+  stroke-width: 2.5;
+}
+.graph.is-far .ge-label,
+.graph.is-far .gn-kind,
+.graph.is-far .gn-badge {
+  display: none;
+}
+.graph.is-far .gn-name {
+  font-size: 20px;
+}
+.minimap {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 230px;
+  background: rgba(247, 248, 245, 0.92);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+}
+.mm {
+  fill: #c9cfc9;
+}
+.mm.st-culprit,
+.mm.mk-error,
+.mm.mk-fail {
+  fill: var(--culprit);
+}
+.mm.st-cleared,
+.mm.mk-pass {
+  fill: var(--cleared);
+}
+.mm.st-abstained {
+  fill: var(--abstain);
+}
+.mm.is-focus,
+.mm.mk-restored,
+.mm.is-match {
+  fill: var(--signal);
+}
+.mm.mk-ran {
+  fill: var(--ink);
+}
+.mm-view {
+  fill: rgba(10, 108, 134, 0.08);
+  stroke: var(--signal);
+  stroke-width: 12;
+}

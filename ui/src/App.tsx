@@ -5,12 +5,23 @@ import './graph.css'
 import './panels.css'
 import './screens.css'
 import './verdict.css'
+import BigLab from './BigLab'
 import Explorer from './Explorer'
 import Flow from './Flow'
 import { usePath } from './route'
 
 function App() {
   const path = usePath()
+  if (path === '/dev/big') {
+    return (
+      <div className="app">
+        <header className="topbar">
+          <a className="brand" href="/">SHERLOCK<span>fault isolation bench</span></a>
+        </header>
+        <main className="main"><BigLab /></main>
+      </div>
+    )
+  }
   if (path === '/explore') {
     return (
       <div className="app">

@@ -82,6 +82,7 @@ export interface Trial {
   reason: string
   elapsed_s?: number
   cassette_miss?: boolean
+  gate?: string
 }
 
 export interface Clue {
@@ -131,6 +132,19 @@ export interface Artifact {
   other_sources?: { thread_id: string; status: string; minimal_sets: string[][]; reason_code: string | null }[]
   path_check?: { kept?: string[]; rejected?: Record<string, string> } | null
   intake?: { kind?: string; note?: string; expected?: string } | null
+  gates?: GateSummary
+  gate_summary?: GateSummary
+}
+
+/** Per-gate counts (additive artifact field; any of them may be missing). */
+export interface GateSummary {
+  nodes_total?: number
+  pruned_by_ancestry?: number
+  g0_flagged?: number
+  g1_nominated?: number
+  g2_cut?: number
+  g3_trials?: number
+  exhaustive_count?: number
 }
 
 export interface Diagnosis {

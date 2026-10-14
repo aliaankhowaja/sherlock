@@ -44,6 +44,7 @@ export default function Replay({ team, failed, good, onNext }: { team: string; f
         frames={stepFrames(shown)}
         labels={shown.edges}
         diff={diff}
+        relevant={new Set(shown.steps.map((s) => s.node))}
         detail={(n) => <NodeCard node={graph.data?.nodes.find((x) => x.id === n)} step={stepOf(shown, n)} good={which === 'failed' ? stepOf(gRun.data, n) : undefined} />}
         toolbar={
           good ? (

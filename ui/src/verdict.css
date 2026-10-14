@@ -141,3 +141,53 @@
 .verdict-lower .inspect {
   max-height: none;
 }
+
+.gates {
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+}
+.gates figcaption {
+  font: 700 12px/1 var(--display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 10px;
+}
+.gates ol {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.gates li {
+  display: grid;
+  padding: 0 22px 0 0;
+  margin-right: 18px;
+  border-right: 1px solid var(--rule);
+  cursor: help;
+}
+.gates li:last-child {
+  border-right: 0;
+}
+.gates b {
+  font: 600 28px/1.1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.gates li:last-child b {
+  color: var(--signal);
+}
+.gates span {
+  font-size: 13px;
+  color: var(--mute);
+}
+.gates-note {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--mute);
+}
+.gate-tag {
+  margin-left: 6px;
+}

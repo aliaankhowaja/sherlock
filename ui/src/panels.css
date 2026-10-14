@@ -41,6 +41,12 @@
 .log li:hover {
   background: var(--rule-soft);
 }
+.log li.is-node {
+  background: var(--rule-soft);
+}
+.log li.is-node .log-x {
+  font-weight: 700;
+}
 .log li.is-now {
   background: var(--signal-soft);
 }

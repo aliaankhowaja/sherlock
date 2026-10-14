@@ -1,6 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { short, useJson, type Diagnosis, type Summary } from './api'
 import type { GraphView, StepsView } from './model'
+import Gates from './Gates'
 import Graph from './Graph'
 import { Glyph } from './Kv'
 import NodeCard from './NodeCard'
@@ -91,6 +92,7 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
           </>
         )}
       </header>
+      {(d.artifact.gates ?? d.artifact.gate_summary) && <Gates g={(d.artifact.gates ?? d.artifact.gate_summary)!} />}
       <div className="verdict-graph">
         <Graph graph={graph.data} verdict selected={sel} onSelect={(n) => setSel(n === sel ? null : n)} />
         <ul className="legend" aria-label="Legend">
@@ -110,7 +112,7 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
               {trials.map((t) => (
                 <tr key={t.n} className={`tr-${t.verdict}`}>
                   <td>{t.n}</td>
-                  <td>{t.restored.join(' + ')}</td>
+                  <td>{t.restored.join(' + ')}{t.gate && <span className="tag gate-tag">{t.gate}</span>}</td>
                   <td><Term k={t.verdict === 'pass' ? 'pass' : t.verdict === 'fail' ? 'fail' : 'abstain'}><Glyph name={t.verdict === 'pass' ? 'check' : t.verdict === 'fail' ? 'cross' : 'question'} />{TRIAL_LABEL[t.label] ?? t.verdict}</Term></td>
                   <td>{plain(t.reason)}</td>
                   <td>{t.elapsed_s !== undefined ? `${t.elapsed_s.toFixed(1)} s` : ''}</td>

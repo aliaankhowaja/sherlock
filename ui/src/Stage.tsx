@@ -33,6 +33,7 @@ export interface StageProps {
   autoplay?: boolean
   labels?: HandOff[]
   diff?: Set<string>
+  relevant?: Set<string>
   detail?: (node: string) => ReactNode
   toolbar?: ReactNode
 }
@@ -54,10 +55,14 @@ export default function PipelineStage(p: StageProps) {
     return () => clearTimeout(t)
   }, [playing, pos, end, speed, p.frames])
 
+  // the log follows the replay; with a node picked it follows that node's latest line instead
   useEffect(() => {
     const el = logRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [pos])
+    if (!el) return
+    const mine = selected ? [...el.querySelectorAll<HTMLElement>('li.is-node')].at(-1) : undefined
+    if (mine) el.scrollTop = mine.offsetTop - el.offsetTop - el.clientHeight / 2
+    else el.scrollTop = el.scrollHeight
+  }, [pos, selected])
 
   const { marks, last } = fold(p.frames, pos)
   const frame = pos >= 0 ? p.frames[pos] : null
@@ -88,14 +93,14 @@ export default function PipelineStage(p: StageProps) {
         {p.toolbar}
       </div>
       <div className="stage-graph">
-        <Graph graph={p.graph} marks={marks} frame={frame} pulse={pos} labels={p.labels} diff={p.diff} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
+        <Graph graph={p.graph} marks={marks} frame={frame} pulse={pos} labels={p.labels} diff={p.diff} relevant={p.relevant} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       </div>
       <div className="stage-lower">
         <section className="log" aria-label="Log">
           <h3 className="eyebrow">Log</h3>
           <ol ref={logRef} aria-live="polite">
             {p.frames.slice(0, pos + 1).map((f, i) => (
-              <li key={i} className={`tone-${f.tone}${i === pos ? ' is-now' : ''}`} onClick={() => { setPlaying(false); setPos(i) }}>
+              <li key={i} className={`tone-${f.tone}${i === pos ? ' is-now' : ''}${selected && (f.node === selected || f.edge?.source === selected) ? ' is-node' : ''}`} onClick={() => { setPlaying(false); setPos(i) }}>
                 <span className="log-t">{f.at !== undefined ? `${(f.at / 1000).toFixed(2)}s` : String(i + 1).padStart(2, '0')}</span>
                 <span className="log-x">{f.text}</span>
               </li>
