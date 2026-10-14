@@ -10,3 +10,6 @@ harness/langgraph-dev.log
 
 # Sherlock local state (tapes, cassettes, diagnoses)
 .sherlock/
+
+# Demo state (pids, logs, recorded runs, private binary copy)
+.sherlock-demo/
