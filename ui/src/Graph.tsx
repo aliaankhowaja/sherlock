@@ -134,7 +134,7 @@ export default function Graph(p: GraphProps) {
             {n.kind && <text x={10} y={b.h - 10} className="gn-kind">{KIND[n.kind] ?? n.kind}</text>}
             {badge && (
               <>
-                <path className={`gn-glyph g-${badge[0]}`} d={GLYPHS[badge[0]]} transform={`translate(${b.w - 22 - badge[1].length * 5.4},${b.h - 19})`} />
+                <path className={`gn-glyph g-${badge[0]}`} d={GLYPHS[badge[0]]} transform={`translate(${b.w - 22 - badge[1].length * 6},${b.h - 19})`} />
                 <text x={b.w - 8} y={b.h - 10} textAnchor="end" className="gn-badge">{badge[1]}</text>
               </>
             )}

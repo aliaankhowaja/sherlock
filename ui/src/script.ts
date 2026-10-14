@@ -89,12 +89,16 @@ export function jobFrames(events: JobEvent[]): Frame[] {
         push({ text: 'Resuming downstream from the recording; replay only, no live calls', tone: 'muted' })
         break
       case 'rerun': {
-        let prev: { node: string; output: Data | null } | null = null
-        for (const s of (e.steps as { node: string; restored: boolean; input: Data; output: Data | null; error: string | null }[] | undefined) ?? []) {
-          if (prev) push(edgeFrame({ source: prev.node, target: s.node, keys: Object.keys(prev.output ?? {}) }))
+        type Re = { node: string; step: number; restored: boolean; input: Data; output: Data | null; error: string | null }
+        const done: Re[] = []
+        for (const s of (e.steps as Re[] | undefined) ?? []) {
+          // a node is fed by the nodes of the superstep before it (parallel branches share a step)
+          for (const src of done.filter((d) => d.step === s.step - 1)) {
+            push(edgeFrame({ source: src.node, target: s.node, keys: Object.keys(src.output ?? {}) }))
+          }
           push({ text: `${s.node}${s.restored ? ' (restored)' : ''} received ${brief(s.input)}`, tone: 'info', node: s.node, phase: 'in', data: s.input, restored: s.restored })
           push({ text: s.error ? `${s.node} failed: ${s.error}` : `${s.node} produced ${brief(s.output)}`, tone: s.error ? 'bad' : 'ok', node: s.node, phase: 'out', data: s.output, error: s.error, restored: s.restored, mark: { [s.node]: s.error ? 'error' : s.restored ? 'restored' : 'ran' } })
-          prev = s
+          done.push(s)
         }
         break
       }

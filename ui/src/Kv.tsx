@@ -20,7 +20,7 @@ export function Kv({ data, fresh, only, diff }: { data: Data | null | undefined;
             </dt>
             <dd title={full}>{value(data[k], 220, false)}</dd>
             {differs && diff && (
-              <dd className="kv-good" title={JSON.stringify(diff[k])}>good run: {value(diff[k], 140)}</dd>
+              <dd className="kv-good" title={JSON.stringify(diff[k])}>good run: {value(diff[k], 220, false)}</dd>
             )}
           </div>
         )
