@@ -52,10 +52,34 @@ def test_diagnose_streams_every_step_in_order(cassette):
     assert len(forks) == 3 and all(f["fork_node"] and f["fork_thread"] for f in forks)
     assert names.count("resume") == 3
     # each trial is announced, forked, resumed, then judged
-    assert names[3:7] == ["trial_start", "fork", "resume", "trial"]
+    assert names[3:8] == ["trial_start", "fork", "resume", "rerun", "trial"]
     done = events[-1]
     assert done["status"] == "found" and done["minimal_sets"] == [["retriever", "extractor"]]
     assert done["trials_used"] == 3
+
+
+def test_each_trial_shows_every_rerun_node_with_its_input_and_output(cassette):
+    events = []
+    diagnose(DiagServer(["retriever.drop_latest", "extractor.legacy_pattern"]), "T", KG, CHECKS, cassette,
+             Budget(), progress=events.append)
+    reruns = [e for e in events if e["event"] == "rerun"]
+    assert len(reruns) == 3
+    for rerun in reruns:
+        assert rerun["fork_thread"] and rerun["fork_node"] and rerun["restored"]
+        nodes = [s["node"] for s in rerun["steps"]]
+        assert set(rerun["restored"]) <= set(nodes) and nodes[0] == rerun["fork_node"]
+        assert all(s["restored"] == (s["node"] in rerun["restored"]) for s in rerun["steps"])
+        assert all({"step", "input", "output"} <= set(s) for s in rerun["steps"])
+        # each node's output is part of what the next node receives
+        for a, b in zip(rerun["steps"], rerun["steps"][1:]):
+            assert set(a["output"]) <= set(b["input"])
+
+
+def test_clip_caps_long_values_and_keeps_the_shape():
+    from sherlock.g3 import clip
+    out = clip({"text": "x" * 1000, "docs": list(range(50)), "n": 3})
+    assert out["n"] == 3 and len(out["text"]) < 1000 and out["text"].startswith("xxx")
+    assert len(out["docs"]) == 21 and out["docs"][-1] == "... (+30 more)"
 
 
 def test_an_early_abstain_still_ends_with_done(cassette):

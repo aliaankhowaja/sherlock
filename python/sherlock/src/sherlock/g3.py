@@ -184,6 +184,28 @@ def _ids(history):
     return [s["checkpoint"]["checkpoint_id"] for s in history]
 
 
+def clip(value, chars: int = 400, items: int = 20):
+    """A size-capped copy for progress events: long strings cut, long lists and maps shortened."""
+    if isinstance(value, str):
+        return value if len(value) <= chars else f"{value[:chars]}... (+{len(value) - chars} chars)"
+    if isinstance(value, list):
+        out = [clip(v, chars, items) for v in value[:items]]
+        return out + [f"... (+{len(value) - items} more)"] if len(value) > items else out
+    if isinstance(value, dict):
+        out = {k: clip(v, chars, items) for k, v in list(value.items())[:items]}
+        if len(value) > items:
+            out["..."] = f"+{len(value) - items} more keys"
+        return out
+    return value
+
+
+def rerun_steps(after: list, restore: list[str]) -> list[dict]:
+    """Each node that ran again in a trial, in order: the state it received and what it wrote."""
+    return [{"node": t["name"], "step": (s.get("metadata") or {}).get("step"), "restored": t["name"] in restore,
+             "input": clip(s.get("values") or {}), "output": clip(t.get("result")), "error": t.get("error")}
+            for s in after for t in s.get("tasks") or [] if t.get("result") is not None or t.get("error")]
+
+
 def _output(values, key):
     return values.get(key) if isinstance(values, dict) else None
 
@@ -192,7 +214,8 @@ def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks:
            cassette_path: Path | str | None, context: dict | None = None, progress=None) -> Verdict:
     """One trial: restore the set `restore`, resume from the cassette, apply Z.
 
-    `progress(event)` (optional) hears `fork` once the fork thread exists and `resume` before the replay."""
+    `progress(event)` (optional) hears `fork` once the fork thread exists, `resume` before the replay and
+    `rerun` (each re-run node with its input and output) after it."""
     emit = progress or (lambda _event: None)
     restore = list(dict.fromkeys(restore))
     if not restore:
@@ -264,7 +287,9 @@ def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks:
         return abstain(f"the trial run failed: {error.get('error')}: {error.get('message')}", **base)
 
     # FR-G3.7: verify the restore was applied and nothing else moved, before any verdict.
-    evidence = _verify_applied(client, fork_id, fork_point, restore, trial_context)
+    evidence, after = _verify_applied(client, fork_id, fork_point, restore, trial_context)
+    emit({"event": "rerun", "restored": restore, "fork_node": plan.fork_node, "fork_thread": fork_id,
+          "steps": rerun_steps(after, restore)})
     if evidence["problem"]:
         return off_track(evidence["problem"], **base, evidence=evidence)
     if _ids(client.request("POST", f"/threads/{thread_id}/history", {"limit": 1000})) != before_ids:
@@ -286,8 +311,9 @@ def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks:
                    evidence=evidence, **base)
 
 
-def _verify_applied(client, fork_id, fork_point, restore, trial_context) -> dict:
-    """Evidence that the trial ran what we asked: the server saw the context, restored nodes re-ran."""
+def _verify_applied(client, fork_id, fork_point, restore, trial_context) -> tuple[dict, list]:
+    """Evidence that the trial ran what we asked: the server saw the context, restored nodes re-ran.
+    Also returns the fork's checkpoints from the fork point on, oldest first."""
     history = client.request("POST", f"/threads/{fork_id}/history", {"limit": 1000})
     chrono = list(reversed(history))
     start = _ids(chrono).index(fork_point["checkpoint"]["checkpoint_id"])
@@ -302,4 +328,4 @@ def _verify_applied(client, fork_id, fork_point, restore, trial_context) -> dict
         problem = f"restored node(s) {[n for n in restore if n not in reran]} did not run again"
     elif chrono[-1].get("next"):
         problem = f"the resumed run stopped early at {chrono[-1]['next']}"
-    return {"context": seen, "nodes_rerun": reran, "problem": problem}
+    return {"context": seen, "nodes_rerun": reran, "problem": problem}, after

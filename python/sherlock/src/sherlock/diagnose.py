@@ -139,7 +139,8 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     marked wrong with no check yet: the result is the G0 clues and an abstain.
 
     `progress(event)` (optional) hears each step as it happens: `start`, `check`, `sources`, `plan`, then per trial
-    `trial_start`, `fork`, `resume`, `trial`, and always a final `done` (the event list is in agents.md).
+    `trial_start`, `fork`, `resume`, `rerun` (each re-run node with its input and output), `trial`, and always a
+    final `done` (the event list is in agents.md).
     """
     emit = progress or (lambda _event: None)
     result = _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
