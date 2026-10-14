@@ -69,6 +69,10 @@
   border-bottom: 1px solid var(--rule-soft);
   vertical-align: top;
 }
+.trials td:nth-child(2),
+.trials td:nth-child(3) {
+  white-space: nowrap;
+}
 .trials td:first-child {
   font-family: var(--mono);
 }
