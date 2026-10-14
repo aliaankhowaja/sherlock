@@ -191,3 +191,58 @@
 .gate-tag {
   margin-left: 6px;
 }
+.ok-differs {
+  margin: 0.6rem 0;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--abstain);
+  background: color-mix(in srgb, var(--abstain) 10%, transparent);
+  font-size: 0.85rem;
+}
+.legend .st-differs {
+  color: var(--abstain);
+}
+.health.is-bad,
+.judgment.is-fail {
+  border-left: 3px solid var(--abstain);
+  padding-left: 0.8rem;
+}
+.health ul {
+  list-style: none;
+  padding: 0;
+}
+.health li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.25rem 0;
+}
+.health li span {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+.judge-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.judge-table td,
+.judge-table th {
+  width: 50%;
+  text-align: left;
+  vertical-align: top;
+  padding: 0.3rem 0.6rem 0.3rem 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.wrong {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.welcome-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 0.8rem;
+}

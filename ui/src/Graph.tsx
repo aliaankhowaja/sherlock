@@ -158,7 +158,8 @@ export default function Graph(p: GraphProps) {
           const mark = p.marks?.[n.id]
           const isFocus = !!f?.node && boxOf(f.node) === b
           const badge: Badge | null = p.verdict && n.status ? verdictBadge(n) : isFocus && f?.phase === 'in' ? ['dot', 'running'] : isFocus && f?.phase === 'edge' ? ['arrow', 'receiving'] : mark ? MARK_BADGE[mark] : null
-          return <NodeEl key={n.id} n={n} b={b} cls={classOf(n.id)} badge={badge} diff={!!p.diff?.has(n.id)} onSelect={pick} />
+          const okButDiffers = !!p.diff?.has(n.id) && !!badge && ['check', 'ring', 'dash'].includes(badge[0])
+          return <NodeEl key={n.id} n={n} b={b} cls={classOf(n.id)} badge={okButDiffers ? ['ring', 'ran ok, ≠ output'] : badge} diff={!!p.diff?.has(n.id)} onSelect={pick} />
         })}
       </svg>
       {big && <Minimap boxes={L.boxes} classOf={classOf} width={L.width} height={L.height} view={view} onJump={(x, y) => { setFollow(false); setVb(around({ x, y, w: 0, h: 0 }, content, view.w, view.h)) }} />}

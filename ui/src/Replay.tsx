@@ -1,23 +1,10 @@
 import { useState } from 'react'
 import { short, useJson } from './api'
-import type { GraphView, RunStep, StepsView } from './model'
+import type { GraphView, StepsView } from './model'
+import HealthList from './Health'
 import NodeCard from './NodeCard'
-import { stepFrames } from './script'
+import { differing, stepFrames, stepOf } from './script'
 import PipelineStage from './Stage'
-
-const stepOf = (v: StepsView | null, node: string): RunStep | undefined => v?.steps.filter((s) => s.node === node).at(-1)
-
-/** Nodes whose output in the failed run differs from the known-good run. */
-function differing(a: StepsView | null, b: StepsView | null): Set<string> {
-  const out = new Set<string>()
-  if (!a || !b) return out
-  for (const s of a.steps) {
-    if (s.node === '__start__') continue
-    const g = stepOf(b, s.node)
-    if (!g || JSON.stringify(g.output) !== JSON.stringify(s.output)) out.add(s.node)
-  }
-  return out
-}
 
 export default function Replay({ team, failed, good, onNext }: { team: string; failed: string; good: string; onNext: () => void }) {
   const [which, setWhich] = useState<'failed' | 'good'>('failed')
@@ -30,6 +17,14 @@ export default function Replay({ team, failed, good, onNext }: { team: string; f
 
   if (error) return <p className="error-line">Could not load the run: {error}</p>
   if (!graph.data || !shown) return <p className="muted">Loading the recorded run…</p>
+
+  if (fRun.data?.health && !fRun.data.health.usable) {
+    return (
+      <div className="screen">
+        <HealthList health={fRun.data.health} thread={failed} />
+      </div>
+    )
+  }
 
   return (
     <div className="screen">
@@ -55,6 +50,7 @@ export default function Replay({ team, failed, good, onNext }: { team: string; f
           ) : null
         }
       />
+      {shown.health && shown.health.items.some((i) => !i.ok) && <HealthList health={shown.health} thread={shown.thread_id} />}
       {shown.note && <p className="muted small">{shown.note}</p>}
       <div className="actions">
         <button type="button" className="btn-primary" onClick={onNext}>Next: diagnose this run</button>

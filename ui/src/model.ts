@@ -23,7 +23,15 @@ export interface RunStep {
   log: string[]
 }
 
+export interface Health {
+  usable: boolean
+  summary: string
+  items: { id: string; label: string; ok: boolean; detail: string }[]
+}
+
 export interface StepsView {
+  health?: Health
+  server_version?: string | null
   thread_id: string
   graph_id: string | null
   note: string | null

@@ -1,7 +1,10 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { short, useJson, type Diagnosis, type Summary } from './api'
 import type { GraphView, StepsView } from './model'
+import { differing, stepOf } from './script'
 import Gates from './Gates'
+import Judgment from './Judgment'
+import Wrong from './Wrong'
 import Graph from './Graph'
 import { Glyph } from './Kv'
 import NodeCard from './NodeCard'
@@ -57,8 +60,6 @@ function headline(s: Summary): string {
   return `${text}.`
 }
 
-const stepOf = (v: StepsView | null, node: string) => v?.steps.filter((s) => s.node === node).at(-1)
-
 export default function Verdict({ failed, onDiagnose, onReplay }: { failed: string; onDiagnose: () => void; onReplay: () => void }) {
   const id = encodeURIComponent(failed)
   const diag = useJson<Diagnosis>(failed ? `/api/diagnoses/${id}` : null)
@@ -67,6 +68,7 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
   const fRun = useJson<StepsView>(failed ? `/api/runs/${id}/steps` : null)
   const gRun = useJson<StepsView>(good ? `/api/runs/${encodeURIComponent(good)}/steps` : null)
   const [sel, setSel] = useState<string | null>(null)
+  const diff = differing(fRun.data, gRun.data)
   const report = useRef<HTMLDivElement>(null)
 
   if (diag.error) {
@@ -99,13 +101,15 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
           </>
         )}
       </header>
+      <Judgment check={d.artifact.check} run={fRun.data} />
       {(d.artifact.gates ?? d.artifact.gate_summary) && <Gates g={(d.artifact.gates ?? d.artifact.gate_summary)!} />}
       <div className="verdict-graph">
-        <Graph graph={graph.data} verdict selected={sel} onSelect={(n) => setSel(n === sel ? null : n)} />
+        <Graph graph={graph.data} verdict diff={diff} selected={sel} onSelect={(n) => setSel(n === sel ? null : n)} />
         <ul className="legend" aria-label="Legend">
           <li className="st-culprit"><Glyph name="bang" />must change</li>
           <li className="st-cleared"><Glyph name="check" />not needed</li>
           <li className="st-unverified"><Glyph name="dash" /><Term k="pruned">not tested</Term></li>
+          <li className="st-differs"><Glyph name="ring" />ran ok, ≠ output</li>
           <li className="st-unverified"><Glyph name="ring" />not verified</li>
           <li className="st-abstained"><Glyph name="question" />cannot say</li>
         </ul>
@@ -131,11 +135,12 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
             <button type="button" onClick={() => report.current && downloadHtml(report.current, d)}>Download report (HTML)</button>
             <button type="button" onClick={() => downloadJson(d)}>Download artifact (JSON)</button>
             <button type="button" onClick={onReplay}>Replay the failed run</button>
+            <Wrong failed={failed} />
           </div>
         </section>
         <section className="inspect">
           <h3 className="eyebrow">Evidence</h3>
-          {sel ? <NodeCard node={graph.data.nodes.find((n) => n.id === sel)} step={stepOf(fRun.data, sel)} good={stepOf(gRun.data, sel)} /> : <p className="muted">Click a node in the graph to see why it has its status, the trials that touched it, and its input and output.</p>}
+          {sel ? <NodeCard node={graph.data.nodes.find((n) => n.id === sel)} step={stepOf(fRun.data, sel)} good={stepOf(gRun.data, sel)} checkFailed={d.artifact.check?.pass === false} /> : <p className="muted">Click a node in the graph to see why it has its status, the trials that touched it, and its input and output.</p>}
         </section>
       </div>
     </div>

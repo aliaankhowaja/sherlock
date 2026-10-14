@@ -8,6 +8,7 @@ import Pick from './Pick'
 import Replay from './Replay'
 import { runPath } from './route'
 import Verdict from './Verdict'
+import Welcome from './Welcome'
 
 type Step = 1 | 2 | 3 | 4
 const STEPS: { n: Step; label: string }[] = [
@@ -27,6 +28,8 @@ export default function Flow({ initialRun }: { initialRun: string | null }) {
   const [pick, setPick] = useState<{ team?: string; failed?: string; good?: string }>({})
   const [step, setStepRaw] = useState<Step>(initialRun ? 4 : 1)
   const [jobId, setJobId] = useState<number | null>(null)
+  const [started, setStarted] = useState(false)
+  const landing = step === 1 && !started && !initialRun && !pick.failed
 
   const graphId = opened.data?.summary.graph_id
   const team = pick.team ?? teams.data?.find((t) => t.graph_id === graphId)?.assistant_id ?? ''
@@ -47,6 +50,7 @@ export default function Flow({ initialRun }: { initialRun: string | null }) {
     if (info.error || teams.error) return `Sherlock cannot reach its server (${info.error ?? teams.error}). Restart sherlock serve, then reload.`
     switch (step) {
       case 1:
+        if (landing) return 'This is a finished example: a failure with two causes. Press Try your own run to diagnose yours.'
         if (!team) return 'Pick the team whose run went wrong.'
         if (!failed) return 'Pick the failed run: the run that gave a wrong answer.'
         if (!good) return 'Pick a known-good run: same input, right answer. Then press Watch the failed run.'
@@ -66,7 +70,7 @@ export default function Flow({ initialRun }: { initialRun: string | null }) {
   return (
     <div className="app">
       <header className="topbar">
-        <a className="brand" href="/" onClick={(e) => { e.preventDefault(); setPick({}); setJobId(null); setStep(1) }}>
+        <a className="brand" href="/" onClick={(e) => { e.preventDefault(); setPick({}); setJobId(null); setStarted(false); setStep(1) }}>
           SHERLOCK<span>fault isolation bench</span>
         </a>
         <ol className="stepper">
@@ -83,7 +87,8 @@ export default function Flow({ initialRun }: { initialRun: string | null }) {
       </header>
       <p className="nextline" role="status"><span>Next</span>{next()}</p>
       <main className="main">
-        {step === 1 && (
+        {landing && <Welcome diagnoses={diags.data?.diagnoses ?? []} onStart={() => setStarted(true)} />}
+        {step === 1 && !landing && (
           <Pick
             teams={teams.data ?? []}
             diagnoses={diags.data?.diagnoses ?? []}

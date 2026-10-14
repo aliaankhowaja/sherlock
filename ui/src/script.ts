@@ -1,4 +1,4 @@
-import type { Data, Frame, HandOff, JobEvent, Mark, StepsView } from './model'
+import type { Data, Frame, HandOff, JobEvent, Mark, RunStep, StepsView } from './model'
 import { brief } from './model'
 import { TRIAL_LABEL, setText } from './terms'
 
@@ -115,6 +115,21 @@ export function jobFrames(events: JobEvent[]): Frame[] {
           : { text: `Done: cannot say (${String(e.reason)})`, tone: 'warn' })
         break
     }
+  }
+  return out
+}
+
+/** The last time `node` ran in a recorded run. */
+export const stepOf = (v: StepsView | null, node: string): RunStep | undefined => v?.steps.filter((s) => s.node === node).at(-1)
+
+/** Nodes that ran without error in `a` but whose output differs from the known-good run `b` (FR-U6: ok is not right). */
+export function differing(a: StepsView | null, b: StepsView | null): Set<string> {
+  const out = new Set<string>()
+  if (!a || !b) return out
+  for (const s of a.steps) {
+    if (s.node === '__start__' || s.error) continue
+    const g = stepOf(b, s.node)
+    if (!g || JSON.stringify(g.output) !== JSON.stringify(s.output)) out.add(s.node)
   }
   return out
 }

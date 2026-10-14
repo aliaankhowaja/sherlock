@@ -9,7 +9,7 @@ const KIND_LABEL: Record<string, string> = {
 }
 
 /** Everything known about one node: what it is, what it got and gave, and what the verdict says about it. */
-export default function NodeCard({ node, step, good }: { node: GNode | undefined; step?: RunStep; good?: RunStep }) {
+export default function NodeCard({ node, step, good, checkFailed }: { node: GNode | undefined; step?: RunStep; good?: RunStep; checkFailed?: boolean }) {
   if (!node) return <p className="muted">Unknown node.</p>
   const v = node.verdict
   return (
@@ -53,6 +53,12 @@ export default function NodeCard({ node, step, good }: { node: GNode | undefined
           </>
         ) : null}
       </dl>
+      {step && !step.error && good && JSON.stringify(good.output) !== JSON.stringify(step.output) && (
+        <p className="ok-differs"><b>Ran ok, output differs.</b> It finished without an error, but its output is not what the known-good run produced. A green span is not a right answer.</p>
+      )}
+      {step && !step.error && checkFailed && !(good && JSON.stringify(good.output) !== JSON.stringify(step.output)) && (
+        <p className="ok-differs"><b>Ran ok; the check failed downstream.</b> This node finished without an error and matches the known-good run, but the final answer still failed its check.</p>
+      )}
       {step ? (
         <>
           <h5>Input in the failed run</h5>

@@ -44,3 +44,15 @@ export async function startDiagnosis(info: Info, team: string, failed: string, g
   if (!res.ok) throw new Error(typeof data?.error === 'string' ? data.error : `request failed: ${res.status}`)
   return Number(data.job_id)
 }
+
+/** Mark a run as wrong (the "Wrong" button): writes intake. Resolves to the command that ran. */
+export async function markWrong(info: Info, failed: string, expected: string): Promise<string> {
+  const res = await fetch('/api/intake', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Sherlock-Token': info.token ?? '' },
+    body: JSON.stringify({ failed_thread_id: failed, expected: expected || undefined }),
+  })
+  const data = await res.json().catch(() => null)
+  if (!res.ok) throw new Error(typeof data?.error === 'string' ? data.error : `request failed: ${res.status}`)
+  return String(data.command)
+}

@@ -34,6 +34,7 @@ export interface Info {
   url: string
   sherlock_dir: string
   token?: string
+  server_version?: string | null
   run?: { enabled: boolean; project: string | null; program: string | null; running_job: number | null }
 }
 
@@ -66,6 +67,9 @@ export interface AssertionResult {
   pass: boolean
   score: number
   reason: string
+  /** Optional: when the Python side writes them, shown as is. */
+  expected?: string
+  actual?: string
 }
 
 export interface CheckReport {
