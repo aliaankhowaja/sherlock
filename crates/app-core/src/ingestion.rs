@@ -31,6 +31,11 @@ pub fn thread_history_path(thread_id: &str) -> String {
 /// Implemented with real HTTP outside `app-core`; faked in tests.
 pub trait LangGraphTransport {
     fn post_json(&self, path: &str, body: serde_json::Value) -> anyhow::Result<serde_json::Value>;
+
+    /// `GET` a LangGraph path (e.g. an assistant's graph). Transports that cannot say so.
+    fn get_json(&self, path: &str) -> anyhow::Result<serde_json::Value> {
+        anyhow::bail!("GET {path} is not supported by this transport")
+    }
 }
 
 /// An agentic team: a configured instance of a graph.

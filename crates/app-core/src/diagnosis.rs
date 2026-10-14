@@ -36,6 +36,16 @@ pub struct NodeVerdict {
     pub sets: Vec<Vec<String>>,
     /// G0 clue sentences about this node. Hints, never part of the status.
     pub clues: Vec<String>,
+    /// Numbers of the trials that restored this node (evidence, in trial order).
+    pub trials: Vec<u64>,
+    /// What restoring it changes: its entry in the known-good run's per-node context difference.
+    pub restore: Option<Value>,
+    /// Why it was skipped, when it was pruned (skipped is not cleared).
+    pub pruned: Option<String>,
+    /// A search candidate, so trials could include it.
+    pub tested: bool,
+    /// It ran in the diagnosed run (on the recorded path).
+    pub on_path: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -225,6 +235,16 @@ fn node_verdicts(
         .and_then(Value::as_array)
         .cloned()
         .unwrap_or_default();
+    let trial_list = artifact
+        .get("trials")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let context_diff = artifact
+        .get("known_good_source")
+        .and_then(|s| s.get("context_diff"))
+        .and_then(Value::as_object);
+    let on_path = str_list(&pruning["nodes_on_path"]);
 
     // Execution order first, then any node only named elsewhere.
     let mut order = str_list(&pruning["nodes_on_path"]);
@@ -303,7 +323,20 @@ fn node_verdicts(
             } else {
                 (NodeStatus::Unverified, "not tested".to_string())
             };
+            let trials = trial_list
+                .iter()
+                .filter(|t| str_list(&t["restored"]).contains(&node))
+                .filter_map(|t| t["n"].as_u64())
+                .collect();
             NodeVerdict {
+                restore: context_diff.and_then(|c| c.get(&node)).cloned(),
+                pruned: pruned
+                    .and_then(|p| p.get(&node))
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                tested: candidates.contains(&node),
+                on_path: on_path.contains(&node),
+                trials,
                 node,
                 status,
                 reason,
@@ -439,6 +472,32 @@ mod tests {
         assert!(d.nodes[1].reason.contains("{retriever, extractor}"));
         // clues are carried as hints only; writer has one but stays unverified
         assert!(!d.nodes[3].clues.is_empty());
+    }
+
+    #[test]
+    fn each_node_carries_its_trials_restoration_and_pruning_for_the_config_panel() {
+        let d = parse_artifact(TWO_CAUSE).unwrap();
+        let node = |id: &str| d.nodes.iter().find(|n| n.node == id).unwrap();
+        // trial numbers that restored the node, in order
+        assert_eq!(node("retriever").trials, vec![1, 2]);
+        assert_eq!(node("extractor").trials, vec![1, 3]);
+        assert!(node("router").trials.is_empty());
+        // what restoring it changes, from the known-good run's context difference
+        assert_eq!(
+            node("retriever").restore,
+            Some(json!({"faults": {"$remove": ["retriever.drop_latest"]}}))
+        );
+        assert_eq!(node("router").restore, None);
+        // pruned nodes say why they were skipped; tested ones say they were tested
+        assert!(
+            node("router")
+                .pruned
+                .as_deref()
+                .unwrap()
+                .contains("same output")
+        );
+        assert!(node("retriever").tested && !node("router").tested);
+        assert!(node("retriever").on_path && node("router").on_path);
     }
 
     #[test]
