@@ -1,6 +1,15 @@
 {
   "by_team": {
     "invoice_pipeline": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.714,
+        "mean_jaccard": 0.786,
+        "n": 7,
+        "wrong": 2
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -19,6 +28,15 @@
         "n": 7,
         "wrong": 5
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.286,
+        "mean_jaccard": 0.286,
+        "n": 7,
+        "wrong": 5
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -27,6 +45,17 @@
         "mean_jaccard": 0.286,
         "n": 7,
         "wrong": 5
+      },
+      "plain_retry": {
+        "abstain": 7,
+        "abstain_reasons": {
+          "no_diagnosis": 7
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 7,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -48,6 +77,15 @@
       }
     },
     "loan_underwriting": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 13,
+        "exact_of_answered": 0.722,
+        "mean_jaccard": 0.861,
+        "n": 18,
+        "wrong": 5
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -66,6 +104,15 @@
         "n": 18,
         "wrong": 18
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.0,
+        "n": 18,
+        "wrong": 18
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -74,6 +121,17 @@
         "mean_jaccard": 0.0,
         "n": 18,
         "wrong": 18
+      },
+      "plain_retry": {
+        "abstain": 18,
+        "abstain_reasons": {
+          "no_diagnosis": 18
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 18,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -95,6 +153,15 @@
       }
     },
     "order_desk": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.286,
+        "mean_jaccard": 0.643,
+        "n": 7,
+        "wrong": 5
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -113,6 +180,15 @@
         "n": 7,
         "wrong": 7
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.214,
+        "n": 7,
+        "wrong": 7
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -121,6 +197,17 @@
         "mean_jaccard": 0.214,
         "n": 7,
         "wrong": 7
+      },
+      "plain_retry": {
+        "abstain": 7,
+        "abstain_reasons": {
+          "no_diagnosis": 7
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 7,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -142,6 +229,15 @@
       }
     },
     "revenue_report": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 9,
+        "exact_of_answered": 0.474,
+        "mean_jaccard": 0.711,
+        "n": 19,
+        "wrong": 10
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -160,6 +256,15 @@
         "n": 19,
         "wrong": 19
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.0,
+        "n": 19,
+        "wrong": 19
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -168,6 +273,17 @@
         "mean_jaccard": 0.0,
         "n": 19,
         "wrong": 19
+      },
+      "plain_retry": {
+        "abstain": 19,
+        "abstain_reasons": {
+          "no_diagnosis": 19
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 19,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -189,6 +305,15 @@
       }
     },
     "support_bot": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.75,
+        "mean_jaccard": 0.875,
+        "n": 8,
+        "wrong": 2
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -207,6 +332,15 @@
         "n": 8,
         "wrong": 6
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.25,
+        "mean_jaccard": 0.312,
+        "n": 8,
+        "wrong": 6
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -215,6 +349,17 @@
         "mean_jaccard": 0.312,
         "n": 8,
         "wrong": 6
+      },
+      "plain_retry": {
+        "abstain": 8,
+        "abstain_reasons": {
+          "no_diagnosis": 8
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 8,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -238,6 +383,15 @@
       }
     },
     "support_desk": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 9,
+        "exact_of_answered": 0.5,
+        "mean_jaccard": 0.741,
+        "n": 18,
+        "wrong": 9
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -256,6 +410,15 @@
         "n": 18,
         "wrong": 17
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.056,
+        "mean_jaccard": 0.102,
+        "n": 18,
+        "wrong": 17
+      },
       "paste_and_play": {
         "abstain": 2,
         "abstain_reasons": {
@@ -266,6 +429,17 @@
         "mean_jaccard": 0.052,
         "n": 18,
         "wrong": 16
+      },
+      "plain_retry": {
+        "abstain": 18,
+        "abstain_reasons": {
+          "no_diagnosis": 18
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 18,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -289,6 +463,15 @@
       }
     },
     "vendor_brief": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 5,
+        "exact_of_answered": 0.556,
+        "mean_jaccard": 0.722,
+        "n": 9,
+        "wrong": 4
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -307,6 +490,15 @@
         "n": 9,
         "wrong": 8
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.111,
+        "mean_jaccard": 0.111,
+        "n": 9,
+        "wrong": 8
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -315,6 +507,17 @@
         "mean_jaccard": 0.111,
         "n": 9,
         "wrong": 8
+      },
+      "plain_retry": {
+        "abstain": 9,
+        "abstain_reasons": {
+          "no_diagnosis": 9
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 9,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -350,6 +553,19 @@
       "hard": false,
       "id": "vendor_brief:router.wrong_source",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -376,6 +592,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -388,6 +617,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -415,6 +653,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -465,6 +707,19 @@
       "hard": false,
       "id": "vendor_brief:writer.stale_template",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "writer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -491,6 +746,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -503,6 +771,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -530,6 +807,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -577,6 +858,19 @@
       "hard": false,
       "id": "vendor_brief:reviewer.false_block",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -603,6 +897,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -615,6 +922,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -642,6 +958,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -688,6 +1008,19 @@
       "hard": true,
       "id": "vendor_brief:retriever.drop_latest+extractor.legacy_pattern",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -714,6 +1047,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -726,6 +1072,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -754,6 +1109,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -805,6 +1164,19 @@
       "hard": true,
       "id": "vendor_brief:retriever.reverse_order+writer.stale_template",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -831,6 +1203,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -843,6 +1228,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -870,6 +1264,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -919,6 +1317,19 @@
       "hard": false,
       "id": "order_desk:no_bulk_discount",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -945,6 +1356,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -957,6 +1381,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -984,6 +1417,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1031,6 +1468,19 @@
       "hard": false,
       "id": "order_desk:qty_off_by_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1057,6 +1507,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1069,6 +1532,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1096,6 +1568,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1146,6 +1622,19 @@
       "hard": true,
       "id": "order_desk:stale_inventory+drops_shipping_line",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -1172,6 +1661,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -1184,6 +1686,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -1212,6 +1723,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -1259,6 +1774,19 @@
       "hard": false,
       "id": "invoice_pipeline:normalize.stale_rate",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "normalize"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1285,6 +1813,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1297,6 +1838,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1324,6 +1874,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1375,6 +1929,19 @@
       "hard": true,
       "id": "invoice_pipeline:extract.comma_split+normalize.trust_parsed",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1401,6 +1968,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1413,6 +1993,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1443,6 +2032,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -1493,6 +2086,19 @@
       "hard": true,
       "id": "invoice_pipeline:extract.comma_split+post.round_down",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1519,6 +2125,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1531,6 +2150,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1558,6 +2186,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -1605,6 +2237,19 @@
       "hard": false,
       "id": "support_bot:fmt.shout",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1631,6 +2276,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1643,6 +2301,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1670,6 +2337,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1714,6 +2385,19 @@
       "hard": false,
       "id": "support_bot:prep.truncate",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1740,6 +2424,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1752,6 +2449,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1779,6 +2485,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1827,6 +2537,19 @@
       "hard": false,
       "id": "support_bot:ask.terse_instruction",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -1853,6 +2576,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1865,6 +2601,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -1892,6 +2637,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -1941,6 +2690,19 @@
       "hard": true,
       "id": "support_bot:prep.truncate+ask.terse_instruction",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -1967,6 +2729,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -1979,6 +2754,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -2002,6 +2786,10 @@
           },
           "reason": "unrecorded_call"
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -2057,6 +2845,19 @@
       "hard": false,
       "id": "support_desk:customer_lookup.stale_cache",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "customer_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -2083,6 +2884,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2095,6 +2909,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2122,6 +2945,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -2179,6 +3006,19 @@
       "hard": true,
       "id": "support_desk:customer_lookup.stale_cache+urgency.threshold_off",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "customer_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -2205,6 +3045,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2217,6 +3070,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2245,6 +3107,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -2301,6 +3167,19 @@
       "hard": false,
       "id": "support_desk:order_lookup.timeout",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "order_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -2327,6 +3206,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "order_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": null,
           "outcome": "abstain",
@@ -2335,6 +3227,15 @@
             "status": "abstain"
           },
           "reason": "no_set_fixes_it"
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -2362,6 +3263,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -2408,6 +3313,19 @@
       "hard": false,
       "id": "support_desk:intake.ref_lowercase",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "intake"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2434,6 +3352,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "order_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": null,
           "outcome": "abstain",
@@ -2442,6 +3373,15 @@
             "status": "abstain"
           },
           "reason": "no_set_fixes_it"
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -2469,6 +3409,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -2520,6 +3464,19 @@
       "hard": true,
       "id": "support_desk:pii_redact.miss_card+compliance_check.skip_pii_scan",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "pii_redact"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -2546,6 +3503,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2558,6 +3528,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2588,6 +3567,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -2640,6 +3623,19 @@
       "hard": true,
       "id": "support_desk:sla_standard.hours_typo+customer_lookup.stale_cache",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "customer_lookup"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -2666,6 +3662,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2678,6 +3687,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2705,6 +3723,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -2763,6 +3785,19 @@
       "hard": true,
       "id": "support_desk:intent_classify.bias_shipping+draft_reply.terse_instruction",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "intent_classify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -2789,6 +3824,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2801,6 +3849,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2824,6 +3881,10 @@
           },
           "reason": "unrecorded_call"
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -2889,6 +3950,19 @@
       "hard": true,
       "id": "support_desk:refund_calc.cap_off+rerank.ascending",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "rerank"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -2915,6 +3989,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -2927,6 +4014,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -2955,6 +4051,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -3007,6 +4107,19 @@
       "hard": false,
       "id": "support_desk:merge_results.drop_history",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "merge_results"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3033,6 +4146,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3045,6 +4171,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3072,6 +4207,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -3121,6 +4260,19 @@
       "hard": false,
       "id": "support_desk:draft_reply.terse_instruction",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "draft_reply"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3147,6 +4299,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3159,6 +4324,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -3186,6 +4360,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -3240,6 +4418,19 @@
       "hard": false,
       "id": "support_desk:approval_gate.limit_off+audit_log.drops_ticket_id+send.dry_run",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.333,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "approval_gate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.333,
           "outcome": "wrong",
@@ -3266,6 +4457,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.333,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.333,
           "outcome": "wrong",
@@ -3278,6 +4482,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3307,6 +4520,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 3,
@@ -3354,6 +4571,19 @@
       "hard": false,
       "id": "support_desk:policy_check.short_window",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "policy_check"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3380,6 +4610,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3392,6 +4635,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3419,6 +4671,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -3470,6 +4726,19 @@
       "hard": false,
       "id": "loan_underwriting:application_intake.thousands_sep",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "application_intake"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3496,6 +4765,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3508,6 +4790,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3535,6 +4826,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -3592,6 +4887,19 @@
       "hard": true,
       "id": "loan_underwriting:fraud_velocity.threshold_one+fraud_device.default_device",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fraud_velocity"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -3618,6 +4926,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3630,6 +4951,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3660,6 +4990,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -3719,6 +5053,19 @@
       "hard": true,
       "id": "loan_underwriting:fraud_aggregate.threshold_two+fraud_velocity.threshold_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fraud_velocity"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -3745,6 +5092,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3757,6 +5117,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3787,6 +5156,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -3841,6 +5214,19 @@
       "hard": false,
       "id": "loan_underwriting:bank_parse.credit_debit_swap",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "bank_parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3867,6 +5253,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -3879,6 +5278,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -3906,6 +5314,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -3962,6 +5374,19 @@
       "hard": false,
       "id": "loan_underwriting:credit_bureau.stale_report",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "credit_bureau"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -3988,6 +5413,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4000,6 +5438,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4027,6 +5474,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4082,6 +5533,19 @@
       "hard": true,
       "id": "loan_underwriting:employer_verify.stale_registry+risk_score.min_balance_x4",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "employer_verify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -4108,6 +5572,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4120,6 +5597,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4148,6 +5634,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -4202,6 +5692,19 @@
       "hard": false,
       "id": "loan_underwriting:limit_check.stale_exposure",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "limit_check"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -4228,6 +5731,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4240,6 +5756,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4267,6 +5792,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4318,6 +5847,19 @@
       "hard": false,
       "id": "loan_underwriting:income_normalise.net_not_gross",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "income_normalise"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -4344,6 +5886,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4356,6 +5911,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4383,6 +5947,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4438,6 +6006,19 @@
       "hard": false,
       "id": "loan_underwriting:letter_draft.terse_instruction",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "letter_draft"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -4464,6 +6045,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4476,6 +6070,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4503,6 +6106,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4551,6 +6158,19 @@
       "hard": false,
       "id": "loan_underwriting:policy_rules.dti_limit_low",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "policy_rules"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4577,6 +6197,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "decline_reason"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4589,6 +6222,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4616,6 +6258,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4667,6 +6313,19 @@
       "hard": false,
       "id": "loan_underwriting:id_parse.swap_dates",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "id_parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -4693,6 +6352,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4705,6 +6377,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4732,6 +6413,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -4789,6 +6474,19 @@
       "hard": true,
       "id": "loan_underwriting:pricing.floor_payment+ledger_write.drop_decision",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -4815,6 +6513,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4827,6 +6538,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4855,6 +6575,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -4905,6 +6629,19 @@
       "hard": false,
       "id": "revenue_report:quarter_off_by_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "report_request"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4931,6 +6668,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -4943,6 +6693,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -4970,6 +6729,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5037,6 +6800,19 @@
       "hard": false,
       "id": "revenue_report:swap_cols",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "extract_billing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5063,6 +6839,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5075,6 +6864,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5102,6 +6900,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5168,6 +6970,19 @@
       "hard": false,
       "id": "revenue_report:stale_eur_rate+gbp_inverted",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fx_rates"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -5194,6 +7009,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5206,6 +7034,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5233,6 +7070,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5294,6 +7135,19 @@
       "hard": true,
       "id": "revenue_report:skip_first_row+key_ignores_month",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract_crm"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5320,6 +7174,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5332,6 +7199,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5359,6 +7235,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -5427,6 +7307,19 @@
       "hard": true,
       "id": "revenue_report:sign_flip+sum_abs",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract_refunds"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5453,6 +7346,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5465,6 +7371,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5493,6 +7408,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -5557,6 +7476,19 @@
       "hard": false,
       "id": "revenue_report:cap_1000",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "outlier_filter"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -5583,6 +7515,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5595,6 +7540,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5622,6 +7576,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5682,6 +7640,19 @@
       "hard": false,
       "id": "revenue_report:always_warn",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "quality_gate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -5708,6 +7679,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5720,6 +7704,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5747,6 +7740,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5796,6 +7793,19 @@
       "hard": false,
       "id": "revenue_report:drop_limit_5pct",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "quality_gate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -5822,6 +7832,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5834,6 +7857,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5861,6 +7893,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -5912,6 +7948,19 @@
       "hard": true,
       "id": "revenue_report:wrong_prior+no_dampening",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "growth_qoq"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -5938,6 +7987,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -5950,6 +8012,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -5978,6 +8049,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6032,6 +8107,19 @@
       "hard": true,
       "id": "revenue_report:terse_instruction+quarter_off_by_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "report_request"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6058,6 +8146,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6070,6 +8171,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -6098,6 +8208,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6169,6 +8283,19 @@
       "hard": true,
       "id": "revenue_report:drop_refunds+locale_comma",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "merge_sources"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -6195,6 +8322,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6207,6 +8347,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -6235,6 +8384,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6298,6 +8451,19 @@
       "hard": false,
       "id": "revenue_report:mean_not_median",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "anomaly_month"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -6324,6 +8490,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6336,6 +8515,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -6363,6 +8551,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -6411,6 +8603,19 @@
       "hard": false,
       "id": "revenue_report:stale_segments",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "join_segments"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -6437,6 +8642,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6449,6 +8667,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -6476,6 +8703,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -6527,6 +8758,19 @@
       "hard": true,
       "id": "vendor_brief:extractor.legacy_pattern+router.wrong_source",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extractor"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -6553,6 +8797,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6565,6 +8822,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -6593,6 +8859,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6646,6 +8916,19 @@
       "hard": true,
       "id": "vendor_brief:retriever.drop_latest+writer.stale_template",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6672,6 +8955,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6684,6 +8980,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -6712,6 +9017,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6763,6 +9072,19 @@
       "hard": true,
       "id": "vendor_brief:retriever.reverse_order+router.wrong_source",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6789,6 +9111,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6801,6 +9136,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -6828,6 +9172,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -6880,6 +9228,19 @@
       "hard": false,
       "id": "vendor_brief:retriever.drop_latest+retriever.reverse_order",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "retriever"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6906,6 +9267,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "reviewer"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -6918,6 +9292,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -6945,6 +9328,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -6996,6 +9383,19 @@
       "hard": true,
       "id": "order_desk:no_bulk_discount+stale_inventory",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "stock"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7022,6 +9422,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7034,6 +9447,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -7062,6 +9484,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -7113,6 +9539,19 @@
       "hard": true,
       "id": "order_desk:no_bulk_discount+qty_off_by_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7139,6 +9578,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7151,6 +9603,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -7179,6 +9640,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -7230,6 +9695,19 @@
       "hard": true,
       "id": "order_desk:drops_shipping_line+qty_off_by_one",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -7256,6 +9734,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -7268,6 +9759,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -7296,6 +9796,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -7346,6 +9850,19 @@
       "hard": true,
       "id": "order_desk:drops_shipping_line+no_bulk_discount",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -7372,6 +9889,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "assemble"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -7384,6 +9914,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.5,
@@ -7412,6 +9951,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -7460,6 +10003,19 @@
       "hard": true,
       "id": "invoice_pipeline:normalize.trust_parsed+post.round_down",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -7486,6 +10042,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -7498,6 +10067,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -7525,6 +10103,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -7571,6 +10153,19 @@
       "hard": false,
       "id": "invoice_pipeline:validate.reject_large",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -7597,6 +10192,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7609,6 +10217,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -7636,6 +10253,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -7684,6 +10305,19 @@
       "hard": true,
       "id": "invoice_pipeline:extract.comma_split+validate.reject_large",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7710,6 +10344,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7722,6 +10369,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -7749,6 +10405,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -7799,6 +10459,19 @@
       "hard": true,
       "id": "invoice_pipeline:normalize.trust_parsed+validate.reject_large",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "validate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -7825,6 +10498,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "post"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7837,6 +10523,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -7864,6 +10559,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -7913,6 +10612,19 @@
       "hard": true,
       "id": "support_bot:ask.terse_instruction+fmt.trailing_newline",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -7939,6 +10651,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -7951,6 +10676,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 1.0,
@@ -7978,6 +10712,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8027,6 +10765,19 @@
       "hard": false,
       "id": "support_bot:fmt.shout+fmt.trailing_newline",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -8053,6 +10804,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -8065,6 +10829,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8092,6 +10865,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -8138,6 +10915,19 @@
       "hard": true,
       "id": "support_bot:ask.terse_instruction+fmt.shout",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "ask"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8164,6 +10954,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8176,6 +10979,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8204,6 +11016,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8252,6 +11068,19 @@
       "hard": true,
       "id": "support_bot:fmt.trailing_newline+prep.truncate",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "prep"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -8278,6 +11107,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "fmt"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -8290,6 +11132,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8317,6 +11168,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8367,6 +11222,19 @@
       "hard": true,
       "id": "support_desk:compliance_check.skip_pii_scan+faq_score.no_normalise",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "faq_score"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -8393,6 +11261,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -8405,6 +11286,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8432,6 +11322,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -8484,6 +11378,19 @@
       "hard": true,
       "id": "support_desk:compliance_check.skip_pii_scan+policy_check.short_window",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "policy_check"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -8510,6 +11417,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -8522,6 +11442,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8549,6 +11478,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -8603,6 +11536,19 @@
       "hard": true,
       "id": "support_desk:draft_reply.terse_instruction+merge_results.drop_history",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "merge_results"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8629,6 +11575,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -8641,6 +11600,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8669,6 +11637,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8724,6 +11696,19 @@
       "hard": true,
       "id": "support_desk:faq_search.stale_index+lang_detect.swap_codes",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "lang_detect"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8750,6 +11735,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -8762,6 +11760,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8790,6 +11797,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8848,6 +11859,19 @@
       "hard": true,
       "id": "support_desk:approval_gate.limit_off+send.dry_run",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "approval_gate"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8874,6 +11898,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8886,6 +11923,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -8914,6 +11960,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -8965,6 +12015,19 @@
       "hard": true,
       "id": "support_desk:faq_search.stale_index+rerank.ascending",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "faq_search"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -8991,6 +12054,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "send"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9003,6 +12079,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9031,6 +12116,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -9084,6 +12173,19 @@
       "hard": true,
       "id": "loan_underwriting:decision_router.always_refer+fraud_identity.months_as_days",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "decision_router"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -9110,6 +12212,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9122,6 +12237,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9149,6 +12273,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -9201,6 +12329,19 @@
       "hard": true,
       "id": "loan_underwriting:fraud_aggregate.threshold_two+pricing.floor_payment",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "pricing"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -9227,6 +12368,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9239,6 +12393,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9266,6 +12429,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -9317,6 +12484,19 @@
       "hard": true,
       "id": "loan_underwriting:employer_verify.stale_registry+kyc_match.exact_case",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "employer_verify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -9343,6 +12523,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9355,6 +12548,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9383,6 +12585,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -9439,6 +12645,19 @@
       "hard": true,
       "id": "loan_underwriting:credit_bureau.thin_file+risk_score.util_cutoff",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "credit_bureau"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9465,6 +12684,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9477,6 +12709,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9504,6 +12745,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -9555,6 +12800,19 @@
       "hard": true,
       "id": "loan_underwriting:id_parse.swap_dates+policy_rules.kyc_ignored",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "id_parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -9581,6 +12839,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9593,6 +12864,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9620,6 +12900,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 1,
@@ -9672,6 +12956,19 @@
       "hard": true,
       "id": "loan_underwriting:fraud_identity.months_as_days+id_parse.swap_dates",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "id_parse"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -9698,6 +12995,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "notify"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9710,6 +13020,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9737,6 +13056,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -9795,6 +13118,19 @@
       "hard": true,
       "id": "revenue_report:drop_selfserve+key_ignores_month",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "dedupe"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9821,6 +13157,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9833,6 +13182,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9861,6 +13219,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -9928,6 +13290,19 @@
       "hard": true,
       "id": "revenue_report:drop_last_bar+sign_flip",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "extract_refunds"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9954,6 +13329,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -9966,6 +13354,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -9994,6 +13391,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -10061,6 +13462,19 @@
       "hard": true,
       "id": "revenue_report:exclude_refunds+wrong_prior",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "agg_total"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -10087,6 +13501,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -10099,6 +13526,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -10127,6 +13563,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -10182,6 +13622,19 @@
       "hard": true,
       "id": "revenue_report:cap_1000+wrong_text",
       "methods": {
+        "g0_g2": {
+          "jaccard": 1.0,
+          "outcome": "exact",
+          "prediction": {
+            "sets": [
+              [
+                "outlier_filter"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 1.0,
           "outcome": "exact",
@@ -10208,6 +13661,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -10220,6 +13686,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -10247,6 +13722,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -10310,6 +13789,19 @@
       "hard": true,
       "id": "revenue_report:key_ignores_month+stale_segments",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "dedupe"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -10336,6 +13828,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -10348,6 +13853,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -10376,6 +13890,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -10441,6 +13959,19 @@
       "hard": true,
       "id": "revenue_report:always_warn+drop_refunds",
       "methods": {
+        "g0_g2": {
+          "jaccard": 0.5,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "merge_sources"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "g0_only": {
           "jaccard": 0.5,
           "outcome": "wrong",
@@ -10467,6 +13998,19 @@
           },
           "reason": null
         },
+        "llm_guess_stub": {
+          "jaccard": 0.0,
+          "outcome": "wrong",
+          "prediction": {
+            "sets": [
+              [
+                "publish"
+              ]
+            ],
+            "status": "answer"
+          },
+          "reason": null
+        },
         "paste_and_play": {
           "jaccard": 0.0,
           "outcome": "wrong",
@@ -10479,6 +14023,15 @@
             "status": "answer"
           },
           "reason": null
+        },
+        "plain_retry": {
+          "jaccard": null,
+          "outcome": "abstain",
+          "prediction": {
+            "reason": "no_diagnosis",
+            "status": "abstain"
+          },
+          "reason": "no_diagnosis"
         },
         "random_node": {
           "jaccard": 0.0,
@@ -10507,6 +14060,10 @@
           },
           "reason": null
         }
+      },
+      "retry": {
+        "passed": 0,
+        "runs": 3
       },
       "sherlock": {
         "candidates": 2,
@@ -10562,6 +14119,49 @@
   "failures": [],
   "invariants": {
     "artifact_violations": {},
+    "live_time_travel": {
+      "vendor_brief:retriever.drop_latest+extractor.legacy_pattern": {
+        "case": "vendor_brief:retriever.drop_latest+extractor.legacy_pattern",
+        "gold": [
+          [
+            "extractor",
+            "retriever"
+          ]
+        ],
+        "outcome": "abstain",
+        "prediction": {
+          "reason": "no_single_node_fix",
+          "status": "abstain"
+        },
+        "single_restore_verdicts": {
+          "extractor": "fail",
+          "retriever": "fail",
+          "reviewer": "fail",
+          "router": "fail",
+          "writer": "fail"
+        }
+      },
+      "vendor_brief:router.wrong_source": {
+        "case": "vendor_brief:router.wrong_source",
+        "gold": [
+          [
+            "router"
+          ]
+        ],
+        "outcome": "exact",
+        "prediction": {
+          "sets": [
+            [
+              "router"
+            ]
+          ],
+          "status": "answer"
+        },
+        "single_restore_verdicts": {
+          "router": "pass"
+        }
+      }
+    },
     "original_thread_unchanged": true,
     "replay_network_attempts": []
   },
@@ -10771,6 +14371,11 @@
       "trials_used": 0
     }
   ],
+  "retry": {
+    "cases_where_a_retry_passed": 0,
+    "retries_that_passed": 0,
+    "runs_per_case": 3
+  },
   "scale": {
     "invoice_pipeline": {
       "candidates_mean": 1.4,
@@ -10864,10 +14469,19 @@
       "trials_mean": 2.1
     }
   },
-  "schema": 1,
+  "schema": 2,
   "seed": 20261014,
   "summary": {
     "all": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 49,
+        "exact_of_answered": 0.57,
+        "mean_jaccard": 0.765,
+        "n": 86,
+        "wrong": 37
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -10886,6 +14500,15 @@
         "n": 86,
         "wrong": 80
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.07,
+        "mean_jaccard": 0.103,
+        "n": 86,
+        "wrong": 80
+      },
       "paste_and_play": {
         "abstain": 2,
         "abstain_reasons": {
@@ -10896,6 +14519,17 @@
         "mean_jaccard": 0.093,
         "n": 86,
         "wrong": 79
+      },
+      "plain_retry": {
+        "abstain": 86,
+        "abstain_reasons": {
+          "no_diagnosis": 86
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 86,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -10919,6 +14553,15 @@
       }
     },
     "hard": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 15,
+        "exact_of_answered": 0.294,
+        "mean_jaccard": 0.618,
+        "n": 51,
+        "wrong": 36
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -10937,6 +14580,15 @@
         "n": 51,
         "wrong": 49
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.039,
+        "mean_jaccard": 0.088,
+        "n": 51,
+        "wrong": 49
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -10945,6 +14597,17 @@
         "mean_jaccard": 0.088,
         "n": 51,
         "wrong": 49
+      },
+      "plain_retry": {
+        "abstain": 51,
+        "abstain_reasons": {
+          "no_diagnosis": 51
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 51,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -10968,6 +14631,15 @@
       }
     },
     "hidden": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 16,
+        "exact_of_answered": 0.471,
+        "mean_jaccard": 0.721,
+        "n": 34,
+        "wrong": 18
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -10986,6 +14658,15 @@
         "n": 34,
         "wrong": 32
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 2,
+        "exact_of_answered": 0.059,
+        "mean_jaccard": 0.118,
+        "n": 34,
+        "wrong": 32
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -10994,6 +14675,17 @@
         "mean_jaccard": 0.118,
         "n": 34,
         "wrong": 32
+      },
+      "plain_retry": {
+        "abstain": 34,
+        "abstain_reasons": {
+          "no_diagnosis": 34
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 34,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -11015,6 +14707,15 @@
       }
     },
     "last_step_ok": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 44,
+        "exact_of_answered": 0.587,
+        "mean_jaccard": 0.773,
+        "n": 75,
+        "wrong": 31
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -11033,6 +14734,15 @@
         "n": 75,
         "wrong": 74
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 1,
+        "exact_of_answered": 0.013,
+        "mean_jaccard": 0.013,
+        "n": 75,
+        "wrong": 74
+      },
       "paste_and_play": {
         "abstain": 2,
         "abstain_reasons": {
@@ -11043,6 +14753,17 @@
         "mean_jaccard": 0.0,
         "n": 75,
         "wrong": 73
+      },
+      "plain_retry": {
+        "abstain": 75,
+        "abstain_reasons": {
+          "no_diagnosis": 75
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 75,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -11066,6 +14787,15 @@
       }
     },
     "one_node": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 49,
+        "exact_of_answered": 0.875,
+        "mean_jaccard": 0.911,
+        "n": 56,
+        "wrong": 7
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -11084,6 +14814,15 @@
         "n": 56,
         "wrong": 50
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 6,
+        "exact_of_answered": 0.107,
+        "mean_jaccard": 0.107,
+        "n": 56,
+        "wrong": 50
+      },
       "paste_and_play": {
         "abstain": 2,
         "abstain_reasons": {
@@ -11094,6 +14833,17 @@
         "mean_jaccard": 0.093,
         "n": 56,
         "wrong": 49
+      },
+      "plain_retry": {
+        "abstain": 56,
+        "abstain_reasons": {
+          "no_diagnosis": 56
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 56,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -11115,6 +14865,15 @@
       }
     },
     "two_node": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.494,
+        "n": 30,
+        "wrong": 30
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -11133,6 +14892,15 @@
         "n": 30,
         "wrong": 30
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 0,
+        "exact_of_answered": 0.0,
+        "mean_jaccard": 0.094,
+        "n": 30,
+        "wrong": 30
+      },
       "paste_and_play": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -11141,6 +14909,17 @@
         "mean_jaccard": 0.094,
         "n": 30,
         "wrong": 30
+      },
+      "plain_retry": {
+        "abstain": 30,
+        "abstain_reasons": {
+          "no_diagnosis": 30
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 30,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,
@@ -11164,6 +14943,15 @@
       }
     },
     "visible": {
+      "g0_g2": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 33,
+        "exact_of_answered": 0.635,
+        "mean_jaccard": 0.795,
+        "n": 52,
+        "wrong": 19
+      },
       "g0_only": {
         "abstain": 0,
         "abstain_reasons": {},
@@ -11182,6 +14970,15 @@
         "n": 52,
         "wrong": 48
       },
+      "llm_guess_stub": {
+        "abstain": 0,
+        "abstain_reasons": {},
+        "exact": 4,
+        "exact_of_answered": 0.077,
+        "mean_jaccard": 0.093,
+        "n": 52,
+        "wrong": 48
+      },
       "paste_and_play": {
         "abstain": 2,
         "abstain_reasons": {
@@ -11192,6 +14989,17 @@
         "mean_jaccard": 0.077,
         "n": 52,
         "wrong": 47
+      },
+      "plain_retry": {
+        "abstain": 52,
+        "abstain_reasons": {
+          "no_diagnosis": 52
+        },
+        "exact": 0,
+        "exact_of_answered": null,
+        "mean_jaccard": null,
+        "n": 52,
+        "wrong": 0
       },
       "random_node": {
         "abstain": 0,

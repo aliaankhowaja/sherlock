@@ -22,7 +22,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 HARNESS = ROOT / "harness"
-sys.path[:0] = [str(HARNESS), str(HERE.parent / "tests"), str(HERE.parent / "src")]
+sys.path[:0] = [str(HERE), str(HARNESS), str(HERE.parent / "tests"), str(HERE.parent / "src")]
 
 from g1_stub import ShortlistStub  # noqa: E402
 from sherlock_harness.catalog import BIG_TEAMS, HARMLESS, SEED, TEAMS, Case, build_cases  # noqa: E402
@@ -30,13 +30,19 @@ from sherlock_harness.stub import EchoStub  # noqa: E402
 from test_g3_live import LAUNCHER, Server, http  # noqa: E402
 
 from sherlock.checks import Checks  # noqa: E402
-from sherlock.diagnose import diagnose, write_artifact  # noqa: E402
+from sherlock.diagnose import _gather_sources, diagnose, write_artifact  # noqa: E402
+import baselines as extra  # noqa: E402
 from sherlock.evaluation import (BASELINES, METHODS, artifact_violations, from_artifact, score,  # noqa: E402
                                  summarize)
 from sherlock.g3 import Client  # noqa: E402
 from sherlock.search import Budget  # noqa: E402
 
-SCHEMA = 1
+SCHEMA = 2
+ALL_METHODS = METHODS + extra.EXTRA
+# FR-E9: the two-cause case live time-travel must fail, and a one-cause control it must be able to solve.
+TWO_CAUSE = "vendor_brief:retriever.drop_latest+extractor.legacy_pattern"
+CONTROL = "vendor_brief:router.wrong_source"
+LIVE_TT = (TWO_CAUSE, CONTROL)
 SLICES = {
     "all": lambda r: True,
     "visible": lambda r: r["split"] == "visible",
@@ -85,6 +91,16 @@ def _lab(work: Path, cases):
     return server, good, failed, cassette
 
 
+def _live_tt(client, tid, history, art, good_tid, team, checks, c):
+    """Live time-travel (no cassette, one node restored per fork) scored like every method on the same case."""
+    graph_id = (client.request("GET", f"/threads/{tid}").get("metadata") or {}).get("graph_id")
+    src = _gather_sources(client, tid, graph_id, history, art["context"], checks, [good_tid], False,
+                          team.node_map)[0]
+    pred, seen = extra.live_time_travel(client, tid, history, src.known_good, checks, art["context"])
+    return {"case": c.id, "gold": c.gold, "single_restore_verdicts": seen, "prediction": pred,
+            "outcome": score(c.gold, pred)["outcome"]}
+
+
 def _history(client, tid):
     return client.request("POST", f"/threads/{tid}/history", {"limit": 1000})
 
@@ -121,7 +137,7 @@ def _run_group(cases, seed):
     """One lab for `cases`: record, restart under replay, diagnose each, score against the baselines."""
     work = Path(tempfile.mkdtemp(prefix="sherlock-eval-"))
     server, good, failed, cassette = _lab(work, cases)
-    rows, artifacts, unchanged, probes = [], [], [], []
+    rows, artifacts, unchanged, probes, invariants_live = [], [], [], [], {}
     try:
         client = Client(server.url)
         for c in cases:
@@ -147,13 +163,19 @@ def _run_group(cases, seed):
             preds = {"sherlock": from_artifact(art)}
             for name, fn in BASELINES.items():
                 preds[name] = fn(after, good_hist, checks, rng=rng)
+            preds["llm_guess_stub"] = extra.llm_guess_stub(after, good_hist, checks)
+            preds["g0_g2"] = extra.g0_g2(art)
+            preds["plain_retry"], retry = extra.plain_retry(client, art, c.team, team.input, checks)
+            if c.id in LIVE_TT:
+                invariants_live[c.id] = _live_tt(client, tid, after, art, good[c.team], team, checks, c)
             red = art.get("trial_reduction") or {}
             gold_nodes = {n for g in c.gold for n in g}
             clue_nodes = sorted({k["node"] for k in art.get("clues", []) if k.get("node")})
             if c.id in PROBES:
                 probes += _gate_probes(client, c, tid, team, checks, cassette, good[c.team], *PROBES[c.id])
             rows.append({**c.to_dict(),
-                         "methods": {m: score(c.gold, preds[m]) | {"prediction": preds[m]} for m in METHODS},
+                         "methods": {m: score(c.gold, preds[m]) | {"prediction": preds[m]} for m in ALL_METHODS},
+                         "retry": retry,
                          "sherlock": {"status": art["status"], "reason_code": art.get("reason_code"),
                                       "trials_used": red.get("trials_used", 0),
                                       "exhaustive_trials": red.get("exhaustive_trials", 0),
@@ -168,7 +190,7 @@ def _run_group(cases, seed):
         server.stop()
     attempts = (work / "net_attempts.txt").read_text().splitlines() if (work / "net_attempts.txt").exists() else []
     shutil.rmtree(work, ignore_errors=True)
-    return rows, artifacts, unchanged, attempts, probes
+    return rows, artifacts, unchanged, attempts, probes, invariants_live
 
 
 def run_eval(seed: int = SEED, only: set | None = None) -> dict:
@@ -183,9 +205,10 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
         return team.llm and len({team.faults[f].node for f in c.faults} & team.request_nodes) >= 2
 
     groups = [[c for c in cases + probe_cases if not alone(c)]] + [[c] for c in cases if alone(c)]
-    rows, artifacts, unchanged, net_attempts, probes = [], [], [], [], []
+    rows, artifacts, unchanged, net_attempts, probes, live = [], [], [], [], [], {}
     for group in groups:
-        r, a, u, n, p = _run_group(group, seed)
+        r, a, u, n, p, lv = _run_group(group, seed)
+        live.update(lv)
         rows += r
         artifacts += a
         unchanged += u
@@ -193,12 +216,12 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
         probes += p
     order = {c.id: i for i, c in enumerate(cases)}
     rows.sort(key=lambda r: order[r["id"]])
-    summary = {s: {m: summarize(rows, m, pick) for m in METHODS} for s, pick in SLICES.items()}
+    summary = {s: {m: summarize(rows, m, pick) for m in ALL_METHODS} for s, pick in SLICES.items()}
     used = sum(r["sherlock"]["trials_used"] for r in rows if r["sherlock"]["status"] == "found")
     exhaustive = sum(r["sherlock"]["exhaustive_trials"] for r in rows if r["sherlock"]["status"] == "found")
     results = {
         "schema": SCHEMA, "seed": seed, "teams": sorted(TEAMS), "cases": rows, "summary": summary,
-        "by_team": {t: {m: summarize(rows, m, lambda r, t=t: r["team"] == t) for m in METHODS} for t in sorted(TEAMS)},
+        "by_team": {t: {m: summarize(rows, m, lambda r, t=t: r["team"] == t) for m in ALL_METHODS} for t in sorted(TEAMS)},
         "trials": {"used_on_found": used, "exhaustive_on_found": exhaustive,
                    "fewer_pct": round(100 * (1 - used / exhaustive), 1) if exhaustive else 0.0},
         "probes": probes, "scale": scale_table(rows),
@@ -206,7 +229,11 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
             "replay_network_attempts": net_attempts,
             "original_thread_unchanged": all(ok for _, ok in unchanged),
             "artifact_violations": {i: v for i, a in artifacts if (v := artifact_violations(a))},
+            "live_time_travel": live,
         },
+        "retry": {"runs_per_case": extra.RETRIES,
+                  "cases_where_a_retry_passed": sum(r["retry"]["passed"] > 0 for r in rows),
+                  "retries_that_passed": sum(r["retry"]["passed"] for r in rows)},
     }
     results["failures"] = expectations(results)
     return results
@@ -255,10 +282,17 @@ def expectations(res: dict) -> list[str]:
                        f"{p['reason_code'] or p['minimal_sets']}")
     for sl in ("all", "hard"):
         mine = res["summary"][sl]["sherlock"]
-        for m in BASELINES:
+        for m in (*BASELINES, *extra.EXTRA):
             other = res["summary"][sl][m]
             if mine["exact"] < other["exact"] or mine["wrong"] > other["wrong"]:
                 bad.append(f"sherlock does not beat or equal {m} on the {sl} slice")
+    live = inv.get("live_time_travel", {})
+    if not live:
+        bad.append("FR-E9: live time-travel was not run")
+    if TWO_CAUSE in live and live[TWO_CAUSE]["outcome"] == "exact":
+        bad.append("FR-E9: live time-travel (no call blocking) solved the two-cause case; the invariant is broken")
+    if CONTROL in live and live[CONTROL]["outcome"] != "exact":
+        bad.append("FR-E9 control: live time-travel could not solve a one-cause case, so the baseline is a straw man")
     if res["trials"]["exhaustive_on_found"] and res["trials"]["fewer_pct"] < 40:
         bad.append(f"fewer trials than exhaustive: {res['trials']['fewer_pct']}% < 40% (NFR-8)")
     return bad
@@ -278,7 +312,7 @@ def render(res: dict) -> str:
                       ("hard", "Hard slice (two-cause, OR-fix, decoy, abstain-by-design)"),
                       ("one_node", "Gold set of one node"), ("two_node", "Gold set of two nodes"),
                       ("last_step_ok", "The node that writes the output is not a culprit")):
-        out += [f"## {title}", "", head + "\n".join(_row(m, res["summary"][sl][m]) for m in METHODS), ""]
+        out += [f"## {title}", "", head + "\n".join(_row(m, res["summary"][sl][m]) for m in ALL_METHODS), ""]
     out += ["## Per team (Sherlock)", "",
             "| team | cases | exact | wrong claim | abstain | abstain reasons |\n|---|---|---|---|---|---|"]
     for t, ms in res["by_team"].items():
@@ -316,6 +350,10 @@ def render(res: dict) -> str:
             f"- network attempts during replay: {len(inv['replay_network_attempts'])}",
             f"- original threads unchanged after forks: {inv['original_thread_unchanged']}",
             f"- artifacts that break the honesty rules: {len(inv['artifact_violations'])}",
+            f"- FR-E9 live time-travel (fork, restore one node, no cassette): "
+            + "; ".join(f"{k}: {v['outcome']} ({v['prediction'].get('reason') or v['prediction']['sets']})"
+                        for k, v in inv["live_time_travel"].items()),
+            f"- plain retry (x{res['retry']['runs_per_case']} per case) passed on {res['retry']['cases_where_a_retry_passed']} case(s)",
             f"- expectation failures: {len(res['failures'])}", ""]
     return "\n".join(out)
 
