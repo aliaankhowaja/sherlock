@@ -82,7 +82,7 @@ export interface Trial {
   reason: string
   elapsed_s?: number
   cassette_miss?: boolean
-  gate?: string
+  gates?: string[]
 }
 
 export interface Clue {
@@ -140,6 +140,7 @@ export interface Artifact {
 export interface GateSummary {
   nodes_total?: number
   pruned_by_ancestry?: number
+  pruned_other?: number
   g0_flagged?: number
   g1_nominated?: number
   g2_cut?: number

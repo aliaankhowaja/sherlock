@@ -21,6 +21,13 @@ function Term({ k, children }: { k: keyof typeof TIP; children: ReactNode }) {
   return <span className="term" tabIndex={0} data-tip={TIP[k]}>{children}</span>
 }
 
+const GATE_NAME: Record<string, string> = { g0: 'clue', g1: 'LLM hint', g2: 'path check' }
+const GATE_TIP: Record<string, string> = {
+  g0: 'A cheap clue pointed at a node in this group; it only set the order.',
+  g1: 'The optional language-model hint nominated a node in this group; it only breaks ties in the order.',
+  g2: 'A suspect you named, kept because a recorded hand-off links it to the failure.',
+}
+
 const both = (set: string[]) => (set.length === 1 ? `${set[0]} alone` : `${set.slice(0, -1).join(', ')} and ${set.at(-1)} together`)
 
 const WHY_NOT: Record<string, string> = {
@@ -112,7 +119,7 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
               {trials.map((t) => (
                 <tr key={t.n} className={`tr-${t.verdict}`}>
                   <td>{t.n}</td>
-                  <td>{t.restored.join(' + ')}{t.gate && <span className="tag gate-tag">{t.gate}</span>}</td>
+                  <td>{t.restored.join(' + ')}{t.gates?.filter((g) => g !== 'g3').map((g) => <span key={g} className="tag gate-tag" title={GATE_TIP[g] ?? g}>{GATE_NAME[g] ?? g}</span>)}</td>
                   <td><Term k={t.verdict === 'pass' ? 'pass' : t.verdict === 'fail' ? 'fail' : 'abstain'}><Glyph name={t.verdict === 'pass' ? 'check' : t.verdict === 'fail' ? 'cross' : 'question'} />{TRIAL_LABEL[t.label] ?? t.verdict}</Term></td>
                   <td>{plain(t.reason)}</td>
                   <td>{t.elapsed_s !== undefined ? `${t.elapsed_s.toFixed(1)} s` : ''}</td>
