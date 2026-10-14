@@ -10,7 +10,11 @@ use rust_embed::RustEmbed;
 use serde::Deserialize;
 use std::path::PathBuf;
 
+mod run;
+mod spawn;
 mod views;
+
+pub use app_core::runner::Project;
 
 #[derive(RustEmbed, Clone)]
 #[folder = "../../ui/dist/"]
@@ -29,6 +33,11 @@ pub struct ServeOptions {
     pub langsmith_url: String,
     /// Sherlock's local state directory; diagnoses are read from `<dir>/diagnoses/`.
     pub sherlock_dir: PathBuf,
+    /// The recorded project the run button diagnoses (`.sherlock/cassette.db`, `checks/`).
+    /// `None`: discovered next to `sherlock_dir`, else the button is off.
+    pub project: Option<PathBuf>,
+    /// The `sherlock-rec` program the run button starts.
+    pub sherlock_rec: String,
 }
 
 impl ServeOptions {
@@ -118,6 +127,7 @@ pub struct AppState {
     /// Where runs are read from, shown to the user in the guided steps.
     source: (&'static str, String),
     sherlock_dir: PathBuf,
+    run: std::sync::Arc<run::RunState>,
 }
 
 impl AppState {
@@ -129,11 +139,18 @@ impl AppState {
                 api_key: langgraph_api_key,
             })),
             sherlock_dir: PathBuf::from(".sherlock"),
+            run: std::sync::Arc::new(run::RunState::new(None, None)),
         }
     }
 
     pub fn with_sherlock_dir(mut self, dir: PathBuf) -> Self {
         self.sherlock_dir = dir;
+        self
+    }
+
+    /// Turn the run button on for `project` (LangGraph source only); `port` is the bound port.
+    pub fn with_project(mut self, project: Option<Project>, port: Option<u16>) -> Self {
+        self.run = std::sync::Arc::new(run::RunState::new(project, port));
         self
     }
 
@@ -145,6 +162,7 @@ impl AppState {
                 langsmith_api_key,
             ))),
             sherlock_dir: PathBuf::from(".sherlock"),
+            run: std::sync::Arc::new(run::RunState::new(None, None)),
         }
     }
 }
@@ -456,6 +474,8 @@ async fn info(State(state): State<AppState>) -> impl IntoResponse {
         "source": state.source.0,
         "url": state.source.1,
         "sherlock_dir": state.sherlock_dir.display().to_string(),
+        "token": state.run.token,
+        "run": run::info(&state.run),
     }))
 }
 
@@ -522,7 +542,14 @@ pub fn build_router(state: AppState) -> axum::Router {
         )
         .route("/api/runs/{thread_id}/steps", get(views::run_steps))
         .route("/api/teams/{assistant_id}/graph", get(views::team_graph))
+        .route("/api/diagnose", axum::routing::post(run::start))
+        .route("/api/jobs", get(run::jobs))
+        .route("/api/jobs/{id}", get(run::job))
         .fallback(serve_ui)
+        .layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            run::guard,
+        ))
         .with_state(state)
 }
 
@@ -530,24 +557,64 @@ fn ui_available() -> bool {
     has_ui_assets() || filesystem_dist_dir().is_some()
 }
 
+fn is_loopback(host: &str) -> bool {
+    matches!(host, "127.0.0.1" | "localhost" | "::1" | "[::1]")
+}
+
+/// The project the run button may diagnose: `--project`, else discovered next to the diagnoses.
+/// Off for a LangSmith source; refused outright on a non-loopback interface.
+fn run_project(opts: &ServeOptions) -> Result<Option<Project>> {
+    if opts.langsmith_api_key.is_some() {
+        return Ok(None);
+    }
+    let Some(dir) = opts
+        .project
+        .clone()
+        .or_else(|| Project::discover(&opts.sherlock_dir))
+    else {
+        return Ok(None);
+    };
+    if !is_loopback(&opts.host) {
+        anyhow::bail!(
+            "the run button only listens on this machine: use --host 127.0.0.1 (or drop --project)"
+        );
+    }
+    Ok(Some(Project {
+        dir: std::path::absolute(&dir)?,
+        program: opts.sherlock_rec.clone(),
+        langgraph_url: opts.langgraph_url.clone(),
+        sherlock_dir: std::path::absolute(&opts.sherlock_dir)?,
+    }))
+}
+
 pub async fn serve(opts: ServeOptions) -> Result<()> {
     if !ui_available() {
         return Err(missing_dist_error());
     }
+    let project = run_project(&opts)?;
     let listener = tokio::net::TcpListener::bind(opts.addr()).await?;
     println!("Serving sherlock at {}", opts.base_url());
     let state = if let Some(key) = opts.langsmith_api_key.clone() {
         println!("Ingestion source: LangSmith ({})", opts.langsmith_url);
-        AppState::langsmith(opts.langsmith_url, key)
+        AppState::langsmith(opts.langsmith_url.clone(), key)
     } else {
         println!("Ingestion source: LangGraph ({})", opts.langgraph_url);
-        AppState::new(opts.langgraph_url, opts.langgraph_api_key)
+        AppState::new(opts.langgraph_url.clone(), opts.langgraph_api_key.clone())
     }
     .with_sherlock_dir(opts.sherlock_dir.clone());
     println!(
         "Diagnoses: {}",
         opts.sherlock_dir.join("diagnoses").display()
     );
+    match &project {
+        Some(p) => println!(
+            "Run button: on (project {}, program {})",
+            p.dir.display(),
+            p.program
+        ),
+        None => println!("Run button: off (no recorded project; pass --project DIR)"),
+    }
+    let state = state.with_project(project, Some(opts.port));
     axum::serve(listener, build_router(state))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
@@ -557,7 +624,7 @@ pub async fn serve(opts: ServeOptions) -> Result<()> {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use axum::body::{Body, to_bytes};
     use axum::http::{Request, StatusCode};
@@ -566,7 +633,7 @@ mod tests {
     use tower::ServiceExt;
 
     /// Fake LangGraph transport: canned JSON per path, records requests.
-    type SeenRequests = Arc<Mutex<Vec<(String, serde_json::Value)>>>;
+    pub(crate) type SeenRequests = Arc<Mutex<Vec<(String, serde_json::Value)>>>;
 
     struct FakeTransport {
         routes: HashMap<String, serde_json::Value>,
@@ -594,7 +661,7 @@ mod tests {
         }
     }
 
-    fn state_with(routes: &[(&str, serde_json::Value)]) -> (AppState, SeenRequests) {
+    pub(crate) fn state_with(routes: &[(&str, serde_json::Value)]) -> (AppState, SeenRequests) {
         let seen = Arc::new(Mutex::new(Vec::new()));
         let fake = FakeTransport {
             routes: routes
@@ -608,6 +675,7 @@ mod tests {
                 upstream: Upstream::LangGraph(Arc::new(fake)),
                 source: ("langgraph", "http://fake".to_string()),
                 sherlock_dir: PathBuf::from("does-not-exist"),
+                run: Arc::new(run::RunState::new(None, None)),
             },
             seen,
         )
@@ -699,9 +767,40 @@ mod tests {
             langsmith_api_key: None,
             langsmith_url: "https://api.smith.langchain.com".to_string(),
             sherlock_dir: PathBuf::from(".sherlock"),
+            project: None,
+            sherlock_rec: "sherlock-rec".to_string(),
         };
         assert_eq!(opts.addr(), "127.0.0.1:3000");
         assert_eq!(opts.base_url(), "http://127.0.0.1:3000");
+    }
+
+    #[test]
+    fn the_run_button_needs_loopback_and_a_langgraph_source() {
+        let opts = |host: &str, project: Option<PathBuf>, langsmith: Option<String>| ServeOptions {
+            host: host.to_string(),
+            port: 3000,
+            langgraph_url: "http://127.0.0.1:2024".to_string(),
+            langgraph_api_key: None,
+            langsmith_api_key: langsmith,
+            langsmith_url: String::new(),
+            sherlock_dir: PathBuf::from("does-not-exist"),
+            project,
+            sherlock_rec: "sherlock-rec".to_string(),
+        };
+        let lab = Some(PathBuf::from("lab"));
+        let p = run_project(&opts("127.0.0.1", lab.clone(), None))
+            .unwrap()
+            .unwrap();
+        assert!(p.dir.is_absolute() && p.dir.ends_with("lab"));
+        assert_eq!(p.program, "sherlock-rec");
+        let err = run_project(&opts("0.0.0.0", lab.clone(), None)).unwrap_err();
+        assert!(err.to_string().contains("--host 127.0.0.1"));
+        assert!(run_project(&opts("0.0.0.0", None, None)).unwrap().is_none());
+        assert!(
+            run_project(&opts("127.0.0.1", lab, Some("k".into())))
+                .unwrap()
+                .is_none()
+        );
     }
 
     #[tokio::test]

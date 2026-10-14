@@ -79,6 +79,16 @@ struct ServeArgs {
     /// Sherlock state directory; diagnoses are read from `<dir>/diagnoses/`
     #[arg(long, default_value = ".sherlock")]
     sherlock_dir: std::path::PathBuf,
+
+    /// Recorded project for the run button (`.sherlock/cassette.db`, `checks/<graph_id>.yaml`).
+    /// Default: `<sherlock-dir>/lab` or the parent of `<sherlock-dir>` if it holds a recording;
+    /// otherwise the button is off. Needs --host on loopback.
+    #[arg(long)]
+    project: Option<std::path::PathBuf>,
+
+    /// The `sherlock-rec` program the run button starts (fixed argv, no shell)
+    #[arg(long, default_value = "sherlock-rec")]
+    sherlock_rec: String,
 }
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -125,6 +135,8 @@ async fn main() -> anyhow::Result<()> {
                 langsmith_api_key,
                 langsmith_url: args.langsmith_url,
                 sherlock_dir: args.sherlock_dir,
+                project: args.project,
+                sherlock_rec: args.sherlock_rec,
             })
             .await?;
         }
@@ -518,6 +530,31 @@ mod tests {
         );
         assert_eq!(args.sherlock_dir, std::path::PathBuf::from("x"));
         assert!(Cli::try_parse_from(["sherlock", "diagnoses", "show"]).is_err());
+    }
+
+    #[test]
+    fn serve_takes_a_project_and_the_sherlock_rec_program() {
+        let cli = Cli::parse_from(["sherlock", "serve"]);
+        let Commands::Serve(args) = cli.command else {
+            panic!("expected serve");
+        };
+        assert_eq!(
+            (args.project, args.sherlock_rec.as_str()),
+            (None, "sherlock-rec")
+        );
+        let cli = Cli::parse_from([
+            "sherlock",
+            "serve",
+            "--project",
+            "lab",
+            "--sherlock-rec",
+            "/x/sherlock-rec",
+        ]);
+        let Commands::Serve(args) = cli.command else {
+            panic!("expected serve");
+        };
+        assert_eq!(args.project, Some(std::path::PathBuf::from("lab")));
+        assert_eq!(args.sherlock_rec, "/x/sherlock-rec");
     }
 
     #[test]
