@@ -62,12 +62,27 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
     (`g3.py`): fork a recorded run over HTTP, restore known-good behaviour via run `context`, resume from the cassette, apply Z.
     Exit 0 pass, 1 fail, 75 abstain, 2 error. The server must be running under `sherlock-rec run --replay langgraph dev ...`;
     G3 refuses otherwise. Known-good file: `{node: {context_key: value | {"$remove": [..], "$add": [..]}}}` (see `harness/known_good/`).
-  - `sherlock-rec diagnose --thread-id ID [--good-run THREAD]... [--discover-good] [--known-good FILE] [--suspect NODE[->NODE]]... [-c sherlock.yaml] [--url URL] [--cassette PATH] [--max-trials 40] [--max-minutes 10] [--max-size 3] [--out DIR]`
+  - `sherlock-rec diagnose --thread-id ID [--good-run THREAD]... [--discover-good] [--known-good FILE] [--suspect NODE[->NODE]]... [-c sherlock.yaml] [--url URL] [--cassette PATH] [--max-trials N] [--max-minutes 10] [--max-size 3] [--g1-url URL --g1-model NAME [--g1-samples 1] [--g1-key K]] [--out DIR]`
     (`diagnose.py` over `search.py`): prune candidates (`plan_candidates`), probe, then singletons, pairs and up to `--max-size`
     nodes through `run_g3`; returns every 1-minimal set or an abstain with a reason code. Writes `.sherlock/diagnoses/<thread_id>.json`
     (schema 1, additive: `status`, `minimal_sets`, `unverified_sets`, `trials` (with `n`, `elapsed_s`), `counts`, `pruning` (with
     `pruned_ratio`), `trial_reduction`, `budget`, plus `clues`, `path_check`, `known_good_source`, `sources_considered`,
-    `other_sources`, `intake`). Exit 0 found, 75 cannot say, 2 error. Same server requirement as `g3`.
+    `other_sources`, `intake`; Phase 6b adds `g1`, `gate_summary`, `trials[].gates`, `screen`). Exit 0 found, 75 cannot say, 2 error. Same server requirement as `g3`.
+    - Large pipelines (`search.py`): up to 6 candidates every set up to `--max-size` is tried, in priority order (G0 clues, then G1 nominations).
+      Above 6, minimal sets are found by duality: shrink a passing set (halving chunks of the lowest-priority nodes), then probe
+      "all candidates except one node of each set found"; when every probe fails nothing else exists, and the size cutoff does not apply
+      (`screen: {mode: "duality"|"enumeration", proved_no_others}`). It relies on monotonicity (restoring more never un-fixes a run), as the
+      superset skip already did. An untestable probe is never proof. `--max-trials` unset = 40, or 3 per candidate + 20 when that is larger.
+      Measured: 30/40/60 nodes, 5 planted shapes, 6-41 trials (2^60 exhaustive); 100 nodes 25 trials, 300 nodes 31.
+    - G1 (`gates.py`, optional, off by default): `--g1-url` is an OpenAI-compatible base URL (`/chat/completions` is appended), key from
+      `--g1-key`, `SHERLOCK_G1_API_KEY` or `OPENAI_API_KEY`. One call per sample, zero tools, node summaries redacted (`redact.py`), reply parsed
+      into node names on the path. Samples only union. G1 only reorders trials (after G0 clue weight); it never adds, removes or labels a node.
+      No usable answer (or the endpoint is down) = `g1.fallback: "g0_only"` and the diagnosis goes on unchanged. `g1` in the artifact:
+      `{enabled, model, endpoint (no key/path), strength: "weak", tools_offered: 0, samples_requested, samples_ok, per_sample, nominated, ignored,
+      prompt_chars, redactions, fallback, error, note}`; `enabled: false` when off. `tests/g1_stub.py --nodes a,b` is a deterministic stub for demos.
+    - Per-gate attribution: `trials[].gates` = which gates put the restored nodes forward (`g0` clue, `g1` nominated, `g2` kept suspect, always `g3`);
+      `gate_summary: {nodes_total, pruned_by_ancestry, pruned_other, g0_flagged, g1_nominated, g2_cut, g3_trials, exhaustive_count}`.
+      `pruning.exhaustive_trials` is an exact Python integer (2^n - 1) and passes 2^53 above 53 nodes: show it as 2^n, not as a JS number.
     `search.py`, `clues.py`, `sources.py` are pure and tested without a server.
     - Known-good: `--good-run` names a prior successful run of the same input (`sources.py`): nodes with the same output are
       skipped, the run-context difference becomes a per-node patch (context items are attributed to a node by name prefix,

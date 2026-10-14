@@ -173,7 +173,9 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-D6, D7, D11 | ✅ | Four labels, first-class abstain with reason code and sentence, counts and trial log in the artifact (P3.3) |
 | FR-D8, D9 | ✅ | `--max-trials/--max-minutes/--max-size`; cutoff documented in `search.py` and the Decision log (P3.4) |
 | FR-D10 | ⬜ | Flakiness pre-check not built: trials replay the cassette, so they are deterministic (see Decision log) |
-| FR-D12 | ✅ | Candidates ordered by clue weight (loop, error, extractive, differs-from-passing-run); speed only (P4.5) |
+| FR-D12 | ✅ | Candidates ordered by clue weight (loop, error, extractive, differs-from-passing-run), then G1 nominations; speed only (P4.5, P6b) |
+| FR-D9 (large) | ✅ | Above 6 candidates minimal sets are found by duality (shrink + "avoid one node of each found set" probes), 6-41 trials on 30/60-node DAGs, size cutoff no longer binds when the probes prove completeness (`tests/test_scale.py`) |
+| Per-gate attribution | ✅ | `trials[].gates` and `gate_summary {nodes_total, pruned_by_ancestry, g0_flagged, g1_nominated, g2_cut, g3_trials, exhaustive_count}` in the artifact (`tests/test_g1.py`) |
 | FR-D13 | ✅ | Sets of 3 by default; configurable with `--max-size` |
 | NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact. Across all four teams, 68 trials vs 538: 87.4% fewer (`docs/eval/results.md`) |
 | FR-E3 | ✅ | Live `diagnose` results equal `gold_minimal_sets` for single, two-cause and writer runs (P3.6) |
@@ -183,7 +185,7 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | FR-U14 | ✅ | Hand-rolled SVG graph (server layer/row, parallel branches, back edges, edge labels with the keys carried), coloured by verified status on the verdict (`Graph.tsx`) |
 | FR-U2 | 🔨 | Judgment strip shows the failed check and its assertions, plus the intake note; "expected vs actual" text is not shown |
 | FR-U3 | ✅ | Nodes coloured by verified status (must change / not needed / not verified / cannot say), computed in `app-core` from the artifact, never by an LLM (P5.2) |
-| FR-U4 | 🔨 | Evidence panel and trial log show every trial and result; hints are marked weaker; G1 is not built |
+| FR-U4 | 🔨 | Evidence panel and trial log show every trial and result; hints are marked weaker; G1 nominations are in the artifact (`g1`, `trials[].gates`) but the UI does not show them yet |
 | FR-U8 | ✅ | Several minimal sets are all listed in the verdict and per node |
 | FR-U11 | 🔨 | The HTML export has no script and no buttons; there is no hosted share view |
 | FR-U12 | 🔨 | Diagnosis list with verdict per run; no question/actual-output columns |
@@ -192,6 +194,7 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | NFR-6 | ✅ | Every reported cause sits beside the trial log that backs it |
 | NFR-18 | ✅ | The export cannot run or fire anything; `serve` has no endpoint that starts a run or a tool |
 | FR-G0.1-G0.5 | ✅ | `clues.py`; clues are evidence, order the search and widen it only for error/empty/malformed/extractive/schema-invalid (P4.1). FR-G0.1 sees tool calls from the cassette only (no node attribution) |
+| FR-G1.1-G1.6 | ✅ | `gates.py`, `diagnose --g1-url/--g1-model/--g1-samples`: swappable OpenAI-compatible endpoint, zero tools, redacted node summaries, samples union, reorder-only, `g1.fallback: g0_only` when empty/down, off = unchanged (`tests/test_g1.py`, 8 tests, local stub `tests/g1_stub.py`). Real-provider call not exercised |
 | FR-G2.1-G2.3 | ✅ | Path check on `--suspect`; deterministic, only rejects (P4.2) |
 | FR-I1-I4 | ✅ | `intake` records wrong / expected / check; marked-wrong runs are diagnosable once a check or known-good is added (P4.3) |
 | FR-I5 | 🔨 | `/runs/:id` exists (P5.5); the "Wrong" button that writes intake does not (CLI `sherlock-rec intake` only) |
@@ -246,6 +249,10 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - Building an httpx client costs about 0.75 s on this Windows machine (SSL context), which dominates LLM-team runs.
 - **2026-10-14 — end-to-end web check ([`verification.md`](verification.md)):** `eval/live_demo.py` ran the real pipeline on four teams (five diagnoses: two-cause, single, redundant fix, LLM-team abstain `unrecorded_call`), `sherlock serve` pointed at the live replay server, and headless Chromium walked guide, run pages, HTML/JSON downloads, `/explore`, server-down and empty states. Fixed: Sherlock's own trial threads listed as runs, seeded diagnoses missing from the guide's run list (the known gap), failed runs offered as known-good, abstain page repeating the raw reason on every node, spec codes in user text, green "idle" in `/explore`. One browser, one viewport, synthetic data.
 
+- **2026-10-14 — Scale audit (synthetic oracle, `tests/test_scale.py`, no server):** layered DAGs with 4 parallel branches per layer, monotone oracle, planted sets. Trials used (exhaustive in brackets): singleton 6/8/7 for 30/40/60 nodes; pair far apart 19/22/23; AND of 3 across branches 27/29/32; OR (two redundant singletons) 23/20/27; mixed (a AND (b OR c)) 37/40/41 [2^30, 2^40, 2^60]. 100 nodes: 25 trials, 300 nodes: 31 (pair). Every run returned exactly the planted 1-minimal sets with `complete` true; runtime under 0.1 s; the 60-node artifact is 16.6 KB. Before the change the OR case at 30 nodes needed 160+ trials and did not finish inside 4n+40 (singletons, then C(n,2) pairs, then C(n,3) triples in lexicographic order).
+- **2026-10-14 — Ancestry pruning is by superstep, not by edges:** in a layered DAG every earlier-layer node stays a candidate even on a branch that does not feed the writer, because a LangGraph node reads shared state and graph edges alone would under-include (the "ancestry, not read-dependencies" limitation). On big pipelines the known-good source is what shrinks the list: `same_output` nodes (FR-K1) and no-op restores are pruned. `pruned_by_ancestry` in `gate_summary` counts only the superstep rule.
+- **2026-10-14 — G1 behaviour (local stub only):** a nominated node moves to the front among equal-clue candidates; a confidently wrong shortlist (`router`) and a dead endpoint both return the same minimal sets as G1 off; the request body has no `tools`, `functions` or `tool_choice`, and an `sk-` key and an e-mail in node writes do not appear in the prompt.
+
 ## Decision log
 
 - **2026-10-12/13 — team meeting; spec by Ibraheem.** Final scope is `docs/sherlock-spec.md`. No live calls: cache or abstain. The 9 October brief is superseded on method.
@@ -291,6 +298,7 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - **Open item 3 (empty candidates after widening):** abstain. Candidates come from pruning, not G1; widening only returns pruned nodes that carry a `widens` clue, and an empty set stays `no_candidates` (or `path_check_failed` when suspects were given). G0 alone never produces a verdict.
   - **G2 without G1:** the nominator is the engineer (`--suspect`), since G1 (hosted model) is out of scope here. With suspects, the search is limited to kept suspects plus clue-widened nodes and `complete` is false. Without suspects G2 is not run; the pruning already requires a tape position.
   - **Clue scope:** FR-G0.1 sees only the cassette, which records no node, so tool-call clues name no node and never widen a specific node. "Out-of-role" (FR-D12) needs role text and is not built. Loop = a node that wrote the identical result twice.
+  - **Phase 6b (large pipelines, G1):** (1) above 6 candidates use set duality instead of enumeration (assumes monotonicity like the superset skip; an abstained probe is never proof; falls back to priority-ordered enumeration when more than 64 probes would be needed); (2) trials are ordered by highest priority index so a tight `--max-trials` finds the answer early; (3) `--max-trials` unset scales as 3 per candidate + 20 (min 40); (4) open item 3 (G1 empty after widening): fall back to G0-only ordering and record `g1.fallback: "g0_only"` in the artifact, never abstain, because G1 never decides anything; (5) G1 is reorder-only: it cannot add or remove a candidate, so it cannot make Sherlock miss a culprit (NFR-5); prompt injection through node text is a documented limitation (NFR-19).
   - **FR-D10 skipped:** trials replay a strict cassette, so a re-run cannot differ; a flakiness check would always say "stable". Revisit if replay ever tolerates nondeterminism.
   - **Intake lives next to the cassette** (`.sherlock/intake/`), read by `diagnose`; `-c` beats the intake record, which beats an auto-discovered `sherlock.yaml`. `--known-good` became optional; with no source at all `diagnose` abstains `no_known_good` (exit 75) instead of erroring.
   - **Artifact:** schema stays 1; fields were only added.
@@ -322,6 +330,8 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
 
 ## Open items
 
+- **For the UI agent (Phase 6b, additive artifact fields, Rust validator untouched):** `g1` (`enabled`, `nominated`, `fallback`, `strength: "weak"`, ...), `gate_summary`, `trials[].gates` (subset of `g0 g1 g2 g3`), `screen {mode, proved_no_others}`. Show G1 nominations visually weaker than G2/G3 (FR-U4). `pruning.exhaustive_trials` is an exact integer that exceeds 2^53 at 54+ nodes: display `2^n` using `pruning.nodes_on_path.length`. A `plan` progress event is unchanged; a new `g1 {nominated, fallback, samples_ok}` progress event fires before it when G1 is on.
+
 Beyond spec §10:
 
 - **Phase 6 gaps:** the evaluation is synthetic (our teams, our planted faults, an echo stub for the LLM team) and small (31 cases), so 30 of 31 exact says the pipeline matches the in-process oracle, not that real failures are diagnosed. The hidden set is hidden from tuning only. Not built: FR-E9, plain-LLM-guess and plain-retry baselines. Gate time grew by about 5 minutes. See `docs/eval/README.md`.
@@ -337,6 +347,8 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 ## Session log
+
+- **2026-10-14** — Phase 6b on `phase-6`: diagnosis engine scaled to 30-300 node pipelines (duality search, priority-ordered enumeration, auto trial budget), optional G1 shortlist (`gates.py`, `--g1-*`), per-gate attribution in the artifact. 271 recorder tests (incl. `test_scale.py` 22, `test_g1.py` 8) and 49 harness tests green. FR-D10 still not built (cassette replay is deterministic).
 
 - **2026-10-14** — Redesigned web UI on `phase-6` (4 UI commits): guided stepper, `PipelineStage` replay of recorded runs and of live diagnosis jobs, verdict page; old Guide/RunPage removed. Driven in headless Chrome on the live demo lab: vendor_brief two-cause replay, a real diagnosis of the order_desk run started from the UI (job 2, done, {parse}), all four verdicts incl. support_bot abstain; screenshots refreshed. `./scripts/test.sh` result in `docs/verification.md`.
 
