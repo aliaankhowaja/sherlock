@@ -189,8 +189,11 @@ def _output(values, key):
 
 
 def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks: Checks,
-           cassette_path: Path | str | None, context: dict | None = None) -> Verdict:
-    """One trial: restore the set `restore`, resume from the cassette, apply Z."""
+           cassette_path: Path | str | None, context: dict | None = None, progress=None) -> Verdict:
+    """One trial: restore the set `restore`, resume from the cassette, apply Z.
+
+    `progress(event)` (optional) hears `fork` once the fork thread exists and `resume` before the replay."""
+    emit = progress or (lambda _event: None)
     restore = list(dict.fromkeys(restore))
     if not restore:
         raise G3Error("nothing to restore: pass at least one node")
@@ -242,11 +245,13 @@ def run_g3(client, thread_id: str, restore: list[str], known_good: dict, checks:
     mismatch = prefix_mismatch(plan.fork_snapshot, fork_point)
     if mismatch:
         return off_track(mismatch, **base)
+    emit({"event": "fork", "restored": restore, "fork_node": plan.fork_node, "fork_thread": fork_id})
 
     # FR-G3.3-G3.5/G3.9: resume from the fork checkpoint; later nodes run again, served from the cassette.
     if cassette is not None:
         cassette.start_trial()
         seen = len(cassette.abstains())
+    emit({"event": "resume", "fork_thread": fork_id})
     result = client.request("POST", f"/threads/{fork_id}/runs/wait", {
         "assistant_id": graph_id, "input": None, "checkpoint": fork_point["checkpoint"],
         "context": trial_context, "durability": "sync"})

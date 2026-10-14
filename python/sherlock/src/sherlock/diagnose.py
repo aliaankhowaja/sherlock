@@ -86,7 +86,7 @@ def _no_source_reason(sources):
 
 
 def _unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original, clues, kg,
-          source, path, suspects):
+          source, path, suspects, emit=lambda _event: None):
     """One search with one known-good source. Returns (result dict, pruning, clues shown)."""
     unit_clues = clues + (differs_clues(source.differing, source.same_output, source.thread_id) if source else [])
     widen = {c.node for c in unit_clues if c.widens and c.node}
@@ -102,6 +102,9 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
         notes.append("the search was limited to the suspects and the nodes a G0 clue widened it with")
     candidates = order_candidates(pruning.candidates, unit_clues)
     pruning.candidates = candidates
+    emit({"event": "plan", "source": source.thread_id if source else None, "candidates": candidates,
+          "pruned": dict(pruning.pruned), "exhaustive_trials": pruning.exhaustive_trials,
+          "max_trials": budget.max_trials, "max_size": budget.max_size})
     if source and source.unattributed:
         result = SearchResult(
             "abstain", "cannot_attribute",
@@ -110,8 +113,9 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
             "node, e.g. `writer.template`, or pass --node-map or --known-good)", notes=notes).to_dict()
     else:
         result = search(candidates,
-                        lambda restore: run_g3(client, thread_id, restore, kg, checks, cassette_path, context),
-                        score_of(original), budget, clock, pruning.untestable).to_dict()
+                        lambda restore: run_g3(client, thread_id, restore, kg, checks, cassette_path, context,
+                                               progress=emit),
+                        score_of(original), budget, clock, pruning.untestable, progress=emit).to_dict()
         if suspects:
             result["complete"] = False
         if source and result["reason_code"] == "no_candidates":
@@ -124,7 +128,7 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
 def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | None, cassette_path: Path | str,
              budget: Budget | None = None, context: dict | None = None, clock=time.monotonic, *,
              good_runs=(), discover_good: bool = False, suspects=(), intake: dict | None = None,
-             node_map: dict[str, str] | None = None) -> dict:
+             node_map: dict[str, str] | None = None, progress=None) -> dict:
     """Run the whole diagnosis and return the result artifact (a JSON-able dict).
 
     Known-good comes from `known_good` (a hand-written per-node context patch), from prior successful runs
@@ -133,7 +137,21 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     prompt, an unprefixed flag); without an entry such a difference still abstains `cannot_attribute`.
     `suspects` is an optional shortlist that the G2 path check must accept. `checks` None means the run was
     marked wrong with no check yet: the result is the G0 clues and an abstain.
+
+    `progress(event)` (optional) hears each step as it happens: `start`, `check`, `sources`, `plan`, then per trial
+    `trial_start`, `fork`, `resume`, `trial`, and always a final `done` (the event list is in agents.md).
     """
+    emit = progress or (lambda _event: None)
+    result = _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
+                       discover_good, suspects, intake, node_map, emit)
+    emit({"event": "done", "status": result["status"], "reason_code": result.get("reason_code"),
+          "reason": result.get("reason"), "minimal_sets": result.get("minimal_sets", []),
+          "trials_used": (result.get("budget") or {}).get("trials_used", 0)})
+    return result
+
+
+def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
+              discover_good, suspects, intake, node_map, emit) -> dict:
     budget = budget or Budget()
     cassette_path = Path(cassette_path)
     known_good = known_good or {}
@@ -150,6 +168,8 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     clues = history_clues(history, checks.output_key if checks else "final_output") + _tool_clues(cassette_path)
     on_path = list(dict.fromkeys(t["name"] for step in _supersteps(history) for t in step))
     shown = [c.to_dict() for c in clues]
+    emit({"event": "start", "thread_id": thread_id, "graph_id": (thread.get("metadata") or {}).get("graph_id"),
+          "nodes_on_path": on_path, "clues": len(shown)})
     if checks is None:
         return _early(thread_id, "no_check",
                       "the run is marked wrong, but there is no check Z to say what right looks like; the clues are "
@@ -157,6 +177,8 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
                       "to get one", created=created, intake=intake, clues=shown, on_path=on_path)
     report = evaluate(checks.assertions, (history[0]["values"] or {}).get(checks.output_key) or "", checks.base_dir)
     original = report.to_dict()
+    emit({"event": "check", "pass": report.passed,
+          "failed": [r["reason"] for r in original.get("results", []) if not r.get("pass")]})
     if report.passed:
         return _early(thread_id, "already_passes", "the original run already passes the check; "
                       "there is nothing to diagnose", check=original, created=created, intake=intake, clues=shown, on_path=on_path)
@@ -167,6 +189,9 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     sources = (_gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover_good, node_map)
                if (good_runs or discover_good) else [])
     early = dict(created=created, intake=intake, clues=shown, on_path=on_path, sources_considered=[s.to_dict() for s in sources])
+    if sources:
+        emit({"event": "sources", "sources": [{"thread_id": s.thread_id, "eligible": s.eligible, "why": s.why,
+                                               "differing_nodes": s.differing} for s in sources]})
     path = path_check(history, checks.output_key, list(suspects)) if suspects else None
     if path:
         early["path_check"] = path.to_dict()
@@ -181,7 +206,7 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
 
     units = [(s, {**s.known_good, **known_good}) for s in ranked] or [(None, known_good)]
     outcomes = [(source, *_unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original,
-                                clues, kg, source, path, list(suspects))) for source, kg in units]
+                                clues, kg, source, path, list(suspects), emit)) for source, kg in units]
 
     found = [o for o in outcomes if o[1]["status"] == "found"]
     source, result, pruning, unit_clues = (found or outcomes)[0]

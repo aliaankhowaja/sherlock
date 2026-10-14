@@ -73,6 +73,14 @@ def _g3(args) -> int:
     return 0 if verdict.verdict == "pass" else EXIT_FAIL
 
 
+def jsonl_progress(stream):
+    """A progress listener that writes one JSON object per line and flushes, so a watcher sees each step live."""
+    def emit(event: dict) -> None:
+        stream.write(json.dumps(event) + "\n")
+        stream.flush()
+    return emit
+
+
 def _diagnose(args) -> int:
     from sherlock.checks import CheckError
     from sherlock.diagnose import diagnose, write_artifact
@@ -90,7 +98,8 @@ def _diagnose(args) -> int:
         result = diagnose(Client(args.url, args.api_key), args.thread_id, known_good, checks, args.cassette,
                           Budget(args.max_trials, args.max_minutes, args.max_size), context,
                           good_runs=args.good_run or [], discover_good=args.discover_good,
-                          suspects=args.suspect or [], intake=record, node_map=node_map)
+                          suspects=args.suspect or [], intake=record, node_map=node_map,
+                          progress=jsonl_progress(sys.stderr) if args.progress else None)
         path = write_artifact(result, sherlock_dir)
     except (G3Error, CheckError, ValueError, OSError) as exc:
         print(f"sherlock-rec: {exc}", file=sys.stderr)
@@ -157,6 +166,8 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--max-minutes", type=float, default=10.0, help="hard cap on wall-clock time (default 10)")
     dg.add_argument("--max-size", type=int, default=3, help="largest set of nodes to try (default 3)")
     dg.add_argument("--out", help="artifact directory (default: the cassette's directory)")
+    dg.add_argument("--progress", action="store_true",
+                    help="also write each step to stderr as it happens, one JSON object per line ({\"event\": ...})")
     it = sub.add_parser("intake", help="mark a run wrong (no node named), or give the output it should have had, "
                                        "or a check file; `diagnose` picks the record up")
     it.add_argument("--thread-id", required=True, help="the failed run")

@@ -147,8 +147,12 @@ class SearchResult:
 
 
 def search(candidates: list[str], oracle, original_score: float | None, budget: Budget,
-           clock=time.monotonic, untestable=()) -> SearchResult:
-    """Find every 1-minimal set among `candidates`. `oracle(restore_list) -> g3.Verdict`."""
+           clock=time.monotonic, untestable=(), progress=None) -> SearchResult:
+    """Find every 1-minimal set among `candidates`. `oracle(restore_list) -> g3.Verdict`.
+
+    `progress(event)` (optional) hears `trial_start` before each new trial and `trial` (the record, minus the
+    check details) after it."""
+    emit = progress or (lambda _event: None)
     order = list(candidates)
     t0 = clock()
     cache: dict[frozenset, tuple[dict, object]] = {}
@@ -162,12 +166,14 @@ def search(candidates: list[str], oracle, original_score: float | None, budget: 
             if clock() - t0 > budget.max_minutes * 60:
                 raise _Exhausted(f"the time budget of {budget.max_minutes:g} minute(s) was used up")
             restored = sorted(key, key=order.index)
+            emit({"event": "trial_start", "n": len(cache) + 1, "restored": restored})
             started = clock()
             v = oracle(restored)
             cache[key] = ({"n": len(cache) + 1, "restored": restored, "verdict": v.verdict, "label": label_of(v, original_score),
                            "score": score_of(v.check), "reason": v.reason, "fork_node": v.fork_node,
                            "fork_thread": v.fork_thread, "check": v.check,
                            "elapsed_s": round(clock() - started, 3), "cassette_miss": bool(v.evidence.get("cassette_miss"))}, v)
+            emit({"event": "trial", **{k: x for k, x in cache[key][0].items() if k != "check"}})
         return cache[key][0]
 
     minimal: list[frozenset] = []
