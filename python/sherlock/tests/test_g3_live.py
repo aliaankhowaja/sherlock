@@ -209,14 +209,14 @@ def test_cli_exit_codes_end_to_end(team1, llm_miss, tmp_path):
     z, kg = ["-c", str(HARNESS / "sherlock.yaml")], ["--known-good", str(HARNESS / "known_good" / "vendor_brief.json")]
     ok = cli(team1, "single", "extractor", *z, *kg)
     assert ok.returncode == 0 and json.loads(ok.stdout)["verdict"] == "pass", ok.stderr
-    assert cli(team1, "single", "writer", *z, *kg).returncode == 1
+    assert cli(team1, "single", "writer", *z, *kg).returncode == 100
     llm_kg = tmp_path / "kg.json"
     llm_kg.write_text(json.dumps(LLM_KNOWN_GOOD))
     llm_z = tmp_path / "sherlock.yaml"
     llm_z.write_text(f"assert:\n  - type: contains\n    value: 'ANSWER: echo: {QUESTION}'\n")
     miss = cli(llm_miss, "both", "prep", "-c", str(llm_z), "--known-good", str(llm_kg))
     assert miss.returncode == 75 and "cannot say" in miss.stderr
-    assert cli(team1, "single", "extractor", "-c", str(llm_z), "--known-good", str(tmp_path / "nope.json")).returncode == 2
+    assert cli(team1, "single", "extractor", "-c", str(llm_z), "--known-good", str(tmp_path / "nope.json")).returncode == 1
 
 
 # --- Phase 3 exit criterion: diagnose on demo team #1 (FR-D1-D9, FR-E3) ----------------------------
@@ -302,7 +302,7 @@ def test_diagnose_cli_writes_the_artifact_and_exits_by_result(team1, llm_miss, t
     miss, artifact = cli(llm_miss, "both", llm_kg, llm_z)
     assert miss.returncode == 75 and artifact.exists(), miss.stderr
     assert json.loads(artifact.read_text())["status"] == "abstain"
-    assert cli(team1, "two", tmp_path / "nope.json", HARNESS / "sherlock.yaml")[0].returncode == 2
+    assert cli(team1, "two", tmp_path / "nope.json", HARNESS / "sherlock.yaml")[0].returncode == 1
 
 
 # --- Phase 4 exit criterion: from a failed run + a prior success, no hand-written patch ------------------------

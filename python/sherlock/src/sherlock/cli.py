@@ -32,8 +32,10 @@ def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, a
     return env
 
 
-EXIT_FAIL = 1
-EXIT_ERROR = 2
+# FR-X7: 0 pass, 100 the check failed (answered wrong), 1 infrastructure error (graph/server/IO crashed),
+# 75 cannot say, 2 usage (argparse).
+EXIT_FAIL = 100
+EXIT_ERROR = 1
 
 
 def _check(args) -> int:
@@ -147,14 +149,14 @@ def _intake(args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="sherlock-rec")
+    ap = argparse.ArgumentParser(prog="sherlock-rec", epilog="exit codes: 0 pass, 100 check failure, 1 infrastructure error, 75 cannot say, 2 usage")
     sub = ap.add_subparsers(dest="verb", required=True)
-    chk = sub.add_parser("check", help="score an output against sherlock.yaml (exit 0 pass, 1 fail, 2 error)")
+    chk = sub.add_parser("check", help="score an output against sherlock.yaml (exit 0 pass, 100 check failed, 1 error)")
     chk.add_argument("-c", "--config", help="check file (default: sherlock.yaml found upward from cwd)")
     chk.add_argument("--output", help="the output text (default: stdin)")
     chk.add_argument("--output-file")
     g3 = sub.add_parser("g3", help="run-again test: restore nodes in a forked run, resume from the cassette, "
-                                   "apply the check (exit 0 pass, 1 fail, 75 abstain, 2 error)")
+                                   "apply the check (exit 0 pass, 100 check failed, 75 abstain, 1 error)")
     g3.add_argument("--thread-id", required=True, help="the recorded failed run")
     g3.add_argument("--restore", required=True, help="comma-separated nodes to restore (the candidate set)")
     g3.add_argument("--known-good", required=True, help="JSON/YAML: node -> context patch giving its good behaviour")
@@ -164,7 +166,7 @@ def main(argv: list[str] | None = None) -> int:
     g3.add_argument("--cassette", default=".sherlock/cassette.db")
     g3.add_argument("--context", help="JSON run context to start from (default: the original run's)")
     dg = sub.add_parser("diagnose", help="find every minimal set of nodes whose restoration fixes a failed run "
-                                         "(exit 0 found, 75 cannot say, 2 error); writes .sherlock/diagnoses/<thread>.json")
+                                         "(exit 0 found, 75 cannot say, 1 error); writes .sherlock/diagnoses/<thread>.json")
     dg.add_argument("--thread-id", required=True, help="the recorded failed run")
     dg.add_argument("--known-good", help="JSON/YAML: node -> context patch giving its good behaviour "
                                          "(overrides what --good-run derives, per node)")
