@@ -366,6 +366,9 @@ Beyond spec §10:
   - NFR-10: `--max-cassette-mb` (default 500), WAL and busy timeout, two-connection test.
   - NFR-3: `requests` and `urllib.request` record/replay (`shim_http.py`); `aiohttp` not covered.
   - NFR-21: wheel-build test only; PyPI publishing and Rust-in-wheel out of scope. FR-D10 and the console-script rename skipped.
+  - FR-E4: baselines `g0_g2` 49/86 exact, `llm_guess_stub` 6/86 (a fixed heuristic, not a model), `plain_retry` 0 of 258 reruns passed; Sherlock 84/86.
+  - FR-E9: live time-travel without the cassette fails `vendor_brief:retriever.drop_latest+extractor.legacy_pattern`; a one-cause control passes (`invariants.live_time_travel`).
+  - NFR-11 partial: 24 s from `sherlock-rec run` to first diagnosis (clean install not timed). NFR-14: needs a user test, not measured.
 
 - **2026-10-14** - Large demo teams on `phase-6`: `_kit.Pipeline` plus `support_desk` (33 nodes), `loan_underwriting` (32), `revenue_report` (33), 105 faults, 54 planned and seeded cases; `run_eval.py` covers 7 teams with gate probes and a scale table (84/86 exact, at most 7 trials vs up to 2^32 exhaustive); live demo with 11 diagnoses up at `http://127.0.0.1:58469`; found and worked around the invisible list-edge join in the run history. Harness 180 tests green.
 - **2026-10-14** - Teammate setup on `phase-6`: thin `Makefile` over `scripts/{setup,demo,demo-stop,doctor,test-fast}.sh`, short `readme.md`, `.gitattributes` (this line was restored from a truncated view after an accidental overwrite of the working file; its author should re-check it).
