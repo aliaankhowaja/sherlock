@@ -112,6 +112,22 @@ def _diagnose(args) -> int:
     return 0 if result["status"] == "found" else EXIT_ABSTAIN
 
 
+def _outcomes(args) -> int:
+    from sherlock.checks import CheckError, load_checks
+    from sherlock.g3 import Client, G3Error
+    from sherlock.outcomes import outcomes
+
+    try:
+        checks = load_checks(args.config)
+        threads = Client(args.url, args.api_key).request(
+            "POST", "/threads/search", {"metadata": {"graph_id": args.graph_id}, "limit": args.limit})
+    except (G3Error, CheckError, ValueError, OSError) as exc:
+        print(f"sherlock-rec: {exc}", file=sys.stderr)
+        return EXIT_ERROR
+    print(json.dumps(outcomes(threads or [], checks), indent=2))
+    return 0
+
+
 def _intake(args) -> int:
     from sherlock.checks import CheckError
     from sherlock.intake import write_intake
@@ -168,6 +184,13 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--out", help="artifact directory (default: the cassette's directory)")
     dg.add_argument("--progress", action="store_true",
                     help="also write each step to stderr as it happens, one JSON object per line ({\"event\": ...})")
+    oc = sub.add_parser("outcomes", help="list a team's runs with pass/fail against the check (JSON); "
+                                         "Sherlock's own trial forks are left out")
+    oc.add_argument("--graph-id", required=True, help="the team's graph id")
+    oc.add_argument("-c", "--config", help="check file (default: sherlock.yaml found upward from cwd)")
+    oc.add_argument("--url", default="http://127.0.0.1:2024", help="the LangGraph server holding the runs")
+    oc.add_argument("--api-key")
+    oc.add_argument("--limit", type=int, default=100)
     it = sub.add_parser("intake", help="mark a run wrong (no node named), or give the output it should have had, "
                                        "or a check file; `diagnose` picks the record up")
     it.add_argument("--thread-id", required=True, help="the failed run")
@@ -190,6 +213,8 @@ def main(argv: list[str] | None = None) -> int:
         return _g3(args)
     if args.verb == "diagnose":
         return _diagnose(args)
+    if args.verb == "outcomes":
+        return _outcomes(args)
     if args.verb == "intake":
         return _intake(args)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
