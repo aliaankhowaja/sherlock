@@ -298,7 +298,9 @@ fn build(raw: &Value, d: Option<&Diagnosis>) -> anyhow::Result<GraphView> {
                 layer: layer[i],
                 row: row[i],
                 verdict: verdicts.iter().find(|v| &v.node == id).cloned(),
-                faults: d.map(|d| faults_of(&d.artifact, id)).unwrap_or_default(),
+                faults: d
+                    .map(|d| faults_of(&d.artifact, id, verdicts.iter().find(|v| &v.node == id)))
+                    .unwrap_or_default(),
             }
         })
         .collect();
@@ -338,8 +340,9 @@ fn build(raw: &Value, d: Option<&Diagnosis>) -> anyhow::Result<GraphView> {
     })
 }
 
-/// Context items of the diagnosed run attributed to `node` by name prefix (as the engine does).
-fn faults_of(artifact: &Value, node: &str) -> Vec<String> {
+/// Context items of the diagnosed run attributed to `node`: by name prefix (as the engine does),
+/// plus what its known-good restore removes (attributed by a node map, e.g. `qty_off_by_one`).
+fn faults_of(artifact: &Value, node: &str, verdict: Option<&NodeVerdict>) -> Vec<String> {
     let prefix = format!("{node}.");
     let items = artifact
         .get("context")
@@ -351,10 +354,21 @@ fn faults_of(artifact: &Value, node: &str) -> Vec<String> {
             Value::String(s) => vec![s.as_str()],
             _ => Vec::new(),
         });
-    items
-        .filter(|s| s.starts_with(&prefix))
-        .map(str::to_string)
-        .collect()
+    let removed = verdict
+        .and_then(|v| v.restore.as_ref())
+        .and_then(Value::as_object)
+        .into_iter()
+        .flat_map(|r| r.values())
+        .filter_map(|change| change.get("$remove").and_then(Value::as_array))
+        .flatten()
+        .filter_map(Value::as_str);
+    let mut out: Vec<String> = Vec::new();
+    for item in items.filter(|s| s.starts_with(&prefix)).chain(removed) {
+        if !out.iter().any(|o| o == item) {
+            out.push(item.to_string());
+        }
+    }
+    out
 }
 
 #[cfg(test)]
@@ -425,6 +439,18 @@ mod tests {
                 .iter()
                 .all(|n| n.verdict.is_none() && n.faults.is_empty())
         );
+    }
+
+    #[test]
+    fn a_fault_flag_attributed_by_node_map_shows_on_its_node() {
+        let mut raw: Value = serde_json::from_str(TWO_CAUSE).unwrap();
+        raw["context"] = json!({"faults": ["qty_off_by_one", "retriever.drop_latest"]});
+        raw["known_good_source"]["context_diff"]["extractor"] =
+            json!({"faults": {"$remove": ["qty_off_by_one"]}});
+        let d = parse_artifact(&raw.to_string()).unwrap();
+        let v = build_view(&vendor_graph(), &d).unwrap();
+        assert_eq!(node(&v, "extractor").faults, ["qty_off_by_one"]);
+        assert_eq!(node(&v, "retriever").faults, ["retriever.drop_latest"]);
     }
 
     #[test]
