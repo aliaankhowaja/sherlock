@@ -10,6 +10,8 @@ use rust_embed::RustEmbed;
 use serde::Deserialize;
 use std::path::PathBuf;
 
+mod views;
+
 #[derive(RustEmbed, Clone)]
 #[folder = "../../ui/dist/"]
 struct Assets;
@@ -165,6 +167,21 @@ impl app_core::ingestion::LangGraphTransport for HttpTransport {
         let mut response = request
             .send_json(body)
             .map_err(|e| anyhow::anyhow!("POST {url} failed: {e}"))?;
+        response
+            .body_mut()
+            .read_json()
+            .map_err(|e| anyhow::anyhow!("invalid JSON from {url}: {e}"))
+    }
+
+    fn get_json(&self, path: &str) -> anyhow::Result<serde_json::Value> {
+        let url = format!("{}{}", self.base_url, path);
+        let mut request = ureq::get(&url);
+        if let Some(key) = &self.api_key {
+            request = request.header("X-Api-Key", key);
+        }
+        let mut response = request
+            .call()
+            .map_err(|e| anyhow::anyhow!("GET {url} failed: {e}"))?;
         response
             .body_mut()
             .read_json()
@@ -450,18 +467,22 @@ async fn diagnosis(
     State(state): State<AppState>,
     axum::extract::Path(thread_id): axum::extract::Path<String>,
 ) -> Result<Json<app_core::diagnosis::Diagnosis>, ApiError> {
-    use app_core::diagnosis::DiagnosisError;
     app_core::diagnosis::DiagnosisStore::new(&state.sherlock_dir)
         .get(&thread_id)
         .map(Json)
-        .map_err(|e| ApiError {
-            status: match e {
-                DiagnosisError::BadId(_) => StatusCode::BAD_REQUEST,
-                DiagnosisError::NotFound(_) => StatusCode::NOT_FOUND,
-                DiagnosisError::Invalid(_) => StatusCode::UNPROCESSABLE_ENTITY,
-            },
-            message: e.to_string(),
-        })
+        .map_err(diagnosis_error)
+}
+
+fn diagnosis_error(e: app_core::diagnosis::DiagnosisError) -> ApiError {
+    use app_core::diagnosis::DiagnosisError;
+    ApiError {
+        status: match e {
+            DiagnosisError::BadId(_) => StatusCode::BAD_REQUEST,
+            DiagnosisError::NotFound(_) => StatusCode::NOT_FOUND,
+            DiagnosisError::Invalid(_) => StatusCode::UNPROCESSABLE_ENTITY,
+        },
+        message: e.to_string(),
+    }
 }
 
 async fn serve_ui(uri: axum::http::Uri) -> impl IntoResponse {
@@ -495,6 +516,12 @@ pub fn build_router(state: AppState) -> axum::Router {
         .route("/api/info", get(info))
         .route("/api/diagnoses", get(diagnoses))
         .route("/api/diagnoses/{thread_id}", get(diagnosis))
+        .route(
+            "/api/diagnoses/{thread_id}/graph",
+            get(views::diagnosis_graph),
+        )
+        .route("/api/runs/{thread_id}/steps", get(views::run_steps))
+        .route("/api/teams/{assistant_id}/graph", get(views::team_graph))
         .fallback(serve_ui)
         .with_state(state)
 }
@@ -560,6 +587,10 @@ mod tests {
                 .get(path)
                 .cloned()
                 .ok_or_else(|| anyhow::anyhow!("no LangGraph route for {path}"))
+        }
+
+        fn get_json(&self, path: &str) -> anyhow::Result<serde_json::Value> {
+            self.post_json(path, serde_json::Value::Null)
         }
     }
 
@@ -875,5 +906,140 @@ mod tests {
             let text = String::from_utf8_lossy(&body);
             assert!(text.contains("ui/dist"), "got: {text}");
         }
+    }
+
+    const VENDOR_HISTORY: &str =
+        include_str!("../../../harness/fixtures/vendor_brief_two_cause_history.json");
+    const VENDOR_AID: &str = "ceebe086-90b2-5890-9347-b737e3a4e9d4";
+
+    fn vendor_graph() -> serde_json::Value {
+        let chain = [
+            "__start__",
+            "router",
+            "retriever",
+            "extractor",
+            "writer",
+            "reviewer",
+            "__end__",
+        ];
+        serde_json::json!({
+            "nodes": chain.iter().map(|id| serde_json::json!({"id": id, "metadata": {"kind": "deterministic"}})).collect::<Vec<_>>(),
+            "edges": chain.windows(2).map(|w| serde_json::json!({"source": w[0], "target": w[1]})).collect::<Vec<_>>(),
+        })
+    }
+
+    #[tokio::test]
+    async fn steps_endpoint_returns_each_node_run_with_input_output_and_hand_offs() {
+        let history: serde_json::Value = serde_json::from_str(VENDOR_HISTORY).unwrap();
+        let graph_path = format!("/assistants/{VENDOR_AID}/graph");
+        let (state, _) = state_with(&[
+            ("/threads/t1/history", history),
+            (graph_path.as_str(), vendor_graph()),
+        ]);
+        let (status, json) = get(build_router(state), "/api/runs/t1/steps").await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(json["thread_id"], "t1");
+        assert_eq!(json["graph_id"], "vendor_brief");
+        let steps = json["steps"].as_array().unwrap();
+        assert_eq!(steps.len(), 6);
+        let retriever = &steps[2];
+        assert_eq!(retriever["node"], "retriever");
+        assert_eq!(retriever["kind"], "deterministic");
+        for key in [
+            "index",
+            "step",
+            "checkpoint_id",
+            "input",
+            "changed",
+            "input_from",
+            "output",
+            "error",
+            "started_at",
+            "finished_at",
+            "duration_ms",
+            "log",
+        ] {
+            assert!(retriever.get(key).is_some(), "missing {key}");
+        }
+        assert_eq!(
+            steps[3]["input"]["documents"],
+            retriever["output"]["documents"]
+        );
+        assert!(
+            retriever["log"][0]
+                .as_str()
+                .unwrap()
+                .starts_with("retriever received")
+        );
+        assert_eq!(json["edges"].as_array().unwrap().len(), 5);
+        assert!(json["note"].is_null());
+    }
+
+    #[tokio::test]
+    async fn steps_and_graph_reject_bad_ids_and_report_a_down_server() {
+        let (state, seen) = state_with(&[]);
+        let router = build_router(state);
+        let (status, _) = get(router.clone(), "/api/runs/..%2Fetc/steps").await;
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        let (status, _) = get(router.clone(), "/api/teams/bad%20id/graph").await;
+        assert_eq!(status, StatusCode::BAD_REQUEST);
+        assert!(seen.lock().unwrap().is_empty());
+        let (status, json) = get(router, "/api/runs/t9/steps").await;
+        assert_eq!(status, StatusCode::BAD_GATEWAY);
+        assert!(
+            json["error"]
+                .as_str()
+                .unwrap()
+                .contains("no LangGraph route")
+        );
+    }
+
+    #[tokio::test]
+    async fn team_graph_is_laid_out_without_a_verdict() {
+        let (state, _) = state_with(&[("/assistants/a1/graph", vendor_graph())]);
+        let (status, json) = get(build_router(state), "/api/teams/a1/graph").await;
+        assert_eq!(status, StatusCode::OK);
+        let nodes = json["nodes"].as_array().unwrap();
+        assert_eq!(nodes.len(), 7);
+        assert!(
+            nodes
+                .iter()
+                .all(|n| n["status"].is_null() && n["layer"].is_u64())
+        );
+        assert_eq!(json["edges"].as_array().unwrap().len(), 6);
+    }
+
+    #[tokio::test]
+    async fn diagnosis_graph_carries_verdict_evidence_per_node() {
+        let teams = serde_json::json!([{"assistant_id": "a1", "graph_id": "vendor_brief"}]);
+        let (mut state, _) = state_with(&[
+            ("/assistants/search", teams),
+            ("/assistants/a1/graph", vendor_graph()),
+        ]);
+        state.sherlock_dir = PathBuf::from(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../harness/fixtures/sherlock-demo"
+        ));
+        let router = build_router(state);
+        let uri = "/api/diagnoses/01a1371a-f0a7-79f2-bb6e-4b065c36df4b/graph";
+        let (status, json) = get(router.clone(), uri).await;
+        assert_eq!(status, StatusCode::OK);
+        let retriever = json["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|n| n["id"] == "retriever")
+            .unwrap();
+        assert_eq!(retriever["status"], "culprit");
+        assert_eq!(retriever["faults"][0], "retriever.drop_latest");
+        assert!(
+            !retriever["verdict"]["trials"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        assert!(json["known_good_source"].is_string());
+        let (status, _) = get(router, "/api/diagnoses/missing-run/graph").await;
+        assert_eq!(status, StatusCode::NOT_FOUND);
     }
 }
