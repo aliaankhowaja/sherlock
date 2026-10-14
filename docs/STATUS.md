@@ -353,6 +353,20 @@ Beyond spec §10:
 
 ## Session log
 
+- **2026-10-15** — Must-requirement sweep on `phase-6` (3 parallel agents):
+  - FR-U9/NFR-12: `/` opens on a finished two-cause verdict (live, else seeded vendor_brief) with "Try your own run".
+  - FR-U6: nodes that differ from the known-good run read "ran ok, output differs"; ok nodes say "check failed downstream".
+  - FR-U7: `app_core::health` checklist for empty/broken recordings (5 tests), rendered by the UI.
+  - FR-U2 partial: expected/actual strip is derived from the assertion reason; Python should add `check.results[].expected/.actual`.
+  - FR-I5: `POST /api/intake` (same guards as diagnose, 3 tests) and a Wrong button. FR-R9: "cannot diagnose: no usable history".
+  - NFR-23 partial: server version is in `/api/info` and `/steps`, not inside diagnosis artifacts.
+  - FR-X7: exit codes 0 pass / 100 check failed / 1 error / 75 cannot say / 2 usage.
+  - FR-K2: `diagnose --known-good-output NODE=@file|JSON` (a context patch; source recorded as `pasted`).
+  - FR-G3.10: interrupt in history abstains `interrupt_unsupported`; limitation stated in the artifact.
+  - NFR-10: `--max-cassette-mb` (default 500), WAL and busy timeout, two-connection test.
+  - NFR-3: `requests` and `urllib.request` record/replay (`shim_http.py`); `aiohttp` not covered.
+  - NFR-21: wheel-build test only; PyPI publishing and Rust-in-wheel out of scope. FR-D10 and the console-script rename skipped.
+
 - **2026-10-14** - Large demo teams on `phase-6`: `_kit.Pipeline` plus `support_desk` (33 nodes), `loan_underwriting` (32), `revenue_report` (33), 105 faults, 54 planned and seeded cases; `run_eval.py` covers 7 teams with gate probes and a scale table (84/86 exact, at most 7 trials vs up to 2^32 exhaustive); live demo with 11 diagnoses up at `http://127.0.0.1:58469`; found and worked around the invisible list-edge join in the run history. Harness 180 tests green.
 - **2026-10-14** - Teammate setup on `phase-6`: thin `Makefile` over `scripts/{setup,demo,demo-stop,doctor,test-fast}.sh`, short `readme.md`, `.gitattributes` (this line was restored from a truncated view after an accidental overwrite of the working file; its author should re-check it).
 - **2026-10-14** — Phase 6b on `phase-6`: diagnosis engine scaled to 30-300 node pipelines (duality search, priority-ordered enumeration, auto trial budget), optional G1 shortlist (`gates.py`, `--g1-*`), per-gate attribution in the artifact. 271 recorder tests (incl. `test_scale.py` 22, `test_g1.py` 8) and 49 harness tests green. FR-D10 still not built (cassette replay is deterministic).
