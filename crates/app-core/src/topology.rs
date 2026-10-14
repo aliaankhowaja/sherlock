@@ -8,7 +8,7 @@
 //! A node's kind (deterministic / LLM / tool) is what the team declared in LangGraph node
 //! metadata (`add_node(..., metadata={"kind": "llm"})`); nothing is inferred.
 
-use crate::diagnosis::{Diagnosis, NodeStatus};
+use crate::diagnosis::{Diagnosis, NodeStatus, NodeVerdict};
 use crate::ingestion::LangGraphTransport;
 use serde::Serialize;
 use serde_json::Value;
@@ -46,6 +46,11 @@ pub struct GraphNode {
     pub layer: usize,
     /// Vertical position within the whole drawing (centred per column; may be fractional).
     pub row: f64,
+    /// The verdict's evidence for this node (trials that restored it, its known-good context
+    /// difference `restore`, minimal sets, clues, why pruned). `None` without a verdict on it.
+    pub verdict: Option<NodeVerdict>,
+    /// Fault flags in the diagnosed run's context that name this node (`retriever.drop_latest`).
+    pub faults: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -68,6 +73,8 @@ pub struct GraphView {
     pub rows: f64,
     /// Something the reader should know about how the graph and verdict were joined.
     pub note: Option<String>,
+    /// The known-good run whose behaviour the trials restored (its thread id), when there is one.
+    pub known_good_source: Option<String>,
 }
 
 pub fn graph_path(assistant_id: &str) -> String {
@@ -290,6 +297,8 @@ fn build(raw: &Value, d: Option<&Diagnosis>) -> anyhow::Result<GraphView> {
                 reason,
                 layer: layer[i],
                 row: row[i],
+                verdict: verdicts.iter().find(|v| &v.node == id).cloned(),
+                faults: d.map(|d| faults_of(&d.artifact, id)).unwrap_or_default(),
             }
         })
         .collect();
@@ -320,7 +329,32 @@ fn build(raw: &Value, d: Option<&Diagnosis>) -> anyhow::Result<GraphView> {
         layers,
         rows: rows as f64,
         note,
+        known_good_source: d.and_then(|d| {
+            d.artifact
+                .pointer("/known_good_source/thread_id")
+                .and_then(Value::as_str)
+                .map(str::to_string)
+        }),
     })
+}
+
+/// Context items of the diagnosed run attributed to `node` by name prefix (as the engine does).
+fn faults_of(artifact: &Value, node: &str) -> Vec<String> {
+    let prefix = format!("{node}.");
+    let items = artifact
+        .get("context")
+        .and_then(Value::as_object)
+        .into_iter()
+        .flat_map(|c| c.values())
+        .flat_map(|v| match v {
+            Value::Array(a) => a.iter().filter_map(Value::as_str).collect::<Vec<_>>(),
+            Value::String(s) => vec![s.as_str()],
+            _ => Vec::new(),
+        });
+    items
+        .filter(|s| s.starts_with(&prefix))
+        .map(str::to_string)
+        .collect()
 }
 
 #[cfg(test)]
@@ -367,6 +401,30 @@ mod tests {
 
     fn node<'a>(v: &'a GraphView, id: &str) -> &'a GraphNode {
         v.nodes.iter().find(|n| n.id == id).unwrap()
+    }
+
+    #[test]
+    fn each_node_carries_its_evidence_fault_flags_and_the_restore_source() {
+        let d = parse_artifact(TWO_CAUSE).unwrap();
+        let v = build_view(&vendor_graph(), &d).unwrap();
+        let retriever = node(&v, "retriever");
+        assert_eq!(retriever.faults, ["retriever.drop_latest"]);
+        let evidence = retriever.verdict.as_ref().unwrap();
+        assert!(!evidence.trials.is_empty() && evidence.restore.is_some());
+        assert!(node(&v, "router").faults.is_empty());
+        assert!(node(&v, START).verdict.is_none());
+        assert_eq!(
+            v.known_good_source.as_deref(),
+            Some("01a1371a-fb57-7973-b25c-ea081b1f9c98")
+        );
+        let plain = layout(&vendor_graph()).unwrap();
+        assert!(plain.known_good_source.is_none());
+        assert!(
+            plain
+                .nodes
+                .iter()
+                .all(|n| n.verdict.is_none() && n.faults.is_empty())
+        );
     }
 
     #[test]
