@@ -70,11 +70,14 @@ def post(state: State, runtime: Runtime[Context]) -> State:
 
 NODES = ["extract", "normalize", "validate", "post"]
 
+# Node kind for Sherlock's graph view (LangGraph node metadata; no effect on execution).
+DETERMINISTIC = {"kind": "deterministic"}
+
 builder = StateGraph(State, context_schema=Context)
-builder.add_node("extract", extract)
-builder.add_node("normalize", normalize)
-builder.add_node("validate", validate)
-builder.add_node("post", post)
+builder.add_node("extract", extract, metadata=DETERMINISTIC)
+builder.add_node("normalize", normalize, metadata=DETERMINISTIC)
+builder.add_node("validate", validate, metadata=DETERMINISTIC)
+builder.add_node("post", post, metadata=DETERMINISTIC)
 builder.add_edge(START, "extract")
 for _a, _b in zip(NODES, NODES[1:]):
     builder.add_edge(_a, _b)

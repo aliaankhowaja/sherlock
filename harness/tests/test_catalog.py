@@ -69,3 +69,15 @@ def test_hidden_set_never_repeats_a_visible_case_and_every_case_fails_z():
 def test_hard_slice_has_each_kind():
     tags = {t for c in build_cases() for t in c.tags}
     assert {"two_cause", "or_fix", "silent_decoy", "abstain_by_design"} <= tags
+
+
+def test_every_node_declares_its_kind_for_the_graph_view():
+    """The web app's pipeline graph reads `kind` from LangGraph node metadata (`GET /assistants/{id}/graph`)."""
+    for team in TEAMS.values():
+        drawn = team.module.graph.get_graph().to_json()
+        kinds = {n["id"]: (n.get("metadata") or {}).get("kind") for n in drawn["nodes"]
+                 if n["id"] not in ("__start__", "__end__")}
+        assert set(kinds) == set(team.nodes), team.name
+        assert set(kinds.values()) <= {"deterministic", "llm", "tool"}, (team.name, kinds)
+    bot = {n["id"]: n.get("metadata") for n in TEAMS["support_bot"].module.graph.get_graph().to_json()["nodes"]}
+    assert bot["ask"] == {"kind": "llm"} and bot["prep"] == {"kind": "deterministic"}

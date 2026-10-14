@@ -62,9 +62,9 @@ def fmt(state: State, runtime: Runtime[Context]) -> State:
 NODES = ["prep", "ask", "fmt"]
 
 builder = StateGraph(State, context_schema=Context)
-builder.add_node("prep", prep)
-builder.add_node("ask", ask)
-builder.add_node("fmt", fmt)
+builder.add_node("prep", prep, metadata={"kind": "deterministic"})
+builder.add_node("ask", ask, metadata={"kind": "llm"})
+builder.add_node("fmt", fmt, metadata={"kind": "deterministic"})
 builder.add_edge(START, "prep")
 builder.add_edge("prep", "ask")
 builder.add_edge("ask", "fmt")

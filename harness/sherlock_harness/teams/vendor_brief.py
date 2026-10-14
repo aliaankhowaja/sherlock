@@ -117,12 +117,15 @@ def reviewer(state: State, runtime: Runtime[Context]) -> State:
 
 NODES = ["router", "retriever", "extractor", "writer", "reviewer"]
 
+# Node kind for Sherlock's graph view (LangGraph node metadata; no effect on execution).
+DETERMINISTIC = {"kind": "deterministic"}
+
 builder = StateGraph(State, context_schema=Context)
-builder.add_node("router", router)
-builder.add_node("retriever", retriever)
-builder.add_node("extractor", extractor)
-builder.add_node("writer", writer)
-builder.add_node("reviewer", reviewer)
+builder.add_node("router", router, metadata=DETERMINISTIC)
+builder.add_node("retriever", retriever, metadata=DETERMINISTIC)
+builder.add_node("extractor", extractor, metadata=DETERMINISTIC)
+builder.add_node("writer", writer, metadata=DETERMINISTIC)
+builder.add_node("reviewer", reviewer, metadata=DETERMINISTIC)
 builder.add_edge(START, "router")
 for upstream, downstream in zip(NODES, NODES[1:]):
     builder.add_edge(upstream, downstream)

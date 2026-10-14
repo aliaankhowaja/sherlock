@@ -78,7 +78,7 @@ NODES = ["parse", "stock", "pricing", "assemble"]
 
 builder = StateGraph(State, context_schema=Context)
 for _name, _fn in (("parse", parse), ("stock", stock), ("pricing", pricing), ("assemble", assemble)):
-    builder.add_node(_name, _fn)
+    builder.add_node(_name, _fn, metadata={"kind": "deterministic"})
 builder.add_edge(START, "parse")
 builder.add_edge("parse", "stock")
 builder.add_edge("parse", "pricing")
