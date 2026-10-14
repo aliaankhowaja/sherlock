@@ -17,15 +17,17 @@ Windows machine, one headless Chromium (`playwright-cli`), synthetic demo teams.
 
 ## Screenshots (`docs/screenshots/`)
 
+Replaced by the redesigned UI (see "Redesigned UI" below); the earlier guide/run-page screenshots were removed with those pages.
+
 | File | Shows |
 |---|---|
-| `guide.png` | Home with the four steps filled in (team, failed run, known-good run, exact command), the verdict card, all diagnoses, glossary |
-| `guide-empty.png` | First launch: no LangGraph server, no diagnoses; says what is missing and how to start it |
-| `guide-server-down.png` | Server down: plain error with the URL being read and the fix |
-| `run-found.png` | Two-cause verdict: failed-check strip, nodes coloured by verified status, evidence, limits, trial log |
-| `run-abstain.png` | `support_bot` cannot say: reason, plain-words explanation, no node coloured as a cause |
-| `run-empty.png` | A run with no diagnosis: the command to create one |
-| `explore.png` | Ingestion dashboard with Sherlock's own trial threads labelled |
+| `1-pick.png` | Step 1: team picked, its pipeline already drawn, failed and known-good runs with failed/passed and diagnosed marks |
+| `2-replay.png` | Step 2: the two-cause `vendor_brief` run mid-replay: log, `extractor` input (new keys flagged) and output, ≠ on nodes that differ from the known-good run |
+| `2-replay-900.png` | Same stage at 900 px wide (`invoice_pipeline`): log and current hand-off stay side by side |
+| `3-diagnose.png` | Step 3: a diagnosis started from the UI, replayed on the stage (restored `parse`, re-run branches) with the step checklist |
+| `4-verdict-found.png` | Step 4: "Restoring retriever and extractor together makes the run pass; neither alone does", graph by verified status, trial log, retriever evidence with output vs known-good |
+| `4-verdict-abstain.png` | `support_bot` cannot say: one-line reason, full explanation, engine reason; every node "cannot say", none named |
+| `explore.png` | The ingestion dashboard, now behind "Advanced" |
 
 Both downloads work: the HTML is a single file with no `<script>`, containing the verdict and the "Must change" chips; the JSON is the artifact.
 
@@ -57,3 +59,31 @@ for no verdict, dashed grey for not verified.
 - The run page is long; no table of contents. FR-U5/U6/U7 remain unbuilt (see STATUS).
 - No automated UI tests; this pass is manual (screenshots, one browser, one viewport 1280 wide). Narrow/mobile widths and keyboard use were not checked.
 - All data is synthetic (echo stub for the LLM team); nothing here says real failures are diagnosed.
+
+## Redesigned UI (2026-10-14, later the same day)
+
+Why: the guide/run-page UI was judged cluttered and hard to follow. The new UI is one guided flow with a stepper
+(Pick runs -> Pipeline & replay -> Diagnose -> Verdict), a one-line "Next" banner, and one primary action per screen.
+
+Checked in headless Chrome (Chrome DevTools MCP) against `sherlock serve --project/--sherlock-rec` on the live demo lab
+(`eval/live_demo.py`, replay server from `/tmp/demo.log`), viewport 1360 and 900 wide:
+
+1. **Replay.** `vendor_brief` two-cause failed run, stepped node by node: each node shows the input it received (keys just
+   handed over flagged "new"), then its output, then the edge to the next node pulses and is labelled with the keys it carries.
+   `retriever` (2 documents instead of 3) and `extractor` (`SOC 2` instead of `ISO 27001`) are marked as differing from the
+   known-good run; the node card shows both values.
+2. **Live diagnosis from the UI.** `order_desk` failed run `01a1391f-e082-…` with known-good `…7d12`: "Run diagnosis again"
+   posted `/api/diagnose` with the token, polled `/api/jobs/2` until `done` (about 1.7 s); the stage replayed the events
+   (plan: test parse, prune 3; trial 1 of budget 40: restore parse; fork; re-run of stock and pricing in parallel, then
+   assemble; verdict pass) and the checklist ticked each step with its time. Verdict: {parse}, 1 trial.
+3. **Verdicts.** All four teams open on `/runs/:id`: two-cause {retriever + extractor} (3 trials of 31), single {writer},
+   `order_desk` {assemble + stock}, redundant {extract} or {normalize} ("Restoring extract alone makes the run pass; so does
+   restoring normalize alone."), `support_bot` abstain `unrecorded_call` (no node named, all "cannot say").
+
+Issues found on screenshots and fixed: edge labels overlapping nodes; long abstain headline; graph over-scaling on small
+teams; log/inspector stacking too early at 900 px; a trial replay drawing a hand-off between two parallel branches
+(now derived from supersteps); font glyphs used as icons (now drawn SVG marks plus words).
+
+Still not done: run badges for undiagnosed runs say "not checked yet" (the server cannot tell pass from fail without the
+check); the vendor_brief graph has no node kinds because this lab was started before kinds were declared; no automated UI
+tests; one browser, desktop and 900 px only.

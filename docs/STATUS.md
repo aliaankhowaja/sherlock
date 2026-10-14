@@ -120,14 +120,14 @@ Gate `./scripts/test.sh` green 2026-10-14: 48 harness, 228 recorder (24 live), e
 - [x] Graph with per-node evidence, fault flags and known-good source: `GET /api/teams/{id}/graph`, `GET /api/diagnoses/{id}/graph` — `16884bd`, `a0638ea`, `95cf2e2`.
 - [x] Run button: `POST /api/diagnose`, `GET /api/jobs[/{id}]`, token/Origin/Host guard, one job at a time, `serve --project/--sherlock-rec` with discovery — `d615ac0`, `48a8263`; `crates/api/src/run_tests.rs`.
 - [x] Live check on the demo lab (`eval/live_demo.py`): steps for the undiagnosed `order_desk` failed run; POST without token 403, foreign Origin 403, unlisted id 400, second POST 409; with token the job ended `done` in about 2 s with 10 progress events (incl. `rerun`) and wrote `diagnoses/01a1391f-e082-….json` (`{parse}`, 1 trial).
-- [ ] The UI itself (next session; contract in `agents.md` "Web API").
+- [x] The UI itself (`9485691`, `0eaa2c8`, `06ed793`, `9e0d784`): stepper Pick runs -> Pipeline & replay -> Diagnose -> Verdict with a "Next" line; `PipelineStage` plays a recorded run (each node's input, output, and the keys handed to the next node, with a travelling pulse on the edge) and a diagnosis job's events on the same graph; run button with polling and a step checklist; verdict headline, graph by verified status, trial log, node evidence, export. Verified in headless Chrome on the live demo lab, see `docs/verification.md` "Redesigned UI".
 - Gap: the demo lab running during the check was launched before node kinds were declared, so its graph showed `kind: null`; a fresh `live_demo.py` serves the kinds (checked: `get_graph().to_json()` carries `metadata.kind`).
 
 ## Remaining / not built
 
 - FR-E9 (live time-travel without call blocking must fail the two-cause case), the plain-LLM-guess and plain-retry baselines, G0+G2 as a separate row: not built (see `docs/eval/README.md`).
 - No real-provider or real-failure evaluation; the LLM team uses a deterministic echo stub, so stochastic sampling is not measured. The "most real bugs are in deterministic nodes" claim is still unmeasured.
-- Phase 5 leftovers: FR-U5 (node input beside output: API `/api/runs/{id}/steps` done, UI pending), FR-U6, FR-U7, FR-U9 first screen; Rust `sherlock diagnose` wrapper; `sherlock doctor` (FR-R12).
+- Phase 5 leftovers: FR-U6, FR-U7, FR-U9 first screen; Rust `sherlock diagnose` wrapper; `sherlock doctor` (FR-R12).
 - Interceptors cover httpx and `BaseTool` only.
 
 For the team: (1) decide the mid-evaluation date and the required demo; (2) pick a provider and key for one real smoke test; (3) say whether a shared-cassette cross-case contamination check (see Decision log) should become a permanent test; (4) add the missing `causal-debugger/` governing documents and review TraceSurgeon / Agent-Casuality before mid-eval.
@@ -178,7 +178,9 @@ Only requirements that are not ⬜ are listed. IDs are from `sherlock-spec.md` �
 | NFR-8 | ✅ | 31 exhaustive trials vs 1 (single) and 3 (two-cause) on team 1: 97% and 90% fewer; `trial_reduction` in the artifact. Across all four teams, 68 trials vs 538: 87.4% fewer (`docs/eval/results.md`) |
 | FR-E3 | ✅ | Live `diagnose` results equal `gold_minimal_sets` for single, two-cause and writer runs (P3.6) |
 | FR-U13 | ✅ | Per-node timeline, errors first |
-| FR-U1 | 🔨 | `/runs/:id` is one page per diagnosed run (P5.5); the node list is a timeline, not a graph in the middle (FR-U14) |
+| FR-U1 | ✅ | `/runs/:id` opens the verdict step for that run, with the pipeline graph in the middle and replay one click away |
+| FR-U5 | ✅ | Replay and node card show each node's input beside its output; differing keys against the known-good run are flagged (`Replay.tsx`, `NodeCard.tsx`) |
+| FR-U14 | ✅ | Hand-rolled SVG graph (server layer/row, parallel branches, back edges, edge labels with the keys carried), coloured by verified status on the verdict (`Graph.tsx`) |
 | FR-U2 | 🔨 | Judgment strip shows the failed check and its assertions, plus the intake note; "expected vs actual" text is not shown |
 | FR-U3 | ✅ | Nodes coloured by verified status (must change / not needed / not verified / cannot say), computed in `app-core` from the artifact, never by an LLM (P5.2) |
 | FR-U4 | 🔨 | Evidence panel and trial log show every trial and result; hints are marked weaker; G1 is not built |
@@ -335,6 +337,8 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 ## Session log
+
+- **2026-10-14** — Redesigned web UI on `phase-6` (4 UI commits): guided stepper, `PipelineStage` replay of recorded runs and of live diagnosis jobs, verdict page; old Guide/RunPage removed. Driven in headless Chrome on the live demo lab: vendor_brief two-cause replay, a real diagnosis of the order_desk run started from the UI (job 2, done, {parse}), all four verdicts incl. support_bot abstain; screenshots refreshed. `./scripts/test.sh` result in `docs/verification.md`.
 
 - **2026-10-14** — Final verification pass on `phase-6` (3 commits): drove the real product through the web app, fixed the newcomer-facing issues above, added `eval/live_demo.py`, refreshed `docs/screenshots/`, wrote `docs/verification.md`. Gate `./scripts/test.sh` green (48 harness, 228 recorder, evaluation reproducible, app-core 23, api 16, cli 21, clippy, fmt); gaps are listed in `verification.md`.
 

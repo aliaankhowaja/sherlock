@@ -37,12 +37,14 @@ Repo: `sherlock` — minimal suspect-agent finder for multi-agent teams.
 - `ui/` — vanilla React + Vite + TS. No router/state/framework additions without reason.
   - `/explore` is the ingestion dashboard: teams → runs → error-first per-node log
     timeline (manual refresh, run filter, limit). Same-origin `/api/*` only.
-  - Paths (`history.pushState`, no router dep): `/` guided four-step flow (pick failed run, pick known-good run, copy the
-    `sherlock-rec diagnose` command, read the verdict) plus glossary; `/runs/:id` run page (verdict, failed check, nodes
-    coloured by verified status, evidence, trial log, read-only HTML/JSON download); `/explore` the ingestion dashboard.
-    The copy-paste command stays as the fallback; the run button (`POST /api/diagnose`) is on only when `serve` has a
-    recorded project, binds loopback and the request carries the per-process token (see "Web API").
-    Shared bits: `parts.tsx` (components), `terms.ts` (labels, glossary, command builder), `share.ts`, `api.ts`.
+  - Paths (`history`, no router dep): `/` the guided flow `Flow.tsx` with a stepper 1 Pick runs (`Pick.tsx`) ->
+    2 Pipeline & replay (`Replay.tsx`) -> 3 Diagnose (`Diagnose.tsx`) -> 4 Verdict (`Verdict.tsx`) and a one-line "Next"
+    banner; `/runs/:id` opens the same flow on step 4; `/explore` (linked as "Advanced") the ingestion dashboard.
+    `Stage.tsx` (`PipelineStage`) is the shared player: `Graph.tsx` (hand-rolled SVG from the server's layer/row),
+    play/pause/step/reset + speed over frames built in `script.ts` from `/api/runs/{id}/steps` (`stepFrames`) or a job's
+    progress events (`jobFrames`), log panel, current input -> output (`Kv.tsx`), node card (`NodeCard.tsx`).
+    The run button (`POST /api/diagnose`) shows only when `/api/info` says `run.enabled`; the command is always in a
+    collapsible. Shared bits: `model.ts` (API shapes, glyph paths), `terms.ts`, `share.ts`, `api.ts`, `jobs.ts`.
 - `harness/` — Python (uv, 3.12): four demo LangGraph teams (`vendor_brief`, `order_desk`, `invoice_pipeline`, `support_bot` = the LLM-node team)
   with fault injection, gold derivation, seeded visible/hidden cases and hard-slice tags (`sherlock_harness/catalog.py`), live-server spikes and
   fixtures. See `harness/README.md`.
