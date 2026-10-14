@@ -154,3 +154,19 @@ fn display_command_quotes_only_what_needs_it() {
         "sherlock-rec -c \"C:/My Project/x.yaml\" --url http://h:1"
     );
 }
+
+#[test]
+fn the_demo_lab_and_a_plain_project_are_discovered_from_the_sherlock_dir() {
+    let demo = temp("discover-demo");
+    std::fs::create_dir_all(demo.join("lab").join(".sherlock")).unwrap();
+    std::fs::write(demo.join("lab").join(".sherlock").join("cassette.db"), b"").unwrap();
+    assert_eq!(Project::discover(&demo), Some(demo.join("lab")));
+    let plain = temp("discover-plain");
+    std::fs::create_dir_all(plain.join(".sherlock")).unwrap();
+    std::fs::write(plain.join(".sherlock").join("cassette.db"), b"").unwrap();
+    assert_eq!(
+        Project::discover(&plain.join(".sherlock")),
+        Some(plain.clone())
+    );
+    assert_eq!(Project::discover(&temp("discover-none")), None);
+}

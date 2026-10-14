@@ -1,6 +1,6 @@
 //! A diagnosis job as the page sees it: events from `--progress`, log lines, and the end state.
 
-use app_core::jobs::{Job, JobState};
+use app_core::jobs::{Board, Job, JobState};
 use app_core::runner::Pick;
 
 fn job() -> Job {
@@ -69,4 +69,34 @@ fn a_process_that_cannot_start_says_why() {
     j.failed_to_start("program not found".into(), 1001);
     assert_eq!(j.state, JobState::Failed);
     assert_eq!(j.error.as_deref(), Some("program not found"));
+}
+
+#[test]
+fn a_finished_verdict_names_its_artifact_and_a_failure_does_not() {
+    let mut ok = job();
+    ok.on_line(r#"{"event": "done", "status": "found"}"#, 1100);
+    ok.finish(Some(0), 1200);
+    assert_eq!(ok.artifact_id.as_deref(), Some("f"));
+    let mut bad = job();
+    bad.finish(Some(2), 1200);
+    assert_eq!(bad.artifact_id, None);
+}
+
+#[test]
+fn the_board_runs_one_job_at_a_time_and_numbers_them() {
+    let pick = Pick {
+        graph_id: "order_desk".into(),
+        failed: "f".into(),
+        good: "g".into(),
+    };
+    let mut board = Board::default();
+    let first = board.start(&pick, "cmd".into(), 0).unwrap();
+    assert_eq!(first, 1);
+    let busy = board.start(&pick, "cmd".into(), 1).unwrap_err();
+    assert!(busy.contains("already running"));
+    board.get_mut(first).unwrap().finish(None, 2);
+    let second = board.start(&pick, "cmd".into(), 3).unwrap();
+    assert_eq!(second, 2);
+    assert!(board.get(first).is_some() && board.get(99).is_none());
+    assert_eq!(board.running(), Some(2));
 }

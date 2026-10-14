@@ -94,6 +94,20 @@ fn path_str(p: &std::path::Path) -> String {
 }
 
 impl Project {
+    /// Find the project next to a `--sherlock-dir`: the live demo's `<dir>/lab`, else the directory
+    /// that holds `<dir>` when `<dir>` is a project's `.sherlock`. The one with a recording wins.
+    pub fn discover(sherlock_dir: &std::path::Path) -> Option<PathBuf> {
+        let has_recording = |p: &std::path::Path| p.join(".sherlock").join("cassette.db").is_file();
+        let lab = sherlock_dir.join("lab");
+        if has_recording(&lab) {
+            return Some(lab);
+        }
+        let abs = std::path::absolute(sherlock_dir).ok()?;
+        abs.parent()
+            .filter(|p| has_recording(p))
+            .map(std::path::Path::to_path_buf)
+    }
+
     pub fn cassette(&self) -> PathBuf {
         self.dir.join(".sherlock").join("cassette.db")
     }

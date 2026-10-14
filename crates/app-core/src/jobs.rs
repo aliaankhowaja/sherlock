@@ -35,6 +35,8 @@ pub struct Job {
     pub exit_code: Option<i32>,
     /// Why it failed, in plain words.
     pub error: Option<String>,
+    /// The diagnosis it wrote (`GET /api/diagnoses/{artifact_id}`), once done.
+    pub artifact_id: Option<String>,
     pub started_ms: u64,
     pub finished_ms: Option<u64>,
 }
@@ -55,6 +57,7 @@ impl Job {
             log: Vec::new(),
             exit_code: None,
             error: None,
+            artifact_id: None,
             started_ms,
             finished_ms: None,
         }
@@ -93,7 +96,10 @@ impl Job {
             .iter()
             .any(|e| e["event"].as_str() == Some("done"));
         match exit_code {
-            Some(EXIT_FOUND | EXIT_ABSTAIN) if said_done => self.state = JobState::Done,
+            Some(EXIT_FOUND | EXIT_ABSTAIN) if said_done => {
+                self.state = JobState::Done;
+                self.artifact_id = Some(self.failed.clone());
+            }
             _ => {
                 self.state = JobState::Failed;
                 self.error = Some(match self.log.iter().rev().find(|l| !l.trim().is_empty()) {
@@ -112,5 +118,59 @@ impl Job {
         self.state = JobState::Failed;
         self.error = Some(why);
         self.finished_ms = Some(now_ms);
+    }
+}
+
+/// Jobs started from the web app. One runs at a time; finished ones are kept for the page to read.
+#[derive(Debug, Default)]
+pub struct Board {
+    last_id: u64,
+    jobs: Vec<Job>,
+}
+
+/// Finished jobs kept in memory (oldest dropped first).
+const KEEP_JOBS: usize = 20;
+
+impl Board {
+    /// The running job's id, if any.
+    pub fn running(&self) -> Option<u64> {
+        self.jobs
+            .iter()
+            .find(|j| j.state == JobState::Running)
+            .map(|j| j.id)
+    }
+
+    /// Register a new job, refusing while another is still running.
+    pub fn start(
+        &mut self,
+        pick: &crate::runner::Pick,
+        command: String,
+        now_ms: u64,
+    ) -> Result<u64, String> {
+        if let Some(id) = self.running() {
+            return Err(format!(
+                "a diagnosis is already running (job {id}); wait for it to finish"
+            ));
+        }
+        self.last_id += 1;
+        self.jobs
+            .push(Job::new(self.last_id, pick, command, now_ms));
+        if self.jobs.len() > KEEP_JOBS {
+            self.jobs.remove(0);
+        }
+        Ok(self.last_id)
+    }
+
+    pub fn get(&self, id: u64) -> Option<&Job> {
+        self.jobs.iter().find(|j| j.id == id)
+    }
+
+    pub fn get_mut(&mut self, id: u64) -> Option<&mut Job> {
+        self.jobs.iter_mut().find(|j| j.id == id)
+    }
+
+    /// Newest first.
+    pub fn list(&self) -> Vec<&Job> {
+        self.jobs.iter().rev().collect()
     }
 }
