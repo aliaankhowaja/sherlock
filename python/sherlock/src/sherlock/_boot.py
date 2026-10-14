@@ -3,7 +3,7 @@
 import os
 import sys
 
-from sherlock import _hook, shim_httpx, shim_tools
+from sherlock import _hook, shim_http, shim_httpx, shim_tools
 from sherlock.cassette import Cassette
 from sherlock.runtime import Runtime
 
@@ -36,4 +36,6 @@ def bootstrap():
     _hook.install({
         "httpx": guarded(shim_httpx.patch),
         "langchain_core.tools.base": guarded(shim_tools.patch),
+        "requests.adapters": guarded(shim_http.patch_requests),
+        "urllib.request": guarded(shim_http.patch_urllib),
     })
