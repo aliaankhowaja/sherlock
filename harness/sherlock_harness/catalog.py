@@ -26,10 +26,12 @@ from types import ModuleType
 from sherlock_harness.faults import FAULTS as VENDOR_FAULTS
 from sherlock_harness.faults import Fault
 from sherlock_harness.stub import EchoStub
-from sherlock_harness.teams import invoice_pipeline, order_desk, support_bot, vendor_brief
+from sherlock_harness.teams import (invoice_pipeline, loan_underwriting, order_desk, revenue_report, support_bot,
+                                    support_desk, vendor_brief)
 
 SEED = 20261014
 HIDDEN_PER_TEAM = 4
+HIDDEN_BIG = 6
 
 ORDER_FAULTS = {
     "qty_off_by_one": Fault("parse", "Adds one to every quantity"),
@@ -76,13 +78,25 @@ class Team:
         return {name: f.node for name, f in self.faults.items()}
 
 
+def _kit_faults(module) -> dict[str, Fault]:
+    """The large teams declare their faults next to their nodes (`_kit.Pipeline`); lift them into catalogue form."""
+    return {name: Fault(node, text, harmful) for name, (node, text, harmful) in module.FAULTS.items()}
+
+
 TEAMS: dict[str, Team] = {t.name: t for t in (
     Team("vendor_brief", vendor_brief, VENDOR_FAULTS, {"vendor": "acme"}),
     Team("order_desk", order_desk, ORDER_FAULTS, order_desk.INPUT),
     Team("invoice_pipeline", invoice_pipeline, INVOICE_FAULTS, invoice_pipeline.INPUT),
     Team("support_bot", support_bot, SUPPORT_FAULTS, support_bot.INPUT, llm=True,
          request_nodes=frozenset({"prep", "ask"})),
+    Team("support_desk", support_desk, _kit_faults(support_desk), support_desk.INPUT, llm=True,
+         request_nodes=frozenset({"lang_detect", "intent_classify", "sentiment", "draft_reply"})),
+    Team("loan_underwriting", loan_underwriting, _kit_faults(loan_underwriting), loan_underwriting.INPUT, llm=True,
+         request_nodes=frozenset({"letter_draft"})),
+    Team("revenue_report", revenue_report, _kit_faults(revenue_report), revenue_report.INPUT, llm=True,
+         request_nodes=frozenset({"report_request", "narrative_llm"})),
 )}
+BIG_TEAMS = ("support_desk", "loan_underwriting", "revenue_report")
 
 
 def passes(assertions: list[dict], output: str) -> bool:
@@ -97,7 +111,10 @@ def run_team(team: Team, faults: list[str]) -> dict:
     unknown = set(faults) - team.faults.keys()
     if unknown:
         raise ValueError(f"unknown faults: {sorted(unknown)}")
-    return team.module.graph.invoke(dict(team.input), context=team.module.Context(faults=list(faults)))
+    try:
+        return team.module.graph.invoke(dict(team.input), context=team.module.Context(faults=list(faults)))
+    except Exception:  # a node raised: the run has no output, which Z fails (the recorded run shows the error)
+        return {"final_output": ""}
 
 
 _PASSES: dict[tuple, bool] = {}  # an LLM-team run costs ~1s (httpx builds an SSL context); the graphs are deterministic
@@ -165,6 +182,53 @@ VISIBLE: list[tuple[str, list[str]]] = [  # the cases we tuned on
     ("support_bot", ["prep.truncate"]),
     ("support_bot", ["ask.terse_instruction"]),
     ("support_bot", ["prep.truncate", "ask.terse_instruction"]),
+    # support_desk: large team
+    ("support_desk", ["customer_lookup.stale_cache"]),
+    ("support_desk", ["customer_lookup.stale_cache", "urgency.threshold_off"]),
+    ("support_desk", ["order_lookup.timeout"]),
+    ("support_desk", ["intake.ref_lowercase"]),
+    ("support_desk", ["pii_redact.miss_card", "compliance_check.skip_pii_scan"]),
+    ("support_desk", ["sla_standard.hours_typo", "customer_lookup.stale_cache"]),
+    ("support_desk", ["intent_classify.bias_shipping", "draft_reply.terse_instruction"]),
+    ("support_desk", ["refund_calc.cap_off", "rerank.ascending"]),
+    ("support_desk", ["merge_results.drop_history"]),
+    ("support_desk", ["draft_reply.terse_instruction"]),
+    ("support_desk", ["approval_gate.limit_off", "audit_log.drops_ticket_id", "send.dry_run"]),
+    ("support_desk", ["policy_check.short_window"]),
+    # loan_underwriting: large team
+    ("loan_underwriting", ["application_intake.thousands_sep"]),
+    ("loan_underwriting", ["fraud_velocity.threshold_one", "fraud_device.default_device"]),
+    ("loan_underwriting", ["fraud_aggregate.threshold_two", "fraud_velocity.threshold_one"]),
+    ("loan_underwriting", ["bank_parse.credit_debit_swap"]),
+    ("loan_underwriting", ["credit_bureau.stale_report"]),
+    ("loan_underwriting", ["employer_verify.stale_registry", "risk_score.min_balance_x4"]),
+    ("loan_underwriting", ["limit_check.stale_exposure"]),
+    ("loan_underwriting", ["income_normalise.net_not_gross"]),
+    ("loan_underwriting", ["letter_draft.terse_instruction"]),
+    ("loan_underwriting", ["policy_rules.dti_limit_low"]),
+    ("loan_underwriting", ["id_parse.swap_dates"]),
+    ("loan_underwriting", ["pricing.floor_payment", "ledger_write.drop_decision"]),
+    # revenue_report: large team
+    ("revenue_report", ["quarter_off_by_one"]),
+    ("revenue_report", ["swap_cols"]),
+    ("revenue_report", ["stale_eur_rate", "gbp_inverted"]),
+    ("revenue_report", ["skip_first_row", "key_ignores_month"]),
+    ("revenue_report", ["sign_flip", "sum_abs"]),
+    ("revenue_report", ["cap_1000"]),
+    ("revenue_report", ["always_warn"]),
+    ("revenue_report", ["drop_limit_5pct"]),
+    ("revenue_report", ["wrong_prior", "no_dampening"]),
+    ("revenue_report", ["terse_instruction", "quarter_off_by_one"]),
+    ("revenue_report", ["drop_refunds", "locale_comma"]),
+    ("revenue_report", ["mean_not_median"]),
+    ("revenue_report", ["stale_segments"]),
+]
+
+
+HARMLESS = [  # planted but harmless: the run passes, so a diagnosis must say there is nothing to diagnose
+    ("support_desk", ["pii_redact.miss_card"]),
+    ("loan_underwriting", ["fraud_velocity.threshold_one"]),
+    ("revenue_report", ["skip_first_row"]),
 ]
 
 
@@ -214,7 +278,12 @@ def build_cases(seed: int = SEED, hidden_per_team: int = HIDDEN_PER_TEAM) -> lis
         for name, team in TEAMS.items():
             pool = [c for k in (1, 2) for c in combinations(sorted(team.faults), k)
                     if (name, frozenset(c)) not in seen]
-            pool = [list(c) for c in pool if not _passes(team, list(c))]  # a passing run has nothing to diagnose
-            for faults in rng.sample(pool, min(hidden_per_team, len(pool))):
+            want, picked = (HIDDEN_BIG if name in BIG_TEAMS else hidden_per_team), []
+            for c in rng.sample(pool, len(pool)):  # shuffled; run lazily, a 35-fault team has 600+ pairs
+                if len(picked) == want:
+                    break
+                if not _passes(team, list(c)):  # a passing run has nothing to diagnose
+                    picked.append(list(c))
+            for faults in picked:
                 cases.append(_annotate(Case(name, faults, "hidden")))
     return cases

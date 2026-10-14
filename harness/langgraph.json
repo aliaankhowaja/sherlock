@@ -1,6 +1,11 @@
 {
-  "dependencies": ["."],
+  "dependencies": [
+    "."
+  ],
   "graphs": {
-    "vendor_brief": "./sherlock_harness/teams/vendor_brief.py:graph"
+    "vendor_brief": "./sherlock_harness/teams/vendor_brief.py:graph",
+    "support_desk": "./sherlock_harness/teams/support_desk.py:graph",
+    "loan_underwriting": "./sherlock_harness/teams/loan_underwriting.py:graph",
+    "revenue_report": "./sherlock_harness/teams/revenue_report.py:graph"
   }
 }

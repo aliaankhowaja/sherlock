@@ -28,7 +28,7 @@ class Context:
 def ask_llm(content: str) -> str:
     """One chat-completions call to the OpenAI-compatible server in STUB_URL (the evaluation's echo stub)."""
     body = {"model": "stub-1", "messages": [{"role": "user", "content": content}]}
-    with httpx.Client() as client:
+    with httpx.Client(verify=False) as client:  # plain http to the stub; skips the ~1s SSL-context build
         reply = client.post(os.environ["STUB_URL"] + "/v1/chat/completions", json=body).json()
     return reply["choices"][0]["message"]["content"]
 
@@ -52,6 +52,7 @@ class Pipeline:
             fault_names = {}
             for flag, text in (faults or {}).items():
                 full = f"{name}.{flag}" if prefixed else flag
+                assert full not in self.faults, f"duplicate fault {full}"
                 fault_names[flag] = full
                 self.faults[full] = (name, text, flag not in harmless)
             self.order.append(name)
