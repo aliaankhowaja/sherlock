@@ -201,6 +201,22 @@ session-log line. Do not edit status columns inside the spec.
 
 ## Commands
 
+Teammate quickstart (`make` is a thin wrapper; the logic is in `scripts/*.sh`, so `bash scripts/<name>.sh` works without make, e.g. Git Bash on Windows):
+
+```sh
+make help         # list targets
+make setup        # once: check tools (uv, Python 3.12, node+npm, cargo), npm ci, uv sync x2, build ui + cargo build -p cli
+make doctor       # tools, versions, free ports, build state, with fixes
+make demo         # live_demo.py -> .sherlock-demo/ (waits for the SERVER line), then sherlock serve on $PORT (default 3000); opens the browser
+make demo-status  # make demo-stop / make clean
+make test-fast    # no evaluation, no live-server tests: ui lint+build, harness, recorder offline, app-core/api/cli, clippy, fmt
+make test         # = ./scripts/test.sh
+make eval         # regenerate docs/eval
+make serve        # dev server against your own `langgraph dev` on :2024
+```
+
+`demo` runs a private copy of the binary (`.sherlock-demo/bin/`) so rebuilds are not blocked by a running server on Windows, uses pid files and a port check (a second `make demo` does nothing), and logs to `.sherlock-demo/{lab,serve}.log`. `PORT=3100 make demo` changes the port, `OPEN=0` skips the browser.
+
 Pre-deploy gate — all tests in one place, separated by crate. Run before shipping the CLI:
 
 ```sh

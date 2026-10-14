@@ -59,7 +59,7 @@ say "Starting the demo lab (records four+ teams and diagnoses them; about 1-3 mi
 (cd "$ROOT/python/sherlock" && PYTHONUNBUFFERED=1 nohup uv run python eval/live_demo.py "$(native "$DEMO")" >"$DEMO/lab.log" 2>&1 &
  echo $! >"$DEMO/lab.sh.pid")
 lab_sh="$(cat "$DEMO/lab.sh.pid")"; rm -f "$DEMO/lab.sh.pid"
-winpid "$lab_sh" >"$DEMO/lab.pid"
+echo "$lab_sh" >"$DEMO/lab.pid"
 
 lab_url=""
 for i in $(seq 1 300); do
@@ -80,7 +80,7 @@ say "Lab ready at $lab_url"
    --sherlock-rec "$(native "$REC_BIN")" >"$DEMO/serve.log" 2>&1 &
  echo $! >"$DEMO/serve.sh.pid")
 serve_sh="$(cat "$DEMO/serve.sh.pid")"; rm -f "$DEMO/serve.sh.pid"
-winpid "$serve_sh" >"$DEMO/serve.pid"; echo "$PORT" >"$DEMO/serve.port"
+echo "$serve_sh" >"$DEMO/serve.pid"; echo "$PORT" >"$DEMO/serve.port"
 
 for i in $(seq 1 30); do
   curl -fsS -m 2 "$URL/api/info" >/dev/null 2>&1 && break

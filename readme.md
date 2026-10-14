@@ -1,63 +1,50 @@
-# sherlock
+# Sherlock
 
-Multi-agent team debugger. Finds the minimal set of agents suspected to be faulty.
+Sherlock finds which agent in a multi-agent LangGraph team broke a run. You give it a failed run and a run that passed.
+It replays the recorded run offline (no live model calls), swaps one agent's behaviour at a time, and tells you the smallest set of agents to blame, or says "cannot say".
 
-## Architecture
-
-- `crates/app-core/` — core logic (fault isolation). No CLI, HTTP, or UI code.
-- `crates/cli/` — primary interface. Thin controller over `app-core`. Binary: `sherlock`.
-- `crates/api/` — HTTP controller over `app-core`. Serves embedded React UI (axum + rust-embed). Opened via CLI.
-- `ui/` — vanilla React + Vite + TS. No meta-framework. Served by `api`, opened by `cli serve`.
-
-CLI-first: `cli` and `api` are controllers only. All domain logic lives in `app-core`.
-
-## First-time setup
+## Quickstart
 
 ```sh
-source "$HOME/.cargo/env"   # if cargo is not on PATH yet
-cd ui && npm install && npm run build && cd ..
-cargo build
+git clone <repo-url> sherlock && cd sherlock
+make setup     # once: checks tools, installs dependencies, builds everything (first run: several minutes)
+make demo      # starts the demo teams and the web app, opens http://127.0.0.1:3000
 ```
 
-## Try the GUI (what’s implemented today)
+No `make` (common on Windows)? Use Git Bash and run the scripts it wraps: `bash scripts/setup.sh`, then `bash scripts/demo.sh`.
+Stop with `make demo-stop` (`bash scripts/demo-stop.sh`). Not sure what is missing? `make doctor`.
 
-Ingestion dashboard: **teams → runs → per-node logs**, backed by a LangGraph API server.
+## What you will see
 
-1. Run a LangGraph Agent Server on **`http://127.0.0.1:2024`** (default). This repo does not ship a graph app — use your own LangGraph project and `langgraph dev`. See [Run a local server](https://docs.langchain.com/oss/python/langgraph/local-server) and `agents.md` for API mapping and flags.
-2. Start sherlock:
+The demo records several example agent teams with injected faults, then opens the web app. It walks through four steps:
+
+1. **Pick runs**: choose a team, a failed run and a run that passed.
+2. **Pipeline and replay**: watch the failed run replayed node by node, with what each agent received and produced.
+3. **Diagnose**: press the button; Sherlock re-runs the team with one agent at a time restored to known-good behaviour.
+4. **Verdict**: the smallest set of agents that fixes the run (for example, "retriever and extractor together; neither alone"), with the evidence.
+
+## Tests
 
 ```sh
-cargo run -p cli -- serve
+make test-fast   # a few minutes: unit tests, lint, build, clippy, fmt
+make test        # full gate, adds the ~5 minute evaluation (docs/eval)
 ```
 
-3. Open **http://127.0.0.1:3000**. Use refresh on each pane. Threads need **`metadata.assistant_id`** for team filtering in the UI.
+## Where things are
 
-Without LangGraph, the shell and `/api/health` still work; teams/runs/logs will error until the upstream is up.
+`agents.md` has the repo layout, commands and the web API. `docs/STATUS.md` is the live project tracker.
+In short: `crates/` (Rust engine, CLI, web server), `ui/` (React app), `python/sherlock/` (recorder, replay, diagnose), `harness/` (demo teams).
 
-## Usage
+## Troubleshooting
 
-```sh
-cargo run -p cli -- --help
-cargo run -p cli -- serve
-cargo run -p cli -- ingest teams
-cargo run -p cli -- ingest runs --limit 20
-cargo run -p cli -- ingest logs --thread-id <THREAD_ID>
-```
+| Problem | Fix |
+|---|---|
+| `port 3000 is already in use` | `PORT=3100 make demo` |
+| `uv not found` | Install uv: https://docs.astral.sh/uv/ (Windows: `winget install astral-sh.uv`), then open a new terminal |
+| `cargo not found` | Install Rust from https://rustup.rs, open a new terminal |
+| `make: command not found` (Windows) | Use Git Bash and `bash scripts/setup.sh`, `bash scripts/demo.sh`, `bash scripts/demo-stop.sh` |
+| Demo hangs or fails to start | Read `.sherlock-demo/lab.log` and `.sherlock-demo/serve.log`; then `make demo-stop` and retry |
+| Rebuild fails with "access denied" on Windows | A running server locks its binary; `make demo` runs a private copy, so only your own `cargo run` serve causes this: stop it |
+| Anything else | `make doctor` lists missing tools with fixes |
 
-## Develop
-
-```sh
-cargo build
-cargo test
-./scripts/test.sh
-cargo clippy -- -D warnings
-cargo fmt --check
-cd ui && npm install && npm run dev   # UI dev server
-cd ui && npm run build                # embedded by api via rust-embed
-```
-
-Live ingestion test (optional; LangGraph must be running):
-
-```sh
-SHERLOCK_LIVE_URL=http://127.0.0.1:2024 cargo test -p app-core --test live_langgraph -- --nocapture
-```
+`make help` lists every target.

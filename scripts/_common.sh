@@ -24,18 +24,20 @@ die()  { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 # True when something accepts connections on 127.0.0.1:$1.
 port_in_use() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
 
-# OS process id for a bash pid (on Windows the MSYS pid differs from the Windows one).
+# pid files hold the bash (MSYS) pid. The Windows pid is looked up at use time: right after launch
+# /proc/<pid>/winpid still points at the launcher, not the final process.
 winpid() { if [ "$IS_WIN" = 1 ] && [ -r "/proc/$1/winpid" ]; then cat "/proc/$1/winpid"; else printf '%s' "$1"; fi; }
 
-# pid files hold the OS pid. These two are OS-pid based.
 pid_alive() {
   [ -n "${1:-}" ] || return 1
-  if [ "$IS_WIN" = 1 ]; then tasklist //FI "PID eq $1" //NH 2>/dev/null | grep -q "[0-9]"; else kill -0 "$1" 2>/dev/null; fi
+  if [ "$IS_WIN" = 1 ]; then
+    [ -r "/proc/$1/winpid" ] && tasklist //FI "PID eq $(winpid "$1")" //NH 2>/dev/null | grep -q "[0-9]"
+  else kill -0 "$1" 2>/dev/null; fi
 }
 kill_tree() {
   [ -n "${1:-}" ] || return 0
   if [ "$IS_WIN" = 1 ]; then
-    taskkill //PID "$1" //T //F >/dev/null 2>&1 || true
+    taskkill //PID "$(winpid "$1")" //T //F >/dev/null 2>&1 || true
   else
     local kids; kids="$(pgrep -P "$1" 2>/dev/null || true)"
     for k in $kids; do kill_tree "$k"; done
