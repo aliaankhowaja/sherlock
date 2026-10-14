@@ -22,9 +22,9 @@
   text-decoration: none;
 }
 .brand span {
-  margin-top: 5px;
-  font: 400 11px/1 var(--mono);
-  letter-spacing: 0.04em;
+  margin-top: 6px;
+  font: 400 12px/1 var(--display);
+  letter-spacing: 0.08em;
   color: var(--mute);
 }
 
@@ -64,7 +64,7 @@
   width: 22px;
   height: 22px;
   border: 1px solid var(--rule);
-  font: 600 12px/1 var(--mono);
+  font: 600 12px/1 var(--display);
 }
 .stepper .is-done button {
   color: var(--ink);
@@ -100,9 +100,9 @@
 }
 .nextline span {
   flex: none;
-  font: 600 11px/1 var(--mono);
+  font: 700 11px/1 var(--display);
   font-style: normal;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--panel);
   background: var(--signal);
@@ -123,8 +123,8 @@
 }
 
 .eyebrow {
-  font: 600 11px/1 var(--mono);
-  letter-spacing: 0.12em;
+  font: 700 12px/1 var(--display);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--mute);
   margin: 0 0 10px;
@@ -137,11 +137,26 @@
 .muted {
   color: var(--mute);
 }
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  font-size: 14px;
+  color: var(--mute);
+}
+.caption b {
+  color: var(--ink);
+}
+.caption .diff-key {
+  color: var(--abstain);
+  font-family: var(--mono);
+}
 .small {
   font-size: 13px;
 }
 .error-line {
-  border-left: 3px solid var(--culprit);
+  border: 1px solid var(--culprit);
   padding: 8px 12px;
   background: var(--culprit-soft);
 }
@@ -191,7 +206,8 @@
   display: inline-block;
   padding: 1px 6px;
   border: 1px solid var(--rule);
-  font: 500 11px/1.5 var(--mono);
+  font: 600 12px/1.5 var(--display);
+  letter-spacing: 0.02em;
   color: var(--mute);
   white-space: nowrap;
 }
@@ -240,4 +256,26 @@
     order: 3;
     flex-basis: 100%;
   }
+}
+
+.glyph {
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.35em;
+  vertical-align: -0.06em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.glyph.g-dot {
+  fill: currentColor;
+}
+.step-n .glyph {
+  margin: 0;
+}
+::selection {
+  background: var(--signal);
+  color: #fff;
 }

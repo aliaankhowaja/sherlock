@@ -1,33 +1,34 @@
-import type { Frame, GNode, GraphView, HandOff, Mark } from './model'
+import { GLYPHS, type Frame, type GlyphName, type GNode, type GraphView, type HandOff, type Mark } from './model'
 
 const W = 128
 const H = 54
-const COL = 186
+const COL = 200
 const ROW = 86
 const PAD = 22
 
-const MARK_BADGE: Record<Mark, string> = {
-  ran: '✓ ran',
-  error: '✕ error',
-  restored: '↺ restored',
-  pruned: '– skipped',
-  candidate: '◇ to test',
-  pass: '✓ passed',
-  fail: '✕ failed',
+type Badge = [GlyphName, string]
+const MARK_BADGE: Record<Mark, Badge> = {
+  ran: ['check', 'ran'],
+  error: ['cross', 'error'],
+  restored: ['restore', 'restored'],
+  pruned: ['dash', 'skipped'],
+  candidate: ['diamond', 'to test'],
+  pass: ['check', 'passed'],
+  fail: ['cross', 'failed'],
 }
 
-function verdictBadge(n: GNode): string {
+function verdictBadge(n: GNode): Badge | null {
   switch (n.status) {
     case 'culprit':
-      return '! must change'
+      return ['bang', 'must change']
     case 'cleared':
-      return '✓ not needed'
+      return ['check', 'not needed']
     case 'abstained':
-      return '? cannot say'
+      return ['question', 'cannot say']
     case 'unverified':
-      return n.verdict?.pruned ? '– not tested' : '○ not verified'
+      return n.verdict?.pruned ? ['dash', 'not tested'] : ['ring', 'not verified']
     default:
-      return ''
+      return null
   }
 }
 
@@ -89,7 +90,7 @@ export default function Graph(p: GraphProps) {
     }
     const on = active && active.source === e.source && active.target === e.target
     const keys = (on ? active.keys : undefined) ?? keysOf(e.source, e.target)
-    const label = keys?.length ? `${keys[0].slice(0, 11)}${keys.length > 1 ? ` +${keys.length - 1}` : ''}` : ''
+    const label = keys?.length ? keys.length > 1 ? `${keys[0].slice(0, 8)} +${keys.length - 1}` : keys[0].slice(0, 11) : ''
     return [
       <g key={i} className={`ge${on ? ' is-on' : ''}${e.conditional ? ' is-cond' : ''}`}>
         <path d={d} pathLength={100} markerEnd="url(#arrow)" />
@@ -105,7 +106,7 @@ export default function Graph(p: GraphProps) {
   })
 
   return (
-    <svg className="graph" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Pipeline graph">
+    <svg className="graph" viewBox={`0 0 ${width} ${height}`} style={{ maxWidth: width }} role="img" aria-label="Pipeline graph">
       <defs>
         <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
           <path d="M0,0 L8,4 L0,8 z" className="ge-head" />
@@ -124,14 +125,19 @@ export default function Graph(p: GraphProps) {
         }
         const mark = p.marks?.[n.id]
         const isFocus = f?.node === n.id
-        const badge = p.verdict && n.status ? verdictBadge(n) : isFocus && f?.phase === 'in' ? '● running' : isFocus && f?.phase === 'edge' ? '← receiving' : mark ? MARK_BADGE[mark] : ''
+        const badge: Badge | null = p.verdict && n.status ? verdictBadge(n) : isFocus && f?.phase === 'in' ? ['dot', 'running'] : isFocus && f?.phase === 'edge' ? ['arrow', 'receiving'] : mark ? MARK_BADGE[mark] : null
         const cls = ['gn', p.verdict && n.status ? `st-${n.status}` : '', mark && !p.verdict ? `mk-${mark}` : '', isFocus ? `is-focus ph-${f?.phase ?? ''}` : '', p.selected === n.id ? 'is-sel' : '', n.verdict?.pruned ? 'is-pruned' : ''].join(' ')
         return (
-          <g key={n.id} className={cls} transform={`translate(${b.x},${b.y})`} tabIndex={0} role="button" aria-label={`${n.id} ${badge}`} onClick={() => p.onSelect?.(n.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && p.onSelect?.(n.id)}>
+          <g key={n.id} className={cls} transform={`translate(${b.x},${b.y})`} tabIndex={0} role="button" aria-label={`${n.id} ${badge?.[1] ?? ''}`} onClick={() => p.onSelect?.(n.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && p.onSelect?.(n.id)}>
             <rect width={b.w} height={b.h} rx={3} />
             <text x={10} y={20} className="gn-name">{n.id.length > 15 ? `${n.id.slice(0, 14)}…` : n.id}</text>
             {n.kind && <text x={10} y={b.h - 10} className="gn-kind">{KIND[n.kind] ?? n.kind}</text>}
-            {badge && <text x={b.w - 8} y={b.h - 10} textAnchor="end" className="gn-badge">{badge}</text>}
+            {badge && (
+              <>
+                <path className={`gn-glyph g-${badge[0]}`} d={GLYPHS[badge[0]]} transform={`translate(${b.w - 22 - badge[1].length * 6.1},${b.h - 19})`} />
+                <text x={b.w - 8} y={b.h - 10} textAnchor="end" className="gn-badge">{badge[1]}</text>
+              </>
+            )}
             {p.diff?.has(n.id) && (
               <text x={b.w - 8} y={18} textAnchor="end" className="gn-diff"><title>Output differs from the known-good run</title>≠</text>
             )}

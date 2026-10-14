@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { short, useJson, type Info } from './api'
 import type { GraphView, Job, JobEvent } from './model'
 import { startDiagnosis } from './jobs'
+import { Glyph } from './Kv'
 import { jobFrames } from './script'
 import PipelineStage from './Stage'
 import { buildCommand, setText } from './terms'
@@ -35,7 +36,7 @@ function checklist(job: Job): Item[] {
   return items
 }
 
-const GLYPH = { done: '✓', now: '●', bad: '✕' }
+const GLYPH = { done: 'check', now: 'dot', bad: 'cross' } as const
 
 interface Props {
   info: Info | null
@@ -112,7 +113,7 @@ export default function Diagnose(p: Props) {
             <ol>
               {checklist(p.job).map((i, n) => (
                 <li key={n} className={`ck-${i.state}`}>
-                  <span className="ck-g" aria-hidden="true">{GLYPH[i.state]}</span>
+                  <span className="ck-g"><Glyph name={GLYPH[i.state]} /></span>
                   <span>{i.label}</span>
                   {i.at !== undefined && <span className="ck-t">{(i.at / 1000).toFixed(2)}s</span>}
                 </li>

@@ -35,7 +35,7 @@
   margin: 10px 0 0;
   padding: 0;
   list-style: none;
-  font: 600 12px var(--mono);
+  font: 600 13px var(--display);
 }
 .legend .st-culprit {
   color: var(--culprit);
@@ -57,8 +57,8 @@
 }
 .trials th {
   text-align: left;
-  font: 600 11px var(--mono);
-  letter-spacing: 0.08em;
+  font: 700 11px var(--display);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--mute);
   border-bottom: 1px solid var(--ink);
@@ -90,7 +90,7 @@
 }
 .card-verdict {
   padding: 10px 12px;
-  border-left: 4px solid var(--unverified);
+  border: 1px solid var(--unverified);
   background: #eef0ed;
   display: grid;
   gap: 4px;
@@ -127,4 +127,13 @@
 .facts ul {
   margin: 0;
   padding-left: 16px;
+}
+
+.verdict-help {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--mute);
+}
+.verdict-lower .inspect {
+  max-height: none;
 }

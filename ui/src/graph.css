@@ -18,14 +18,27 @@
   fill: var(--ink);
 }
 .gn-kind {
-  font: 10px var(--mono);
+  font: 600 10.5px var(--display);
   fill: var(--mute);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+.gn {
+  color: var(--mute);
+}
 .gn-badge {
-  font: 600 10.5px var(--mono);
-  fill: var(--mute);
+  font: 600 11.5px var(--display);
+  fill: currentColor;
+}
+.gn-glyph {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gn-glyph.g-dot {
+  fill: currentColor;
 }
 .gn-diff {
   font: 700 15px var(--mono);
@@ -49,17 +62,17 @@
 .gn.mk-ran rect {
   stroke: var(--ink);
 }
-.gn.mk-ran .gn-badge {
-  fill: var(--ink);
+.gn.mk-ran {
+  color: var(--ink);
 }
 .gn.mk-error rect {
   fill: var(--culprit-soft);
   stroke: var(--culprit);
   stroke-width: 2;
 }
-.gn.mk-error .gn-badge,
-.gn.mk-fail .gn-badge {
-  fill: var(--culprit);
+.gn.mk-error,
+.gn.mk-fail {
+  color: var(--culprit);
 }
 .gn.mk-restored rect {
   stroke: var(--signal);
@@ -67,8 +80,8 @@
   stroke-width: 2;
   fill: var(--signal-soft);
 }
-.gn.mk-restored .gn-badge {
-  fill: var(--signal);
+.gn.mk-restored {
+  color: var(--signal);
 }
 .gn.mk-pruned {
   opacity: 0.55;
@@ -76,8 +89,8 @@
 .gn.mk-pruned rect {
   stroke-dasharray: 3 3;
 }
-.gn.mk-pass .gn-badge {
-  fill: var(--cleared);
+.gn.mk-pass {
+  color: var(--cleared);
 }
 .gn.is-focus rect {
   stroke: var(--signal);
@@ -87,8 +100,8 @@
   fill: var(--signal-soft);
   animation: hum 1.1s ease-in-out infinite;
 }
-.gn.is-focus .gn-badge {
-  fill: var(--signal);
+.gn.is-focus {
+  color: var(--signal);
 }
 @keyframes hum {
   50% { stroke-opacity: 0.35; }
@@ -104,15 +117,15 @@
   stroke: var(--culprit);
   stroke-width: 2.5;
 }
-.gn.st-culprit .gn-badge {
-  fill: var(--culprit);
+.gn.st-culprit {
+  color: var(--culprit);
 }
 .gn.st-cleared rect {
   fill: var(--cleared-soft);
   stroke: var(--cleared);
 }
-.gn.st-cleared .gn-badge {
-  fill: var(--cleared);
+.gn.st-cleared {
+  color: var(--cleared);
 }
 .gn.st-unverified rect {
   fill: #f1f3f0;
@@ -123,6 +136,6 @@
   fill: var(--abstain-soft);
   stroke: var(--abstain);
 }
-.gn.st-abstained .gn-badge {
-  fill: var(--abstain);
+.gn.st-abstained {
+  color: var(--abstain);
 }

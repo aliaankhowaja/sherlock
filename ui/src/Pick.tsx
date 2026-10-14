@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getJson, isTrial, short, useJson, when, type Diagnosis, type Summary, type Team, type TeamRun } from './api'
 import type { GraphView } from './model'
 import Graph from './Graph'
+import { Glyph } from './Kv'
 
 /** failed run -> the known-good run its diagnosis used (read from each verdict). */
 function useGoodOf(ids: string[]) {
@@ -48,9 +49,9 @@ export default function Pick(p: PickProps) {
 
   const badges = (r: TeamRun) => {
     const d = diagnosed.get(r.thread_id)
-    if (d) return <><span className="tag tag-fail">✕ failed</span><span className="tag">diagnosed ✓</span></>
-    if (goodIds.has(r.thread_id)) return <span className="tag tag-pass">✓ passed</span>
-    if (r.status === 'error') return <span className="tag tag-fail">✕ crashed</span>
+    if (d) return <><span className="tag tag-fail"><Glyph name="cross" />failed</span><span className="tag"><Glyph name="check" />diagnosed</span></>
+    if (goodIds.has(r.thread_id)) return <span className="tag tag-pass"><Glyph name="check" />passed</span>
+    if (r.status === 'error') return <span className="tag tag-fail"><Glyph name="cross" />crashed</span>
     return <span className="tag tag-unk">not checked yet</span>
   }
   const rank = (r: TeamRun, good: boolean) => (good ? (goodIds.has(r.thread_id) ? 0 : diagnosed.has(r.thread_id) ? 2 : 1) : diagnosed.has(r.thread_id) ? 0 : goodIds.has(r.thread_id) ? 2 : 1)

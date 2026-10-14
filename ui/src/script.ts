@@ -39,7 +39,7 @@ export function stepFrames(v: StepsView): Frame[] {
 
 function edgeFrame(e: HandOff): Frame {
   return {
-    text: `${e.source} → ${e.target} hands over ${e.keys.join(', ') || 'state'}`,
+    text: `${e.source === '__start__' ? 'run input' : e.source} → ${e.target} hands over ${e.keys.join(', ') || 'state'}`,
     tone: 'muted',
     node: e.target,
     phase: 'edge',

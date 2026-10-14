@@ -32,7 +32,6 @@
   grid-template-columns: 52px 1fr;
   gap: 8px;
   padding: 3px 6px;
-  border-left: 3px solid transparent;
   cursor: pointer;
   animation: arrive 0.25s ease-out;
 }
@@ -44,7 +43,10 @@
 }
 .log li.is-now {
   background: var(--signal-soft);
-  border-left-color: var(--signal);
+}
+.log li.is-now .log-t {
+  color: var(--signal);
+  font-weight: 700;
 }
 .log-t {
   color: #8a938c;
@@ -60,9 +62,6 @@
 }
 .tone-muted .log-x {
   color: var(--mute);
-}
-.tone-bad {
-  border-left-color: var(--culprit) !important;
 }
 .tone-bad .log-x {
   color: var(--culprit);
@@ -117,7 +116,7 @@
 }
 .now-io h5,
 .card h5 {
-  font: 600 11px/1 var(--mono);
+  font: 700 11px/1 var(--display);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--mute);
@@ -143,7 +142,7 @@
   grid-template-columns: minmax(90px, 0.32fr) 1fr;
   gap: 2px 10px;
   padding: 3px 6px;
-  border-left: 2px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
   font: 12.5px/1.45 var(--mono);
 }
 .kv-row dt {
@@ -154,15 +153,15 @@
   overflow-wrap: anywhere;
 }
 .kv-row.is-fresh {
-  border-left-color: var(--signal);
   background: var(--signal-soft);
 }
 .kv-row.is-diff {
-  border-left-color: var(--abstain);
+  background: var(--abstain-soft);
 }
 .kv-tag {
   margin-left: 6px;
-  font-size: 10px;
+  font: 700 10px var(--display);
+  letter-spacing: 0.06em;
   color: var(--signal);
   text-transform: uppercase;
 }

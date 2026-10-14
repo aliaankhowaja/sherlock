@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { short, useJson, type Diagnosis, type DiagnosisList, type Info, type Team } from './api'
 import Diagnose from './Diagnose'
+import { Glyph } from './Kv'
 import type { Job } from './model'
 import { useJob } from './jobs'
 import Pick from './Pick'
@@ -72,7 +73,7 @@ export default function Flow({ initialRun }: { initialRun: string | null }) {
           {STEPS.map((s) => (
             <li key={s.n} className={s.n === step ? 'is-now' : s.n < step ? 'is-done' : ''}>
               <button type="button" disabled={!reachable(s.n)} aria-current={s.n === step ? 'step' : undefined} onClick={() => setStep(s.n)}>
-                <span className="step-n">{s.n < step ? '✓' : s.n}</span>
+                <span className="step-n">{s.n < step ? <Glyph name="check" /> : s.n}</span>
                 {s.label}
               </button>
             </li>

@@ -1,5 +1,5 @@
 import type { Data, Frame } from './model'
-import { value } from './model'
+import { GLYPHS, value, type GlyphName } from './model'
 
 /** Key/value chips. `fresh` keys (just handed over) are flagged; `only` limits the keys shown. */
 export function Kv({ data, fresh, only, diff }: { data: Data | null | undefined; fresh?: string[]; only?: string[]; diff?: Data | null }) {
@@ -18,7 +18,7 @@ export function Kv({ data, fresh, only, diff }: { data: Data | null | undefined;
               {fresh?.includes(k) && <span className="kv-tag">new</span>}
               {differs && <span className="kv-tag kv-tag-diff">≠ good run</span>}
             </dt>
-            <dd title={full}>{value(data[k], 160)}</dd>
+            <dd title={full}>{value(data[k], 220, false)}</dd>
             {differs && diff && (
               <dd className="kv-good" title={JSON.stringify(diff[k])}>good run: {value(diff[k], 140)}</dd>
             )}
@@ -36,10 +36,11 @@ export function Now({ frame, lastOut, lastIn }: { frame: Frame | null; lastOut: 
   }
   if (frame.phase === 'edge' && frame.edge) {
     const e = frame.edge
+    const from = e.source === '__start__' ? 'run input' : e.source
     return (
       <div className="now">
-        <h4 className="now-head"><span>{e.source}</span><span className="now-arrow">→</span><span>{e.target}</span></h4>
-        <p className="now-sub">Output of {e.source} becomes input of {e.target}</p>
+        <h4 className="now-head"><span>{from}</span><span className="now-arrow">→</span><span>{e.target}</span></h4>
+        <p className="now-sub">The output of {from} becomes the input of {e.target}</p>
         <Kv data={lastOut(e.source)?.data} only={e.keys} />
       </div>
     )
@@ -59,7 +60,7 @@ export function Now({ frame, lastOut, lastIn }: { frame: Frame | null; lastOut: 
         {frame.phase === 'out' && (
           <section className="now-io now-out">
             <h5>Output</h5>
-            {frame.error ? <p className="now-error">✕ {frame.error}</p> : <Kv data={frame.data} />}
+            {frame.error ? <p className="now-error"><Glyph name="cross" />{frame.error}</p> : <Kv data={frame.data} />}
           </section>
         )}
       </div>
@@ -79,6 +80,15 @@ export function Icon({ name }: { name: keyof typeof ICONS }) {
   return (
     <svg className="icon" viewBox="0 0 16 16" aria-hidden="true">
       <path d={ICONS[name]} />
+    </svg>
+  )
+}
+
+/** A status mark drawn in SVG; always paired with words by the caller. */
+export function Glyph({ name }: { name: GlyphName }) {
+  return (
+    <svg className={`glyph g-${name}`} viewBox="0 0 10 10" aria-hidden="true">
+      <path d={GLYPHS[name]} />
     </svg>
   )
 }

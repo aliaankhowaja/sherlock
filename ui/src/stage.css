@@ -134,7 +134,7 @@
   to { stroke-dashoffset: -100; }
 }
 .graph .ge-label {
-  font: 10px var(--mono);
+  font: 9.5px var(--mono);
   fill: var(--mute);
   paint-order: stroke;
   stroke: #f2f4f1;

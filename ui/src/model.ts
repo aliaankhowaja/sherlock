@@ -111,8 +111,23 @@ export function brief(d: Data | null | undefined, max = 3): string {
   return parts.join(', ') || 'nothing'
 }
 
-export function value(v: unknown, max = 80): string {
-  if (Array.isArray(v) && v.length > 1) return `[${v.length} items]`
+export function value(v: unknown, max = 80, collapse = true): string {
+  if (collapse && Array.isArray(v) && v.length > 1) return `[${v.length} items]`
   const s = typeof v === 'string' ? JSON.stringify(v) : JSON.stringify(v ?? null)
   return s.length > max ? `${s.slice(0, max - 1)}…` : s
 }
+
+/** Authored 10x10 stroke marks, so status never rides on a font's glyphs. */
+export const GLYPHS = {
+  check: 'M1.5 5.5 L4 8 L8.5 2',
+  cross: 'M2 2 L8 8 M8 2 L2 8',
+  bang: 'M5 1 V6.2 M5 8.4 V9',
+  question: 'M3 3.6 C3 1.2 7.2 1.2 7.2 3.6 C7.2 5.2 5 5 5 6.6 M5 8.4 V9',
+  dot: 'M5 2.6 A2.4 2.4 0 1 1 4.99 2.6 Z',
+  ring: 'M5 1.8 A3.2 3.2 0 1 1 4.99 1.8 Z',
+  dash: 'M2 5 H8',
+  restore: 'M7.8 6.2 A3.2 3.2 0 1 1 6.6 2.2 M5.4 0.8 L6.8 2.3 L5.2 3.4',
+  diamond: 'M5 1.2 L8.8 5 L5 8.8 L1.2 5 Z',
+  arrow: 'M9 5 H1.5 M4.2 2.3 L1.5 5 L4.2 7.7',
+} as const
+export type GlyphName = keyof typeof GLYPHS

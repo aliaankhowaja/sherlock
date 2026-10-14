@@ -1,6 +1,6 @@
 import type { GNode, RunStep } from './model'
-import { Kv } from './Kv'
-import { STATUS_LABEL, STATUS_MEANING, plain, setText } from './terms'
+import { Glyph, Kv } from './Kv'
+import { STATUS_LABEL, STATUS_MEANING, plain } from './terms'
 
 const KIND_LABEL: Record<string, string> = {
   deterministic: 'Deterministic code',
@@ -22,7 +22,6 @@ export default function NodeCard({ node, step, good }: { node: GNode | undefined
         <div className={`card-verdict st-${node.status}`}>
           <b>{v?.pruned ? 'Not tested (pruned)' : STATUS_LABEL[node.status]}</b>
           <p>{plain(node.reason) || STATUS_MEANING[node.status]}</p>
-          {!!v?.sets.length && <p>In smallest fix {setText(v.sets)}.</p>}
           {!!v?.trials.length && <p>Trials that restored it: {v.trials.map((n) => `#${n}`).join(', ')}.</p>}
         </div>
       )}
@@ -59,7 +58,7 @@ export default function NodeCard({ node, step, good }: { node: GNode | undefined
           <h5>Input in the failed run</h5>
           <Kv data={step.input} fresh={step.changed} />
           <h5>Output in the failed run</h5>
-          {step.error ? <p className="now-error">✕ {step.error}</p> : <Kv data={step.output} diff={good ? good.output : undefined} />}
+          {step.error ? <p className="now-error"><Glyph name="cross" />{step.error}</p> : <Kv data={step.output} diff={good ? good.output : undefined} />}
         </>
       ) : (
         <p className="muted small">This node did not run in the recorded failed run.</p>

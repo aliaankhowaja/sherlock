@@ -33,10 +33,10 @@ export default function Replay({ team, failed, good, onNext }: { team: string; f
 
   return (
     <div className="screen">
-      <p className="lede">
-        {which === 'failed' ? 'The failed run' : 'The known-good run'} <code>{short(shown.thread_id)}</code>, replayed from its checkpoints.
-        Watch each node take its input, produce its output, and hand it on.
-        {diff.size > 0 && <> Nodes marked <b>≠</b> wrote something different from the known-good run.</>}
+      <p className="caption">
+        <b>{which === 'failed' ? 'Failed run' : 'Known-good run'}</b> <code>{short(shown.thread_id)}</code>
+        <span>replayed from its recorded checkpoints</span>
+        {diff.size > 0 && <span><b className="diff-key">≠</b> output differs from the known-good run</span>}
       </p>
       <PipelineStage
         key={shown.thread_id}
