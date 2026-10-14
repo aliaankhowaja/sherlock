@@ -15,11 +15,14 @@ from sherlock.cassette import Cassette
 from sherlock.checks import Checks, evaluate
 from sherlock.clues import differs_clues, history_clues, order_candidates, path_check, tool_call_clues
 from sherlock.g3 import G3Error, history_usable, run_g3
+from sherlock.gates import disabled as g1_disabled
+from sherlock.gates import run_g1
 from sherlock.search import LIMITATION, Budget, Pruning, SearchResult, _supersteps, plan_candidates, score_of, search
 from sherlock.sources import Source, assess, rank
 
 # Schema 1 stays; Phase 4 only adds fields: clues, path_check, known_good_source, sources_considered,
-# other_sources, intake, trials[].n/elapsed_s, pruning.pruned_ratio/widened.
+# other_sources, intake, trials[].n/elapsed_s, pruning.pruned_ratio/widened, g1, gate_summary, trials[].gates,
+# screen (how the minimal sets were found).
 SCHEMA = 1
 MAX_SOURCES = 3  # prior successes searched and compared (FR-K4); each gets the full trial budget
 DISCOVER_CAP = 10
@@ -32,7 +35,7 @@ LIMITATIONS = [
     "clues (G0) are weaker than a G3 trial: they order the search and may widen it, they never decide",
 ]
 NEW_FIELDS = {"clues": [], "path_check": None, "known_good_source": None, "sources_considered": [],
-              "other_sources": [], "intake": None}
+              "other_sources": [], "intake": None, "g1": g1_disabled(), "gate_summary": None}
 
 
 def _early(thread_id, code, reason, check=None, **extra) -> dict:
@@ -85,8 +88,23 @@ def _no_source_reason(sources):
     return "no usable known-good run: " + "; ".join(f"{s.thread_id} {s.why}" for s in sources)
 
 
+ANCESTRY = ("runs after the last write", "runs in parallel with the node")
+
+
+def _gate_summary(on_path, pruning, unit_clues, nominated, path, trials_used) -> dict:
+    """What each gate contributed (G0 flagged, G1 nominated, G2 cut, G3 trials) next to the pruning that came first."""
+    pruned = pruning.pruned
+    cut_by_g2 = [n for n, why in pruned.items() if why.startswith("not on the shortlist")] + (list(path.rejected) if path else [])
+    return {"nodes_total": len(on_path),
+            "pruned_by_ancestry": sum(why.startswith(ANCESTRY) for why in pruned.values()),
+            "pruned_other": sum(not why.startswith(ANCESTRY) and not why.startswith("not on the shortlist") for why in pruned.values()),
+            "g0_flagged": len({c.node for c in unit_clues if c.node}),
+            "g1_nominated": len(nominated), "g2_cut": len(dict.fromkeys(cut_by_g2)),
+            "g3_trials": trials_used, "exhaustive_count": pruning.exhaustive_trials}
+
+
 def _unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original, clues, kg,
-          source, path, suspects, emit=lambda _event: None):
+          source, path, suspects, emit=lambda _event: None, nominated=()):
     """One search with one known-good source. Returns (result dict, pruning, clues shown)."""
     unit_clues = clues + (differs_clues(source.differing, source.same_output, source.thread_id) if source else [])
     widen = {c.node for c in unit_clues if c.widens and c.node}
@@ -100,8 +118,10 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
                 pruning.pruned[n] = "not on the shortlist and no widening clue (FR-G0.5)"
         pruning.candidates = [n for n in pruning.candidates if n in allowed]
         notes.append("the search was limited to the suspects and the nodes a G0 clue widened it with")
-    candidates = order_candidates(pruning.candidates, unit_clues)
+    candidates = order_candidates(pruning.candidates, unit_clues, list(nominated))
     pruning.candidates = candidates
+    tags = {n: {g for g, on in (("g0", n in {c.node for c in unit_clues}), ("g1", n in nominated),
+                                ("g2", bool(path) and n in path.kept)) if on} for n in candidates}
     emit({"event": "plan", "source": source.thread_id if source else None, "candidates": candidates,
           "pruned": dict(pruning.pruned), "exhaustive_trials": pruning.exhaustive_trials,
           "max_trials": budget.max_trials, "max_size": budget.max_size})
@@ -115,7 +135,7 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
         result = search(candidates,
                         lambda restore: run_g3(client, thread_id, restore, kg, checks, cassette_path, context,
                                                progress=emit),
-                        score_of(original), budget, clock, pruning.untestable, progress=emit).to_dict()
+                        score_of(original), budget, clock, pruning.untestable, progress=emit, tags=tags).to_dict()
         if suspects:
             result["complete"] = False
         if source and result["reason_code"] == "no_candidates":
@@ -128,7 +148,7 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
 def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | None, cassette_path: Path | str,
              budget: Budget | None = None, context: dict | None = None, clock=time.monotonic, *,
              good_runs=(), discover_good: bool = False, suspects=(), intake: dict | None = None,
-             node_map: dict[str, str] | None = None, progress=None) -> dict:
+             node_map: dict[str, str] | None = None, progress=None, g1: dict | None = None) -> dict:
     """Run the whole diagnosis and return the result artifact (a JSON-able dict).
 
     Known-good comes from `known_good` (a hand-written per-node context patch), from prior successful runs
@@ -138,13 +158,15 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     `suspects` is an optional shortlist that the G2 path check must accept. `checks` None means the run was
     marked wrong with no check yet: the result is the G0 clues and an abstain.
 
+    `g1` ({url, model, samples, key}) switches on the optional G1 shortlist (gates.py); None leaves it off.
+
     `progress(event)` (optional) hears each step as it happens: `start`, `check`, `sources`, `plan`, then per trial
     `trial_start`, `fork`, `resume`, `rerun` (each re-run node with its input and output), `trial`, and always a
     final `done` (the event list is in agents.md).
     """
     emit = progress or (lambda _event: None)
     result = _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
-                       discover_good, suspects, intake, node_map, emit)
+                       discover_good, suspects, intake, node_map, emit, g1)
     emit({"event": "done", "status": result["status"], "reason_code": result.get("reason_code"),
           "reason": result.get("reason"), "minimal_sets": result.get("minimal_sets", []),
           "trials_used": (result.get("budget") or {}).get("trials_used", 0)})
@@ -152,7 +174,7 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
 
 
 def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, context, clock, good_runs,
-              discover_good, suspects, intake, node_map, emit) -> dict:
+              discover_good, suspects, intake, node_map, emit, g1_config=None) -> dict:
     budget = budget or Budget()
     cassette_path = Path(cassette_path)
     known_good = known_good or {}
@@ -189,7 +211,17 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
 
     sources = (_gather_sources(client, thread_id, graph_id, history, context, checks, good_runs, discover_good, node_map)
                if (good_runs or discover_good) else [])
-    early = dict(created=created, intake=intake, clues=shown, on_path=on_path, sources_considered=[s.to_dict() for s in sources])
+    g1 = g1_disabled()
+    nominated: list[str] = []
+    if g1_config:  # optional, weak, never fatal (FR-G1.6): any failure falls back to G0-only ordering
+        res = run_g1(history, checks.output_key, (history[0]["values"] or {}).get(checks.output_key) or "",
+                     [r["reason"] for r in original.get("results", []) if not r.get("pass")], on_path,
+                     url=g1_config["url"], model=g1_config["model"], samples=g1_config.get("samples", 1),
+                     key=g1_config.get("key"))
+        g1, nominated = res.to_dict(), res.nominated
+        emit({"event": "g1", "nominated": nominated, "fallback": res.fallback, "samples_ok": res.samples_ok})
+    early = dict(created=created, intake=intake, clues=shown, on_path=on_path, g1=g1,
+                 sources_considered=[s.to_dict() for s in sources])
     if sources:
         emit({"event": "sources", "sources": [{"thread_id": s.thread_id, "eligible": s.eligible, "why": s.why,
                                                "differing_nodes": s.differing} for s in sources]})
@@ -207,7 +239,7 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
 
     units = [(s, {**s.known_good, **known_good}) for s in ranked] or [(None, known_good)]
     outcomes = [(source, *_unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original,
-                                clues, kg, source, path, list(suspects), emit)) for source, kg in units]
+                                clues, kg, source, path, list(suspects), emit, nominated)) for source, kg in units]
 
     found = [o for o in outcomes if o[1]["status"] == "found"]
     source, result, pruning, unit_clues = (found or outcomes)[0]
@@ -231,7 +263,9 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
             "other_sources": [{"thread_id": o[0].thread_id, "status": o[1]["status"],
                                "minimal_sets": o[1]["minimal_sets"], "reason_code": o[1]["reason_code"]}
                               for o in outcomes if o[0] is not source and o[0]],
-            "intake": intake, "limitations": LIMITATIONS}
+            "intake": intake, "g1": g1,
+            "gate_summary": _gate_summary(on_path, pruning, unit_clues, nominated, path, used),
+            "limitations": LIMITATIONS}
 
 
 def write_artifact(result: dict, sherlock_dir: Path | str) -> Path:

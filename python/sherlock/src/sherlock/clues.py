@@ -214,10 +214,12 @@ def path_check(history: list[dict], output_key: str, suspects: list[str]) -> Pat
 
 # --- ordering (FR-D12) ------------------------------------------------------------------------------------
 
-def order_candidates(candidates: list[str], clues: list[Clue]) -> list[str]:
-    """Strongest clues first; ties keep the recorded order. Speed only: G3 still decides."""
+def order_candidates(candidates: list[str], clues: list[Clue], nominated: list[str] = ()) -> list[str]:
+    """Strongest G0 clues first, then G1 nominations (weaker: they only break ties between equal clue scores,
+    most-named first); remaining ties keep the recorded order. Speed only: G3 still decides."""
     score = {n: 0 for n in candidates}
     for c in clues:
         if c.node in score:
             score[c.node] += c.weight
-    return sorted(candidates, key=lambda n: -score[n])
+    rank = {n: i for i, n in enumerate(nominated)}
+    return sorted(candidates, key=lambda n: (-score[n], rank.get(n, len(rank))))

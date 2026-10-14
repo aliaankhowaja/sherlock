@@ -95,11 +95,15 @@ def _diagnose(args) -> int:
         context = json.loads(args.context) if args.context else None
         known_good = load_known_good(args.known_good) if args.known_good else None
         node_map = load_node_map(args.node_map) if args.node_map else None
+        if bool(args.g1_url) != bool(args.g1_model):
+            raise ValueError("G1 needs both --g1-url and --g1-model (or neither)")
+        g1 = ({"url": args.g1_url, "model": args.g1_model, "samples": max(args.g1_samples, 1), "key": args.g1_key}
+              if args.g1_url else None)
         result = diagnose(Client(args.url, args.api_key), args.thread_id, known_good, checks, args.cassette,
-                          Budget(args.max_trials, args.max_minutes, args.max_size), context,
+                          Budget(args.max_trials or 40, args.max_minutes, args.max_size, auto=args.max_trials is None), context,
                           good_runs=args.good_run or [], discover_good=args.discover_good,
                           suspects=args.suspect or [], intake=record, node_map=node_map,
-                          progress=jsonl_progress(sys.stderr) if args.progress else None)
+                          progress=jsonl_progress(sys.stderr) if args.progress else None, g1=g1)
         path = write_artifact(result, sherlock_dir)
     except (G3Error, CheckError, ValueError, OSError) as exc:
         print(f"sherlock-rec: {exc}", file=sys.stderr)
@@ -178,7 +182,14 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--api-key")
     dg.add_argument("--cassette", default=".sherlock/cassette.db")
     dg.add_argument("--context", help="JSON run context to start from (default: the original run's)")
-    dg.add_argument("--max-trials", type=int, default=40, help="hard cap on G3 trials (default 40)")
+    dg.add_argument("--max-trials", type=int, default=None,
+                    help="hard cap on G3 trials (default: 40, or 3 per candidate + 20 when larger)")
+    dg.add_argument("--g1-url", help="optional G1 shortlist: base URL of an OpenAI-compatible endpoint "
+                                     "(e.g. https://api.openai.com/v1). The model sees redacted node summaries, has no tools, "
+                                     "and can only reorder trials")
+    dg.add_argument("--g1-model", help="model name for --g1-url")
+    dg.add_argument("--g1-samples", type=int, default=1, help="G1 samples; more only widen the list (default 1)")
+    dg.add_argument("--g1-key", help="API key for G1 (default: env SHERLOCK_G1_API_KEY, then OPENAI_API_KEY)")
     dg.add_argument("--max-minutes", type=float, default=10.0, help="hard cap on wall-clock time (default 10)")
     dg.add_argument("--max-size", type=int, default=3, help="largest set of nodes to try (default 3)")
     dg.add_argument("--out", help="artifact directory (default: the cassette's directory)")
