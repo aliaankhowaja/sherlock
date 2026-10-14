@@ -7,7 +7,9 @@ response as an ordered list of chunks. Matching key = hash of the request;
 
 import hashlib
 import json
+import os
 import sqlite3
+import sys
 import time
 from pathlib import Path
 
@@ -47,6 +49,20 @@ CREATE TABLE IF NOT EXISTS replay_sessions (
 # calls.headers: JSON list of [name, value].
 
 
+DEFAULT_MAX_MB = 500  # NFR-10: size cap; `run --max-cassette-mb` or env SHERLOCK_MAX_CASSETTE_MB overrides
+
+
+class CassetteFull(Exception):
+    """The cassette reached its size cap: new calls are not recorded (the user's app is unaffected)."""
+
+
+def max_mb_from_env() -> float:
+    try:
+        return float(os.environ.get("SHERLOCK_MAX_CASSETTE_MB", DEFAULT_MAX_MB))
+    except ValueError:
+        return DEFAULT_MAX_MB
+
+
 def request_key(kind: str, name: str, body: bytes) -> str:
     try:
         canon = json.dumps(json.loads(body), sort_keys=True, separators=(",", ":")).encode()
@@ -60,13 +76,18 @@ def request_key(kind: str, name: str, body: bytes) -> str:
 
 
 class Cassette:
-    def __init__(self, path):
+    def __init__(self, path, max_mb: float | None = None):
         self.path = Path(path)
+        self.max_bytes = int((max_mb_from_env() if max_mb is None else max_mb) * 1024 * 1024)
+        self._warned = False
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._run_script(_SCHEMA)
 
     def _conn(self):
         conn = sqlite3.connect(self.path, timeout=30)
+        # NFR-10: WAL lets a reader (the UI) and the recorder work at once; busy_timeout waits instead of failing.
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=30000")
         conn.row_factory = sqlite3.Row
         return conn
 
@@ -89,7 +110,16 @@ class Cassette:
         finally:
             conn.close()
 
+    def size_bytes(self) -> int:
+        return sum(p.stat().st_size for p in (self.path, Path(f"{self.path}-wal")) if p.exists())
+
     def begin(self, kind, name, body: bytes) -> int:
+        if self.size_bytes() >= self.max_bytes:
+            if not self._warned:
+                self._warned = True
+                print(f"sherlock: cassette reached its {self.max_bytes / 1048576:.4g} MB cap ({self.path}); "
+                      "recording stopped, later calls are not recorded (raise --max-cassette-mb)", file=sys.stderr)
+            raise CassetteFull("cassette size cap reached")
         return self._run(
             "INSERT INTO calls(kind, name, key, request, started) VALUES (?,?,?,?,?)",
             (kind, name, request_key(kind, name, body), redact_body(body), time.time()), write=True)

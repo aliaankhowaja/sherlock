@@ -77,3 +77,42 @@ def test_survives_concurrent_writers(tmp_path):
     for t in ts:
         t.join()
     assert len(c.calls()) == 40
+
+
+def test_size_cap_stops_recording_with_one_warning_and_never_raises_in_shims(tmp_path, capsys):  # NFR-10
+    import pytest
+
+    from sherlock.cassette import Cassette, CassetteFull
+    from sherlock.runtime import warn
+
+    c = Cassette(tmp_path / "c.db", max_mb=0.1)  # ~100 KB
+    c.finish(c.begin("http", "GET http://x", b"{}"), status=200, headers=[], is_sse=False, duration_ms=1,
+             chunks=[b"x" * 200000])
+    for _ in range(2):
+        with pytest.raises(CassetteFull):
+            c.begin("http", "GET http://y", b"{}")
+    err = capsys.readouterr().err
+    assert err.count("recording stopped") == 1
+    warn("recording a request", CassetteFull("x"))
+    assert capsys.readouterr().err == ""
+
+
+def test_two_connections_do_not_deadlock_and_wal_is_on(tmp_path):  # NFR-10
+    import threading
+
+    from sherlock.cassette import Cassette
+
+    c = Cassette(tmp_path / "c.db")
+    assert c._conn().execute("PRAGMA journal_mode").fetchone()[0] == "wal"
+    reader = c._conn()
+    reader.execute("BEGIN")
+    reader.execute("SELECT COUNT(*) FROM calls").fetchall()  # an open read transaction (the UI)
+    done = []
+    t = threading.Thread(target=lambda: (c.finish(c.begin("http", "GET http://z", b"{}"), status=200, headers=[],
+                                                  is_sse=False, duration_ms=1, chunks=[b"a"]), done.append(1)))
+    t.start()
+    t.join(10)
+    assert done, "the recorder blocked behind an open reader"
+    assert reader.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 0  # snapshot isolation: no lock, no dirty read
+    reader.close()
+    assert len(c.calls()) == 1

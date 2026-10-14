@@ -3,7 +3,7 @@
 import sys
 import threading
 
-from sherlock.cassette import Cassette, request_key
+from sherlock.cassette import Cassette, CassetteFull, request_key
 
 
 class CannotSay(Exception):
@@ -62,4 +62,6 @@ class Runtime:
 
 
 def warn(what, exc):
+    if isinstance(exc, CassetteFull):  # already announced once by the cassette
+        return
     print(f"sherlock: {what} failed: {exc!r}; the call itself is unaffected", file=sys.stderr)

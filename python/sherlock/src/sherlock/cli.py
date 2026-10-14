@@ -15,7 +15,8 @@ PKG_ROOT = PKG_DIR.parent
 EXIT_ABSTAIN = 75  # EX_TEMPFAIL: "cannot say"  # makes `import sherlock` work in a child on another interpreter
 
 
-def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, allow_tools=None) -> dict:
+def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, allow_tools=None,
+              max_cassette_mb: float | None = None) -> dict:
     env = dict(os.environ if base is None else base)
     old = env.get("PYTHONPATH")
     env["PYTHONPATH"] = os.pathsep.join(
@@ -27,6 +28,8 @@ def child_env(mode: str, cassette: Path, match: str, base: dict | None = None, a
     if mode == "replay":
         # `langgraph dev` asks pypi.org for the latest version at startup, which is a live call.
         env.setdefault("LANGGRAPH_NO_VERSION_CHECK", "1")
+    if max_cassette_mb is not None:
+        env["SHERLOCK_MAX_CASSETTE_MB"] = str(max_cassette_mb)
     if allow_tools is not None:
         env["SHERLOCK_ALLOW_TOOLS"] = ",".join(allow_tools)
     return env
@@ -245,6 +248,9 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--match", choices=["hash", "sequence"], default="hash")
     run.add_argument("--allow-tool", action="append", metavar="NAME",
                      help="replay: serve only these read-safe tools; any other tool aborts (repeatable)")
+    run.add_argument("--max-cassette-mb", type=float, default=None, metavar="MB",
+                     help="record: stop recording (with a warning; the app keeps running) once the cassette "
+                          "reaches this size (default 500, or env SHERLOCK_MAX_CASSETTE_MB)")
     run.add_argument("cmd", nargs=argparse.REMAINDER)
     args = ap.parse_args(argv)
     if args.verb == "check":
@@ -263,11 +269,12 @@ def main(argv: list[str] | None = None) -> int:
     cassette = Path(args.cassette).resolve()
     mode = "replay" if args.replay else "record"
     if mode == "record":
-        cassette.unlink(missing_ok=True)  # a fresh recording replaces the old one
+        for suffix in ("", "-wal", "-shm"):  # a fresh recording replaces the old one
+            Path(f"{cassette}{suffix}").unlink(missing_ok=True)
     elif not cassette.exists():
         print(f"sherlock: cannot say: no recording at {cassette}", file=sys.stderr)
         return EXIT_ABSTAIN
-    env = child_env(mode, cassette, args.match, allow_tools=args.allow_tool)
+    env = child_env(mode, cassette, args.match, allow_tools=args.allow_tool, max_cassette_mb=args.max_cassette_mb)
     # subprocess, not os.execl: execl on Windows detaches the child from the parent.
     code = subprocess.call(cmd, env=env)
     if mode == "replay":
