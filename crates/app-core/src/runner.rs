@@ -31,7 +31,8 @@ pub struct Pick {
     pub good: String,
 }
 
-fn id_ok(id: &str) -> bool {
+/// A LangGraph-style id: letters, digits, `-`, `_`, `.`; at most 64 chars; no leading `.` or `-`.
+pub fn id_ok(id: &str) -> bool {
     !id.is_empty()
         && id.len() <= 64
         && id
