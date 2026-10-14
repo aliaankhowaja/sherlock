@@ -113,11 +113,21 @@ Not done in Phase 5: FR-U5 (node input beside output), FR-U6 (a green `ok` span 
 
 Gate `./scripts/test.sh` green 2026-10-14: 48 harness, 228 recorder (24 live), evaluation stage (31 cases, reproducible), app-core 23, api 16, cli 21 tests, clippy, fmt.
 
+## Redesigned UI backend (phase-6, 2026-10-14)
+
+- [x] `--progress` `rerun` event: each re-run node's input and output per trial, restored nodes marked — `c6a28e9`; `tests/test_progress.py`.
+- [x] `app_core::steps` + `GET /api/runs/{id}/steps`: a recorded run step by step (input, changed keys, who fed which key, output, error, timing, log lines, labelled hand-offs) — `f08f7c9`, `95cf2e2`; `crates/app-core/tests/steps.rs` on the real two-cause fixture.
+- [x] Graph with per-node evidence, fault flags and known-good source: `GET /api/teams/{id}/graph`, `GET /api/diagnoses/{id}/graph` — `16884bd`, `a0638ea`, `95cf2e2`.
+- [x] Run button: `POST /api/diagnose`, `GET /api/jobs[/{id}]`, token/Origin/Host guard, one job at a time, `serve --project/--sherlock-rec` with discovery — `d615ac0`, `48a8263`; `crates/api/src/run_tests.rs`.
+- [x] Live check on the demo lab (`eval/live_demo.py`): steps for the undiagnosed `order_desk` failed run; POST without token 403, foreign Origin 403, unlisted id 400, second POST 409; with token the job ended `done` in about 2 s with 10 progress events (incl. `rerun`) and wrote `diagnoses/01a1391f-e082-….json` (`{parse}`, 1 trial).
+- [ ] The UI itself (next session; contract in `agents.md` "Web API").
+- Gap: the demo lab running during the check was launched before node kinds were declared, so its graph showed `kind: null`; a fresh `live_demo.py` serves the kinds (checked: `get_graph().to_json()` carries `metadata.kind`).
+
 ## Remaining / not built
 
 - FR-E9 (live time-travel without call blocking must fail the two-cause case), the plain-LLM-guess and plain-retry baselines, G0+G2 as a separate row: not built (see `docs/eval/README.md`).
 - No real-provider or real-failure evaluation; the LLM team uses a deterministic echo stub, so stochastic sampling is not measured. The "most real bugs are in deterministic nodes" claim is still unmeasured.
-- Phase 5 leftovers: FR-U5 (node input beside output), FR-U6, FR-U7, FR-U9 first screen; Rust `sherlock diagnose` wrapper; `sherlock doctor` (FR-R12).
+- Phase 5 leftovers: FR-U5 (node input beside output: API `/api/runs/{id}/steps` done, UI pending), FR-U6, FR-U7, FR-U9 first screen; Rust `sherlock diagnose` wrapper; `sherlock doctor` (FR-R12).
 - Interceptors cover httpx and `BaseTool` only.
 
 For the team: (1) decide the mid-evaluation date and the required demo; (2) pick a provider and key for one real smoke test; (3) say whether a shared-cassette cross-case contamination check (see Decision log) should become a permanent test; (4) add the missing `causal-debugger/` governing documents and review TraceSurgeon / Agent-Casuality before mid-eval.
@@ -299,6 +309,14 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
   - **Runner is a script, not a `sherlock-rec` verb.** It needs the harness and the live-test server helpers, which are not part of the installed package; the pure parts (baselines, scoring, checks) live in `src/sherlock/evaluation.py`.
   - **One lab for all deterministic teams, one lab per LLM-team case** (see Verified facts on cassette contamination).
   - **Gate cost.** The evaluation stage adds about 5 minutes to `./scripts/test.sh` and is the reproducibility check; `tests/test_eval_results.py` is the fast offline half.
+
+- **2026-10-14 — run button security (redesigned UI backend).** A browser-started diagnosis is allowed, but only under all of these, enforced in `api/src/run.rs` and `app_core::runner`:
+  - `serve` binds loopback; `--project` (or a discovered project) on a non-loopback `--host` refuses to start. LangSmith source: button off.
+  - With the button on, every request needs a loopback `Host` (127.0.0.1 / localhost / [::1], serve's port) so a DNS-rebound page cannot read `GET /api/info`.
+  - `POST` needs the per-process random `X-Sherlock-Token` from `GET /api/info` (a cross-origin page cannot read it), an `Origin` of this server when one is sent, and no `Sec-Fetch-Site: cross-site`.
+  - Only the fixed argv `sherlock-rec diagnose --progress --thread-id F --good-run G --url --cassette -c --out [--node-map]` is spawned, without a shell; ids must be well formed and listed by the LangGraph server for that team, not Sherlock trial forks, failed != good.
+  - One job at a time (409 otherwise), killed after 15 minutes; progress is polled (`GET /api/jobs/{id}`), not streamed, to keep the server simple.
+  - Token is generated from the standard library's OS-seeded hasher keys (no new dependency); good enough for a localhost CSRF token, not a secret store.
 
 ## Open items
 
