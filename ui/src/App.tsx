@@ -1,38 +1,32 @@
 import './App.css'
-import './surface.css'
+import './shell.css'
+import './stage.css'
+import './graph.css'
+import './panels.css'
+import './screens.css'
+import './verdict.css'
 import Explorer from './Explorer'
-import Guide from './Guide'
-import { Link } from './parts'
+import Flow from './Flow'
 import { usePath } from './route'
-import RunPage from './RunPage'
 
 function App() {
   const path = usePath()
-  const run = /^\/runs\/([^/]+)\/?$/.exec(path)
-  let page: React.ReactNode
-  if (run) {
-    page = <RunPage key={run[1]} threadId={decodeURIComponent(run[1])} />
-  } else if (path === '/explore') {
-    page = <Explorer />
-  } else {
-    page = <Guide />
+  if (path === '/explore') {
+    return (
+      <div className="app">
+        <header className="topbar">
+          <a className="brand" href="/">SHERLOCK<span>fault isolation bench</span></a>
+          <a className="advanced" href="/">Back to the guided flow</a>
+        </header>
+        <main className="main explore">
+          <Explorer />
+        </main>
+      </div>
+    )
   }
-  return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>sherlock</h1>
-        <nav className="nav" aria-label="Main">
-          <Link to="/" className={path === '/' ? 'active' : undefined}>
-            Diagnose a run
-          </Link>
-          <Link to="/explore" className={path === '/explore' ? 'active' : undefined}>
-            Browse teams and runs
-          </Link>
-        </nav>
-      </header>
-      {page}
-    </div>
-  )
+  const run = /^\/runs\/([^/]+)\/?$/.exec(path)
+  const id = run ? decodeURIComponent(run[1]) : null
+  return <Flow initialRun={id} />
 }
 
 export default App

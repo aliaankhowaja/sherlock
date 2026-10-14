@@ -1,0 +1,243 @@
+.app {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 28px 64px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 18px 0 14px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  font: 700 22px/1 var(--display);
+  font-stretch: condensed;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand span {
+  margin-top: 5px;
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--mute);
+}
+
+.stepper {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+}
+.stepper li + li {
+  border-left: 1px solid var(--rule);
+}
+.stepper button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  color: var(--mute);
+  cursor: pointer;
+  text-align: left;
+}
+.stepper button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.stepper .step-n {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--rule);
+  font: 600 12px/1 var(--mono);
+}
+.stepper .is-done button {
+  color: var(--ink);
+}
+.stepper .is-now button {
+  background: var(--ink);
+  color: var(--panel);
+}
+.stepper .is-now .step-n {
+  border-color: var(--panel);
+}
+.stepper button:not(:disabled):hover {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--signal);
+}
+.stepper .is-now button:hover {
+  color: var(--panel);
+}
+
+.advanced {
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.nextline {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  font: italic 16px/1.45 var(--prose);
+}
+.nextline span {
+  flex: none;
+  font: 600 11px/1 var(--mono);
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--panel);
+  background: var(--signal);
+  padding: 4px 7px;
+}
+
+.main {
+  padding-top: 26px;
+}
+
+.screen {
+  display: grid;
+  gap: 22px;
+}
+.screen.blank {
+  justify-items: start;
+  padding: 40px 0;
+}
+
+.eyebrow {
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 10px;
+}
+
+.lede {
+  font: 17px/1.55 var(--prose);
+  max-width: 72ch;
+}
+.muted {
+  color: var(--mute);
+}
+.small {
+  font-size: 13px;
+}
+.error-line {
+  border-left: 3px solid var(--culprit);
+  padding: 8px 12px;
+  background: var(--culprit-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.actions button,
+.inspect-close,
+.seg button {
+  padding: 8px 14px;
+  border: 1px solid var(--ink);
+  background: var(--panel);
+  cursor: pointer;
+}
+.actions button:hover,
+.inspect-close:hover {
+  background: var(--ink);
+  color: var(--panel);
+}
+
+.btn-primary {
+  padding: 11px 20px !important;
+  border: 1px solid var(--signal) !important;
+  background: var(--signal) !important;
+  color: #fff !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #075468 !important;
+}
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-big {
+  font-size: 18px;
+  padding: 16px 30px !important;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--rule);
+  font: 500 11px/1.5 var(--mono);
+  color: var(--mute);
+  white-space: nowrap;
+}
+.tag-fail {
+  color: var(--culprit);
+  border-color: currentColor;
+}
+.tag-pass {
+  color: var(--cleared);
+  border-color: currentColor;
+}
+.tag-unk {
+  border-style: dashed;
+}
+
+.term {
+  position: relative;
+  border-bottom: 1px dotted currentColor;
+  cursor: help;
+}
+.term:hover::after,
+.term:focus::after {
+  content: attr(data-tip);
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  top: calc(100% + 6px);
+  width: 300px;
+  padding: 10px 12px;
+  background: var(--ink);
+  color: var(--panel);
+  font: 13px/1.45 var(--display);
+  font-style: normal;
+  white-space: normal;
+}
+
+@media (max-width: 1000px) {
+  .app {
+    padding: 0 16px 48px;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .stepper {
+    order: 3;
+    flex-basis: 100%;
+  }
+}

@@ -1,0 +1,178 @@
+/* 1 pick */
+.teams {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.teams .eyebrow {
+  margin: 0 8px 0 0;
+}
+.team {
+  padding: 8px 16px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  font-size: 15px;
+  cursor: pointer;
+}
+.team:hover {
+  border-color: var(--ink);
+}
+.team.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--panel);
+}
+.preview {
+  border: 1px solid var(--rule);
+}
+.preview .graph {
+  max-height: 240px;
+}
+.pick-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.runs {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.runs legend {
+  font: 600 18px var(--display);
+  padding: 0;
+}
+.hint {
+  font: italic 14px/1.4 var(--prose);
+  color: var(--mute);
+  margin-bottom: 6px;
+}
+.run {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  cursor: pointer;
+}
+.run:hover {
+  border-color: var(--ink);
+}
+.run.is-on {
+  border-color: var(--signal);
+  box-shadow: inset 4px 0 0 var(--signal);
+}
+.run.is-off {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.run input {
+  accent-color: var(--signal);
+  margin: 0;
+}
+.run-id {
+  font: 600 13px var(--mono);
+}
+.run-when {
+  font-size: 12px;
+  color: var(--mute);
+}
+.run-tags {
+  display: flex;
+  gap: 4px;
+}
+
+/* 3 diagnose */
+.launch {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px 28px;
+  align-items: center;
+  padding: 20px 22px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+}
+.launch > div {
+  display: grid;
+  gap: 8px;
+}
+.cmd {
+  grid-column: 1 / -1;
+  font-size: 13px;
+}
+.cmd summary {
+  cursor: pointer;
+  color: var(--mute);
+}
+.cmd code {
+  display: block;
+  margin-top: 8px;
+  padding: 10px 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.diag {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  gap: 18px;
+  align-items: start;
+}
+.checklist {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 14px 16px;
+  display: grid;
+  gap: 12px;
+}
+.checklist ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 13.5px;
+}
+.checklist li {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 6px;
+  animation: arrive 0.3s ease-out;
+}
+.ck-g {
+  font-weight: 700;
+}
+.ck-done .ck-g {
+  color: var(--ink);
+}
+.ck-now .ck-g {
+  color: var(--signal);
+  animation: hum 1s ease-in-out infinite;
+}
+.ck-bad .ck-g {
+  color: var(--culprit);
+}
+.ck-t {
+  font: 11px var(--mono);
+  color: var(--mute);
+}
+
+@media (max-width: 1100px) {
+  .diag,
+  .pick-cols,
+  .launch,
+  .stage-lower,
+  .verdict-lower {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stage-lower > section + section,
+  .verdict-lower > section + section {
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+}

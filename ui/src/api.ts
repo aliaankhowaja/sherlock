@@ -33,6 +33,8 @@ export interface Info {
   source: 'langgraph' | 'langsmith'
   url: string
   sherlock_dir: string
+  token?: string
+  run?: { enabled: boolean; project: string | null; program: string | null; running_job: number | null }
 }
 
 /** Verified status of one node. The server computes it; the UI never upgrades it. */

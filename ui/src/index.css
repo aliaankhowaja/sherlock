@@ -1,111 +1,94 @@
+/* Sherlock: a fault-isolation bench. Mineral paper, graphite ink, one petrol signal colour;
+   red/green/amber appear only where a verdict or a check result says so. */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --paper: #e9ece8;
+  --panel: #f7f8f5;
+  --ink: #141917;
+  --mute: #545e58;
+  --rule: #c3c9c3;
+  --rule-soft: #dbe0da;
+  --signal: #0a6c86;
+  --signal-soft: #d5e7ec;
+  --culprit: #b4231b;
+  --culprit-soft: #f6dedb;
+  --cleared: #2b6f33;
+  --cleared-soft: #dcebd9;
+  --abstain: #8f5b00;
+  --abstain-soft: #f3e6cc;
+  --unverified: #66706a;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --display: 'Bahnschrift', 'DIN Alternate', 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
+  --prose: 'Sitka Text', 'Charter', 'Iowan Old Style', Georgia, serif;
+  --mono: 'Cascadia Mono', 'JetBrains Mono', Consolas, ui-monospace, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  /* names the Explorer page still uses */
+  --text: var(--mute);
+  --text-h: var(--ink);
+  --bg: var(--panel);
+  --border: var(--rule);
+  --code-bg: #e2e6e1;
+  --accent: var(--signal);
+  --accent-bg: var(--signal-soft);
+  --accent-border: var(--signal);
+  --sans: var(--display);
+  --heading: var(--display);
+
+  font: 15px/1.5 var(--display);
+  color: var(--ink);
+  background: var(--paper);
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100svh;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--display);
+  color: var(--ink);
+  margin: 0;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
 }
 
-code,
-.counter {
+code {
   font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: var(--ink);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }

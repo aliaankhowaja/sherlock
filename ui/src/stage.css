@@ -1,0 +1,146 @@
+.stage {
+  border: 1px solid var(--ink);
+  background: var(--panel);
+}
+.stage-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.player button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  cursor: pointer;
+  font-size: 13px;
+}
+.player button:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+.player button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.player .btn-play {
+  border-color: var(--signal);
+  background: var(--signal);
+  color: #fff;
+  font-weight: 600;
+  min-width: 96px;
+}
+.icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+.speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--mute);
+}
+.speed select {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 4px;
+}
+.rail {
+  flex: 1;
+  min-width: 80px;
+  height: 3px;
+  background: var(--rule-soft);
+}
+.rail div {
+  height: 100%;
+  background: var(--signal);
+  transition: width 0.3s ease;
+}
+.counter {
+  font: 12px var(--mono);
+  color: var(--mute);
+}
+.seg {
+  display: inline-flex;
+}
+.seg button {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-color: var(--rule);
+}
+.seg button + button {
+  border-left: 0;
+}
+.seg .is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--panel);
+}
+
+/* the graticule: the graph sits on an instrument grid */
+.stage-graph,
+.preview,
+.verdict-graph {
+  padding: 14px;
+  background-color: #f2f4f1;
+  background-image: radial-gradient(circle, #c9cfc9 1px, transparent 1.2px);
+  background-size: 18px 18px;
+  overflow-x: auto;
+}
+.graph {
+  display: block;
+  width: 100%;
+  min-width: 760px;
+  height: auto;
+  max-height: 420px;
+}
+.graph .ge path {
+  fill: none;
+  stroke: #9aa39c;
+  stroke-width: 1.4;
+}
+.graph .ge.is-cond path:first-child {
+  stroke-dasharray: 5 4;
+}
+.graph .ge-head {
+  fill: #9aa39c;
+}
+.graph .ge.is-on path:first-child {
+  stroke: var(--signal);
+  stroke-width: 2;
+}
+.graph .ge-pulse {
+  stroke: var(--signal) !important;
+  stroke-width: 5 !important;
+  stroke-linecap: round;
+  stroke-dasharray: 9 200;
+  animation: travel 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  filter: drop-shadow(0 0 3px rgba(10, 108, 134, 0.6));
+}
+@keyframes travel {
+  from { stroke-dashoffset: 9; }
+  to { stroke-dashoffset: -100; }
+}
+.graph .ge-label {
+  font: 10px var(--mono);
+  fill: var(--mute);
+  paint-order: stroke;
+  stroke: #f2f4f1;
+  stroke-width: 4px;
+}
+.graph .ge.is-on .ge-label {
+  fill: var(--signal);
+  font-weight: 700;
+}

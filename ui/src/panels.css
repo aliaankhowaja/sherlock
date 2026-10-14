@@ -1,0 +1,175 @@
+.stage-lower,
+.verdict-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  border-top: 1px solid var(--rule);
+}
+.verdict-lower {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+}
+.stage-lower > section,
+.verdict-lower > section {
+  padding: 16px 18px;
+  min-width: 0;
+}
+.stage-lower > section + section,
+.verdict-lower > section + section {
+  border-left: 1px solid var(--rule);
+}
+
+.log ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  height: 300px;
+  overflow-y: auto;
+  font: 12.5px/1.5 var(--mono);
+  scroll-behavior: smooth;
+}
+.log li {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 8px;
+  padding: 3px 6px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  animation: arrive 0.25s ease-out;
+}
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(3px); }
+}
+.log li:hover {
+  background: var(--rule-soft);
+}
+.log li.is-now {
+  background: var(--signal-soft);
+  border-left-color: var(--signal);
+}
+.log-t {
+  color: #8a938c;
+}
+.log-x {
+  overflow-wrap: anywhere;
+}
+.tone-head .log-x {
+  font-weight: 700;
+}
+.tone-ok .log-x {
+  color: var(--ink);
+}
+.tone-muted .log-x {
+  color: var(--mute);
+}
+.tone-bad {
+  border-left-color: var(--culprit) !important;
+}
+.tone-bad .log-x {
+  color: var(--culprit);
+}
+.tone-warn .log-x {
+  color: var(--abstain);
+}
+
+.inspect {
+  max-height: 360px;
+  overflow-y: auto;
+}
+.inspect-close {
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.now-empty,
+.now-note {
+  font: italic 15px/1.5 var(--prose);
+  color: var(--mute);
+}
+.now-head,
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font: 600 20px/1.2 var(--display);
+  margin-bottom: 4px;
+}
+.now-arrow {
+  color: var(--signal);
+}
+.now-sub {
+  font-size: 13px;
+  color: var(--mute);
+  margin-bottom: 10px;
+}
+.now-tag,
+.chip-kind {
+  font: 500 11px var(--mono);
+  padding: 2px 6px;
+  border: 1px solid var(--signal);
+  color: var(--signal);
+}
+.chip-kind {
+  border-color: var(--rule);
+  color: var(--mute);
+}
+.now-io {
+  margin-top: 10px;
+}
+.now-io h5,
+.card h5 {
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 12px 0 6px;
+}
+.now-out {
+  padding-top: 6px;
+  border-top: 1px dashed var(--rule);
+}
+.now-error {
+  color: var(--culprit);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.kv {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.kv-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.32fr) 1fr;
+  gap: 2px 10px;
+  padding: 3px 6px;
+  border-left: 2px solid var(--rule-soft);
+  font: 12.5px/1.45 var(--mono);
+}
+.kv-row dt {
+  color: var(--mute);
+}
+.kv-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.kv-row.is-fresh {
+  border-left-color: var(--signal);
+  background: var(--signal-soft);
+}
+.kv-row.is-diff {
+  border-left-color: var(--abstain);
+}
+.kv-tag {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--signal);
+  text-transform: uppercase;
+}
+.kv-tag-diff {
+  color: var(--abstain);
+}
+.kv-good {
+  grid-column: 2;
+  color: var(--mute);
+}

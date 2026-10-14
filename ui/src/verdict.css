@@ -1,0 +1,130 @@
+/* 4 verdict */
+.verdict {
+  padding: 22px 0 6px;
+  border-top: 6px solid var(--unverified);
+}
+.verdict.v-found {
+  border-top-color: var(--culprit);
+}
+.verdict.v-abstain {
+  border-top-color: var(--abstain);
+}
+.headline {
+  font: 400 34px/1.18 var(--prose);
+  letter-spacing: -0.01em;
+  max-width: 30ch;
+  margin: 4px 0 12px;
+}
+.verdict-sub {
+  font-size: 14px;
+  color: var(--mute);
+}
+.verdict-why {
+  margin-top: 8px;
+  font: 12.5px/1.5 var(--mono);
+  color: var(--abstain);
+  max-width: 110ch;
+}
+.verdict-graph {
+  border: 1px solid var(--rule);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font: 600 12px var(--mono);
+}
+.legend .st-culprit {
+  color: var(--culprit);
+}
+.legend .st-cleared {
+  color: var(--cleared);
+}
+.legend .st-unverified {
+  color: var(--unverified);
+}
+.legend .st-abstained {
+  color: var(--abstain);
+}
+.trials {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin-bottom: 16px;
+}
+.trials th {
+  text-align: left;
+  font: 600 11px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+  border-bottom: 1px solid var(--ink);
+  padding: 6px 8px;
+}
+.trials td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+.trials td:first-child {
+  font-family: var(--mono);
+}
+.tr-pass td:nth-child(3) {
+  color: var(--cleared);
+  font-weight: 600;
+}
+.tr-fail td:nth-child(3) {
+  color: var(--culprit);
+}
+.tr-abstain td:nth-child(3),
+.tr-cannot_say td:nth-child(3) {
+  color: var(--abstain);
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+}
+.card-verdict {
+  padding: 10px 12px;
+  border-left: 4px solid var(--unverified);
+  background: #eef0ed;
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.card-verdict.st-culprit {
+  border-color: var(--culprit);
+  background: var(--culprit-soft);
+}
+.card-verdict.st-cleared {
+  border-color: var(--cleared);
+  background: var(--cleared-soft);
+}
+.card-verdict.st-abstained {
+  border-color: var(--abstain);
+  background: var(--abstain-soft);
+}
+.facts {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 13.5px;
+}
+.facts dt {
+  color: var(--mute);
+}
+.facts dd {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.facts ul {
+  margin: 0;
+  padding-left: 16px;
+}
