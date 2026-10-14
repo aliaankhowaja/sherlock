@@ -28,6 +28,8 @@ Replaced by the redesigned UI (see "Redesigned UI" below); the earlier guide/run
 | `4-verdict-found.png` | Step 4: "Restoring retriever and extractor together makes the run pass; neither alone does", graph by verified status, trial log, retriever evidence with output vs known-good |
 | `4-verdict-abstain.png` | `support_bot` cannot say: one-line reason, full explanation, engine reason; every node "cannot say", none named |
 | `explore.png` | The ingestion dashboard, now behind "Advanced" |
+| `big-verdict.png` | `/dev/big` synthetic 40-node team: gate strip (40 -> 14 -> 6 -> 4 -> 3 trials) and the verdict graph opened on the verified nodes, stage bands, untested nodes faded |
+| `big-replay.png` | Same team replaying with Follow on: the window tracks the running node, minimap shows where it is |
 
 Both downloads work: the HTML is a single file with no `<script>`, containing the verdict and the "Must change" chips; the JSON is the artifact.
 
@@ -87,3 +89,14 @@ teams; log/inspector stacking too early at 900 px; a trial replay drawing a hand
 Still not done: run badges for undiagnosed runs say "not checked yet" (the server cannot tell pass from fail without the
 check); the vendor_brief graph has no node kinds because this lab was started before kinds were declared; no automated UI
 tests; one browser, desktop and 900 px only.
+
+## Large teams (same day)
+
+Real 28-42 node teams were not on the server yet, so the views were checked on `/dev/big`, a synthetic 40-node fixture
+(`ui/src/fixture.ts`: 7 stages, parallel branches, a conditional route, a retry back edge; 2 culprit, 3 cleared, the rest
+not tested). Checked in headless Chrome: no overlapping boxes (per-layer guard in `layout.ts`); the verdict opens on a
+readable window around the culprit/cleared nodes, not a 5,400-unit-wide fit; wheel zoom, drag pan, Fit, Reset view,
+find-a-node, Group by stage / Expand stages, minimap jump; replay with Follow keeps the running node centred; the log
+follows the replay or the picked node. The gate strip reads the artifact's `gate_summary` (field names checked against
+`diagnose.py` at `95a1fe9`); trial rows carry `trials[].gates` tags. Not checked: a real big team's graph from the server,
+touch input, the strip on a real artifact.

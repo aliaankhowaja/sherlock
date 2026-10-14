@@ -350,6 +350,7 @@ Beyond spec §10:
 
 - **2026-10-14** — Phase 6b on `phase-6`: diagnosis engine scaled to 30-300 node pipelines (duality search, priority-ordered enumeration, auto trial budget), optional G1 shortlist (`gates.py`, `--g1-*`), per-gate attribution in the artifact. 271 recorder tests (incl. `test_scale.py` 22, `test_g1.py` 8) and 49 harness tests green. FR-D10 still not built (cassette replay is deterministic).
 
+- **2026-10-14** — UI for large teams (`2ce3250`, `1f788ac`): pan/zoom/fit/follow, minimap, stage grouping, search, dimming, gate strip from `gate_summary`, per-trial gate tags; checked on the synthetic 40-node `/dev/big` (real big teams not served yet).
 - **2026-10-14** — Redesigned web UI on `phase-6` (4 UI commits): guided stepper, `PipelineStage` replay of recorded runs and of live diagnosis jobs, verdict page; old Guide/RunPage removed. Driven in headless Chrome on the live demo lab: vendor_brief two-cause replay, a real diagnosis of the order_desk run started from the UI (job 2, done, {parse}), all four verdicts incl. support_bot abstain; screenshots refreshed. `./scripts/test.sh` result in `docs/verification.md`.
 
 - **2026-10-14** — Final verification pass on `phase-6` (3 commits): drove the real product through the web app, fixed the newcomer-facing issues above, added `eval/live_demo.py`, refreshed `docs/screenshots/`, wrote `docs/verification.md`. Gate `./scripts/test.sh` green (48 harness, 228 recorder, evaluation reproducible, app-core 23, api 16, cli 21, clippy, fmt); gaps are listed in `verification.md`.
