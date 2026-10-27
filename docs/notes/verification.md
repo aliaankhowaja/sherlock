@@ -1,3 +1,5 @@
+> **Working note (tier 3). Not authoritative.** It may be stale or wrong. Facts come from the code and from docs/eval. Never cite this file in anything submitted to the university.
+
 # End-to-end verification (2026-10-14)
 
 Product checked through the web app as a first-time user, on branch `phase-6`. Honest scope: one reviewer, one
