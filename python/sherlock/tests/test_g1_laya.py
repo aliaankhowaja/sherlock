@@ -67,6 +67,7 @@ def test_laya_orders_by_needs_restore_caches_and_never_leaks(cassette, tmp_path)
 
 FAILURES = {
     "unauthorized": lambda b: (401, {"error": "bad key"}, 0),
+    "no_credits": lambda b: (402, {"error": {"code": "insufficient_credits"}}, 0),
     "wrong_model": lambda b: (400, {"error": "unknown model"}, 0),
     "server_error": lambda b: (500, {}, 0),
     "malformed": lambda b: (200, {"answers": {}}, 0),

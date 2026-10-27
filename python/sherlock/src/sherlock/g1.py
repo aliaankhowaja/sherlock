@@ -257,7 +257,7 @@ def rank(cfg: dict, candidates: list[str], card_of) -> dict:
         try:
             entry, hit = cached_answers(cfg, card, min(cfg["timeout_ms"] / 1000, left))
         except Exception as exc:  # noqa: BLE001 - C8: one bad card is a null score; a dead endpoint stops G1
-            if isinstance(exc, OSError) and (not called or getattr(exc, "code", None) in (401, 403)):
+            if isinstance(exc, OSError) and (not called or getattr(exc, "code", None) in (401, 402, 403)):
                 problem = f"the endpoint failed: {type(exc).__name__} {getattr(exc, 'code', '')}".rstrip()
                 break
             scores[n] = None
