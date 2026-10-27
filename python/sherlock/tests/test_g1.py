@@ -10,13 +10,17 @@ sys.path.insert(0, str(Path(__file__).parent))
 from g1_stub import ShortlistStub
 from test_diagnose_unit import KG, DiagServer
 from test_g3_unit import CHECKS, HISTORY
+from test_sources import good_history
 
 from sherlock.cassette import Cassette
 from sherlock.diagnose import diagnose
+from sherlock.g1 import CARD_CHARS, node_card, rank
 from sherlock.gates import parse_nominations, run_g1
 from sherlock.search import Budget
 
 NODES = ["router", "retriever", "extractor", "writer", "reviewer"]
+CARD = lambda n: (n, False)  # noqa: E731
+GOLDEN = Path(__file__).parent / "golden" / "g1_cards"
 
 
 def g1(url, **kw):
@@ -102,6 +106,43 @@ def test_artifact_attributes_each_trial_and_summarises_each_gate(cassette):
     assert {"pruned_by_ancestry", "g0_flagged", "g2_cut"} <= set(s)
 
 
+def test_fake_scorer_is_deterministic_and_skips_a_single_candidate():
+    r = rank({"backend": "fake"}, NODES, CARD)
+    assert r == {**rank({"backend": "fake"}, list(reversed(NODES)), CARD), "ms": r["ms"]} and r["status"] == "ok"
+    scores = [s["score"] for s in r["scores"]]
+    assert scores == sorted(scores, reverse=True) and all(0 <= s <= 1 for s in scores)
+    assert rank({"backend": "fake"}, ["writer"], CARD)["status"] == "skipped"
+
+
+def test_fake_scorer_changes_order_never_the_answer(cassette):  # AC-G1-1 on the unit fixture; the 86 cases: run_eval
+    base, fake = run(cassette), run(cassette, {"backend": "fake"})
+    for key in ("minimal_sets", "unverified_sets"):
+        assert sorted(map(sorted, fake[key])) == sorted(map(sorted, base[key]))
+    assert (fake["status"], fake["reason_code"]) == (base["status"], base["reason_code"])
+    assert set(fake["pruning"]["candidates"]) == set(base["pruning"]["candidates"])
+    assert fake["g1"]["backend"] == "fake" and [s["node"] for s in fake["g1"]["scores"]] != []
+    assert fake["gate_summary"]["g1_nominated"] == len(fake["g1"]["scores"])
+
+
 def test_g2_cut_and_g0_flags_are_counted(cassette):
     r = run(cassette, suspects=["extractor", "writer"])
     assert any("g2" in t["gates"] for t in r["trials"]) and r["gate_summary"]["g2_cut"] >= 0
+
+
+@pytest.mark.parametrize("node", NODES)
+def test_node_cards_match_the_golden_files(node):  # AC-G1-6
+    card, truncated = node_card(node, HISTORY, good_history(), CHECKS)
+    assert card == (GOLDEN / f"{node}.txt").read_text(encoding="utf-8") and not truncated
+    assert len(card) <= CARD_CHARS
+
+
+def test_cards_are_redacted_cut_to_budget_and_maskable():
+    secret = "sk-" + "a" * 30
+    history = [dict(s, tasks=[dict(t, result={**(t.get("result") or {}), "note": f"{secret} bob@corp.com " + "x" * 9000})
+                              for t in s.get("tasks") or []]) for s in HISTORY]
+    card, truncated = node_card("extractor", history, good_history(), CHECKS)
+    assert truncated and len(card) <= CARD_CHARS and secret not in card and "bob@corp.com" not in card
+    assert card.splitlines()[1].startswith("FLAGS: ") and "chars cut...]" in card  # flags are never cut
+    masked, _ = node_card("extractor", HISTORY, good_history(), CHECKS, mask=True)
+    assert not any(n in masked for n in NODES) and masked.startswith("NODE: node_")
+    assert node_card("extractor", HISTORY, None, CHECKS)[0].splitlines()[1].endswith("upstream_differs=unknown")

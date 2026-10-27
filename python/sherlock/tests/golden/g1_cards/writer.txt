@@ -1,0 +1,7 @@
+NODE: writer
+FLAGS: output_same_as_good=no input_same_as_good=yes errored=no upstream_differs=[retriever, extractor]
+CHECK: contains "ISO 27001"; not-contains "SOC 2"
+DIFF: removed "ISO 27001. ... w" | added "SOC 2. ... writer: drafted brief"
+OUT_FAILED: {"brief": "Vendor brief: acme. Certifications: SOC 2. Data region: EU.", "notes": ["writer: drafted brief"]}
+OUT_GOOD: {"brief": "Vendor brief: acme. Certifications: ISO 27001. Data region: EU.", "notes": ["w"]}
+IN_FAILED: {"certifications": ["SOC 2"], "data_region": "EU", "documents": ["2023 assessment: Acme held SOC 2 Type II (expired 2023, not renewed).", "Data residency: all customer data is stored in the EU (Frankfurt)."], "notes": ["router: compliance_db", "retriever: 2 documents", "extractor: SOC 2"], "source": "compliance_db", "vendor": "acme"}

@@ -96,6 +96,7 @@ class Source:
     known_good: dict = field(default_factory=dict)
     unattributed: list[str] = field(default_factory=list)
     context: dict | None = None
+    history: list = field(default_factory=list, repr=False)  # the good run's checkpoints, for G1 node cards
 
     def to_dict(self):
         return {"kind": "run", "thread_id": self.thread_id, "confirmed": self.confirmed, "eligible": self.eligible,
@@ -126,6 +127,7 @@ def assess(thread_id: str, confirmed: bool, failed_history: list[dict], failed_c
     src.same_output = [n for n in nodes if n not in src.differing]
     src.known_good, src.unattributed = derive_known_good(failed_context, good_context, nodes, owners)
     src.context = good_context
+    src.history = good_history
     src.eligible = True
     src.why = f"passes the check on the same input; {len(src.differing)} node(s) wrote something different"
     return src

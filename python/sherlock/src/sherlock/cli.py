@@ -106,6 +106,50 @@ def parse_pasted(items) -> dict:
     return out
 
 
+def _laya_cfg(args, cache_dir: Path | None) -> dict:
+    """G1 Laya settings from the flags. The key stays in the environment: LAYA_API_KEY, or a .env file here."""
+    env_file = Path(".env")
+    if "LAYA_API_KEY" not in os.environ and env_file.is_file():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            name, sep, value = line.partition("=")
+            if sep and name.strip() == "LAYA_API_KEY":
+                os.environ["LAYA_API_KEY"] = value.strip().strip("'\"")
+    given = {"endpoint": args.g1_endpoint or os.environ.get("LAYA_API_BASE"), "path": args.g1_path,
+             "model": args.g1_model, "timeout_ms": args.g1_timeout_ms, "total_timeout_ms": args.g1_total_timeout_ms}
+    return {"backend": "laya", "allow_remote": args.g1_allow_remote, "cache_dir": None if args.g1_no_cache else cache_dir,
+            **{k: v for k, v in given.items() if v is not None}}
+
+
+def _g1_check(args) -> int:
+    """Smoke test of a G1 Laya endpoint: the sample card twice, the reported model, usage and every probability."""
+    import time
+    from urllib.parse import urlsplit
+
+    from sherlock.g1 import DEFAULTS, SAMPLE_CARD, ask, blocked, parse
+
+    cfg = {**DEFAULTS, **_laya_cfg(args, None)}
+    print(f"sherlock-rec: this sends card text to {urlsplit(cfg['endpoint']).hostname}", file=sys.stderr)
+    problem = blocked(cfg)
+    if problem:
+        print(f"sherlock-rec: {problem}", file=sys.stderr)
+        return EXIT_ERROR
+    runs = []
+    try:
+        for _ in range(2):
+            start = time.monotonic()
+            raw = ask(cfg, SAMPLE_CARD, cfg["timeout_ms"] / 1000)
+            runs.append((raw, *parse(raw), round(1000 * (time.monotonic() - start))))
+    except (OSError, ValueError) as exc:
+        print(f"sherlock-rec: {cfg['endpoint']}{cfg['path']}: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return EXIT_ERROR
+    (raw, answers, truncated, first_ms), (_, again, _, warm_ms) = runs
+    print(json.dumps({"url": cfg["endpoint"] + cfg["path"], "model_requested": cfg.get("model"),
+                      "model_reported": raw.get("model"), "routed_to": (raw.get("routing") or {}).get("model"),
+                      "usage": raw.get("usage"), "truncated": truncated, "answers": answers,
+                      "same_answers_twice": answers == again, "ms_first": first_ms, "ms_warm": warm_ms}, indent=2))
+    return 0
+
+
 def _diagnose(args) -> int:
     from sherlock.checks import CheckError
     from sherlock.diagnose import diagnose, write_artifact
@@ -122,10 +166,12 @@ def _diagnose(args) -> int:
         pasted = parse_pasted(args.known_good_output)
         known_good = {**(known_good or {}), **pasted} if pasted else known_good
         node_map = load_node_map(args.node_map) if args.node_map else None
-        if bool(args.g1_url) != bool(args.g1_model):
-            raise ValueError("G1 needs both --g1-url and --g1-model (or neither)")
+        backend = args.g1 or ("hosted" if args.g1_url else "off")
+        if (backend == "hosted") != bool(args.g1_url) or (backend == "hosted" and not args.g1_model):
+            raise ValueError("--g1 hosted needs both --g1-url and --g1-model, and --g1-url is only for it")
         g1 = ({"url": args.g1_url, "model": args.g1_model, "samples": max(args.g1_samples, 1), "key": args.g1_key}
-              if args.g1_url else None)
+              if backend == "hosted" else _laya_cfg(args, sherlock_dir / "g1_cache") if backend == "laya"
+              else {"backend": "fake"} if backend == "fake" else None)
         result = diagnose(Client(args.url, args.api_key), args.thread_id, known_good, checks, args.cassette,
                           Budget(args.max_trials or 40, args.max_minutes, args.max_size, auto=args.max_trials is None), context,
                           good_runs=args.good_run or [], discover_good=args.discover_good,
@@ -174,6 +220,18 @@ def _intake(args) -> int:
     return 0
 
 
+def _laya_args(p) -> None:
+    p.add_argument("--g1-model", help="model name: for --g1-url, or the Laya checkpoint (default typed-decisions)")
+    p.add_argument("--g1-endpoint", help="Laya base URL (default: env LAYA_API_BASE, else https://api.laya.studio)")
+    p.add_argument("--g1-path", help="Laya path (default /v1/systemone)")
+    p.add_argument("--g1-allow-remote", action="store_true",
+                   help="allow a non-local Laya endpoint: the redacted node cards then leave this machine")
+    p.add_argument("--g1-timeout-ms", type=int, help="per Laya call (default 10000)")
+    p.add_argument("--g1-total-timeout-ms", type=int, help="all of G1 in one diagnosis (default 60000)")
+    p.add_argument("--g1-no-cache", action="store_true",
+                   help="always call the endpoint; the result is then not reproducible (g1.cache = disabled)")
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="sherlock-rec", epilog="exit codes: 0 pass, 100 check failure, 1 infrastructure error, 75 cannot say, 2 usage")
     sub = ap.add_subparsers(dest="verb", required=True)
@@ -216,10 +274,14 @@ def main(argv: list[str] | None = None) -> int:
     dg.add_argument("--context", help="JSON run context to start from (default: the original run's)")
     dg.add_argument("--max-trials", type=int, default=None,
                     help="hard cap on G3 trials (default: 40, or 3 per candidate + 20 when larger)")
+    dg.add_argument("--g1", choices=["off", "hosted", "laya", "fake"],
+                    help="optional G1 trial ordering (default off; hosted when --g1-url is given). `laya` scores each "
+                         "candidate with the Laya API (key: env LAYA_API_KEY); `fake` scores by a hash of the node "
+                         "name, for tests. G1 only reorders trials, never changes the answer")
     dg.add_argument("--g1-url", help="optional G1 shortlist: base URL of an OpenAI-compatible endpoint "
                                      "(e.g. https://api.openai.com/v1). The model sees redacted node summaries, has no tools, "
                                      "and can only reorder trials")
-    dg.add_argument("--g1-model", help="model name for --g1-url")
+    _laya_args(dg)
     dg.add_argument("--g1-samples", type=int, default=1, help="G1 samples; more only widen the list (default 1)")
     dg.add_argument("--g1-key", help="API key for G1 (default: env SHERLOCK_G1_API_KEY, then OPENAI_API_KEY)")
     dg.add_argument("--max-minutes", type=float, default=10.0, help="hard cap on wall-clock time (default 10)")
@@ -242,6 +304,8 @@ def main(argv: list[str] | None = None) -> int:
     it.add_argument("--check", help="a check file Z (sherlock.yaml)")
     it.add_argument("--note")
     it.add_argument("--dir", default=".sherlock", help="Sherlock directory (default .sherlock)")
+    gc = sub.add_parser("g1-check", help="smoke-test a G1 Laya endpoint with the sample card (sends it twice)")
+    _laya_args(gc)
     run = sub.add_parser("run", help="run a command under the recorder")
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
     run.add_argument("--cassette", default=".sherlock/cassette.db")
@@ -263,6 +327,8 @@ def main(argv: list[str] | None = None) -> int:
         return _outcomes(args)
     if args.verb == "intake":
         return _intake(args)
+    if args.verb == "g1-check":
+        return _g1_check(args)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
     if not cmd:
         ap.error("run: missing command")

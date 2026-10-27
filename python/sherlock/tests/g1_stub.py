@@ -8,6 +8,7 @@
 import argparse
 import json
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
@@ -47,6 +48,34 @@ class ShortlistStub:
         self._srv.shutdown()
         self._srv.server_close()
         self._thread.join(timeout=5)
+
+
+class _LayaHandler(BaseHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+    def do_POST(self):
+        body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+        self.server.hits.append({**body, "_auth": self.headers.get("Authorization"), "_path": self.path})
+        status, payload, delay = self.server.reply(body)
+        time.sleep(delay)
+        out = json.dumps(payload).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(out)))
+        self.end_headers()
+        self.wfile.write(out)
+
+
+class LayaStub(ShortlistStub):
+    """A Laya System One stand-in: `reply(body) -> (status, payload, delay_s)` answers each POST."""
+
+    def __init__(self, reply):
+        self._srv = ThreadingHTTPServer(("127.0.0.1", 0), _LayaHandler)
+        self._srv.hits, self._srv.reply = [], reply
+        self.url = f"http://127.0.0.1:{self._srv.server_address[1]}"
+        self.hits = self._srv.hits
+        self._thread = None
 
 
 if __name__ == "__main__":

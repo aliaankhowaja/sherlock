@@ -11,6 +11,7 @@ import time
 import pytest
 
 from sherlock.clues import Clue, order_candidates
+from sherlock.g1 import rank
 from sherlock.g3 import Verdict
 from sherlock.search import Budget, plan_candidates, search
 
@@ -51,12 +52,13 @@ class Oracle:
                        check={"pass": ok, "results": [{"score": 1.0 if ok else 0.0}]})
 
 
-def diagnose_synthetic(n, planted_fn, clue_nodes=(), max_size=3, max_trials=None):
+def diagnose_synthetic(n, planted_fn, clue_nodes=(), max_size=3, max_trials=None, g1=False):
     history, kg, ctx, nodes = world(n)
     plan = plan_candidates(history, kg, ctx, "final_output")
     planted = planted_fn(plan.candidates)
     clues = [Clue("extractive", c, "planted", weight=3) for c in clue_nodes]
-    cands = order_candidates(plan.candidates, clues)
+    nominated = [s["node"] for s in rank({"backend": "fake"}, plan.candidates, lambda n: (n, False))["scores"]] if g1 else ()
+    cands = order_candidates(plan.candidates, clues, nominated)
     oracle = Oracle(planted)
     budget = Budget(max_trials=max_trials or 4 * n + 40, max_minutes=5, max_size=max_size)
     t0 = time.perf_counter()
@@ -98,6 +100,15 @@ def test_g0_ordering_finds_a_planted_pair_in_a_handful_of_trials(n):
     pair = {cands[-1], cands[-2]}
     res, oracle, *_ = diagnose_synthetic(n, lambda c: [pair], clue_nodes=pair, max_trials=12)
     assert sorted(res.minimal_sets[0]) == sorted(pair) and len(oracle.calls) <= 12
+
+
+@pytest.mark.parametrize("n", SIZES + (300,))
+@pytest.mark.parametrize("case", CASES)
+def test_g1_fake_order_gives_the_same_answer(n, case):  # AC-G1-1 at scale
+    base, fake = diagnose_synthetic(n, CASES[case])[0], diagnose_synthetic(n, CASES[case], g1=True)[0]
+    for r in (base, fake):
+        r.minimal_sets, r.unverified_sets = sorted(map(sorted, r.minimal_sets)), sorted(map(sorted, r.unverified_sets))
+    assert (fake.status, fake.reason_code, fake.minimal_sets, fake.unverified_sets) ==            (base.status, base.reason_code, base.minimal_sets, base.unverified_sets)
 
 
 def test_artifact_stays_small_at_sixty_nodes():

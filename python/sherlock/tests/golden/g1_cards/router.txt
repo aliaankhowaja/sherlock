@@ -1,0 +1,7 @@
+NODE: router
+FLAGS: output_same_as_good=yes input_same_as_good=yes errored=no upstream_differs=[]
+CHECK: contains "ISO 27001"; not-contains "SOC 2"
+DIFF: none
+OUT_FAILED: {"notes": ["router: compliance_db"], "source": "compliance_db"}
+OUT_GOOD: {"notes": ["router: compliance_db"], "source": "compliance_db"}
+IN_FAILED: {"notes": [], "vendor": "acme"}

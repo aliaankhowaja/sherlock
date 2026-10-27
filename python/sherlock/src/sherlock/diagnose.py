@@ -14,6 +14,8 @@ from pathlib import Path
 from sherlock.cassette import Cassette
 from sherlock.checks import Checks, evaluate
 from sherlock.clues import differs_clues, history_clues, order_candidates, path_check, tool_call_clues
+from sherlock.g1 import node_card
+from sherlock.g1 import rank as rank_g1
 from sherlock.g3 import G3Error, history_usable, run_g3
 from sherlock.gates import disabled as g1_disabled
 from sherlock.gates import run_g1
@@ -106,7 +108,7 @@ def _gate_summary(on_path, pruning, unit_clues, nominated, path, trials_used) ->
 
 
 def _unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original, clues, kg,
-          source, path, suspects, emit=lambda _event: None, nominated=()):
+          source, path, suspects, emit=lambda _event: None, nominated=(), g1_cfg=None):
     """One search with one known-good source. Returns (result dict, pruning, clues shown)."""
     unit_clues = clues + (differs_clues(source.differing, source.same_output, source.thread_id) if source else [])
     widen = {c.node for c in unit_clues if c.widens and c.node}
@@ -120,6 +122,15 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
                 pruning.pruned[n] = "not on the shortlist and no widening clue (FR-G0.5)"
         pruning.candidates = [n for n in pruning.candidates if n in allowed]
         notes.append("the search was limited to the suspects and the nodes a G0 clue widened it with")
+    if g1_cfg:  # the G1 scorer sees only the survivors; its order breaks ties inside a G0 score (variant A)
+        good = source.history if source else None
+        g1 = rank_g1(g1_cfg, pruning.candidates,
+                     lambda n: node_card(n, history, good, checks, g1_cfg.get("mask", False)))
+        nominated = [s["node"] for s in g1["scores"]]
+        g1["order_changed"] = (order_candidates(pruning.candidates, unit_clues)
+                               != order_candidates(pruning.candidates, unit_clues, nominated))
+        emit({"event": "g1", "backend": g1["backend"], "status": g1["status"], "nominated": nominated,
+              "cache": g1.get("cache"), "ms": g1["ms"]})
     candidates = order_candidates(pruning.candidates, unit_clues, list(nominated))
     pruning.candidates = candidates
     tags = {n: {g for g, on in (("g0", n in {c.node for c in unit_clues}), ("g1", n in nominated),
@@ -144,6 +155,8 @@ def _unit(client, thread_id, history, context, checks, cassette_path, budget, cl
             result["reason"] += (f"; the passing run {source.thread_id} used the same node configuration or wrote "
                                  "the same outputs, so the difference is not something Sherlock can restore")
         result["notes"] = notes + result["notes"]
+    if g1_cfg:
+        result["g1"] = g1
     return result, pruning, unit_clues
 
 
@@ -165,7 +178,8 @@ def diagnose(client, thread_id: str, known_good: dict | None, checks: Checks | N
     that source as "pasted". The pasted value is the node's known-good behaviour, restored through the run
     context like any other; a downstream node's recorded output is never pasted back (FR-G3.4).
 
-    `g1` ({url, model, samples, key}) switches on the optional G1 shortlist (gates.py); None leaves it off.
+    `g1` ({url, model, samples, key}) switches on the optional G1 shortlist (gates.py); {"backend": "laya" | "fake",
+    ...} switches on the G1 scorer instead (g1.py, settings in g1.DEFAULTS); None leaves G1 off.
 
     `progress(event)` (optional) hears each step as it happens: `start`, `check`, `sources`, `plan`, then per trial
     `trial_start`, `fork`, `resume`, `rerun` (each re-run node with its input and output), `trial`, and always a
@@ -224,7 +238,8 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
                if (good_runs or discover_good) else [])
     g1 = g1_disabled()
     nominated: list[str] = []
-    if g1_config:  # optional, weak, never fatal (FR-G1.6): any failure falls back to G0-only ordering
+    hosted = bool(g1_config) and g1_config.get("backend", "hosted") == "hosted"
+    if hosted:  # optional, weak, never fatal (FR-G1.6): any failure falls back to G0-only ordering
         res = run_g1(history, checks.output_key, (history[0]["values"] or {}).get(checks.output_key) or "",
                      [r["reason"] for r in original.get("results", []) if not r.get("pass")], on_path,
                      url=g1_config["url"], model=g1_config["model"], samples=g1_config.get("samples", 1),
@@ -250,11 +265,14 @@ def _diagnose(client, thread_id, known_good, checks, cassette_path, budget, cont
 
     units = [(s, {**s.known_good, **known_good}) for s in ranked] or [(None, known_good)]
     outcomes = [(source, *_unit(client, thread_id, history, context, checks, cassette_path, budget, clock, original,
-                                clues, kg, source, path, list(suspects), emit, nominated)) for source, kg in units]
+                                clues, kg, source, path, list(suspects), emit, nominated, None if hosted else g1_config))
+                for source, kg in units]
 
     found = [o for o in outcomes if o[1]["status"] == "found"]
     source, result, pruning, unit_clues = (found or outcomes)[0]
     result = dict(result)
+    g1 = result.pop("g1", g1)
+    nominated = nominated or [s["node"] for s in g1.get("scores", [])]
     distinct = {frozenset(frozenset(s) for s in o[1]["minimal_sets"]) for o in found}
     if len(distinct) > 1:  # FR-K4: successes that disagree about what restoring flips never become gold
         said = "; ".join(f"{o[0].thread_id}: " + " and ".join("{" + ", ".join(s) + "}" for s in o[1]["minimal_sets"])
