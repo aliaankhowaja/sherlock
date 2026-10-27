@@ -15,7 +15,7 @@
 //!
 //! The module does no I/O itself: callers inject a [`LangGraphTransport`]
 //! (real HTTP lives outside `app-core`; tests use a fake). This keeps
-//! `app-core` free of CLI/HTTP/UI dependencies per `agents.md`.
+//! `app-core` free of CLI/HTTP/UI dependencies per `AGENTS.md` and `docs/notes/architecture.md`.
 
 /// LangGraph API paths used by this module.
 pub const ASSISTANTS_SEARCH_PATH: &str = "/assistants/search";

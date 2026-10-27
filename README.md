@@ -32,7 +32,7 @@ make test        # full gate, adds the ~5 minute evaluation (docs/eval)
 
 ## Where things are
 
-`agents.md` has the repo layout, commands and the web API. `docs/STATUS.md` is the live project tracker.
+`AGENTS.md` has the layout, commands and team rules. `docs/README.md` explains the docs; `docs/notes/status.md` is the working tracker (orientation only).
 In short: `crates/` (Rust engine, CLI, web server), `ui/` (React app), `python/sherlock/` (recorder, replay, diagnose), `harness/` (demo teams).
 
 ## Troubleshooting
