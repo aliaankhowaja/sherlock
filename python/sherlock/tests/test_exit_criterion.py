@@ -1,4 +1,4 @@
-"""Phase 1 exit criterion (STATUS.md): record the LLM demo team via `sherlock run`, replay it with
+"""Phase 1 exit criterion (docs/notes/status.md): record the LLM demo team via `sherlock run`, replay it with
 zero network calls, and see a deliberately changed request abort with "cannot say"."""
 
 import os
