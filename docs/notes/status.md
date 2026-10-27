@@ -279,31 +279,46 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 
-## G1 Laya API v0 (new)
+## G1 Laya API v0 (branch `g1-laya`, local)
 
-Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Nothing below is built or verified yet.
+Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Updated 2026-10-28.
 
 ### Build steps (spec section 12)
 
-| Step | Build | Exit check |
+| Step | State | Evidence |
 | --- | --- | --- |
-| 1 | Backend interface, the `off` and `fake` backends, and the orchestrator call site | AC-G1-1 holds with `off`. AC-G1-9 passes with `fake` |
-| 2 | Node-card builder with golden-file tests | AC-G1-6. Read the cards for 10 cases by eye, including the vendor-brief example |
-| 3 | Laya API client, response cache, error handling, `g1-check`, fake HTTP server tests | Section 10 steps 1 to 9 done. AC-G1-4, 5 and 11 pass. Same card twice gives identical output. Measured time replaces the 10-second target |
-| 4 | Zero-shot evaluation of methods 1 to 6 on the 86 cases | Metrics table written. **Gate:** if G0 order or the rule baseline already finds the first fix in at most 1 trial on 95 percent of cases, planted data cannot show a gain. Tell your supervisor and move straight to harder generated cases and real failures |
-| 5 | Harder generated cases and shortcut controls (can run in parallel with steps 2 to 4). Tune question wording on the development half only, bump the version string for each change | Dataset v1 is byte-reproducible. Dev and test files committed. Evaluation of methods 1 to 7 on the test half |
-| 6 | Integration: `g1` result field, progress line, Rust reader, evidence panel, schema decision. Then the final evaluation with frozen question version, and the ship decision | AC-G1-3, 7 and 10 pass. Tables for all three data sources. Decision recorded against the pre-declared rule |
+| 1 Backend interface, `off`/`fake`, call site | ✅ | `g1.py` `rank`; hook in `diagnose._unit` after pruning; `tests/test_g1.py`, `tests/test_scale.py` |
+| 2 Node cards, golden files | ✅ | `g1.node_card`; `tests/golden/g1_cards/` (vendor brief, all 5 nodes read by eye) |
+| 3 Laya client, cache, `g1-check`, fake server tests | ✅ | `tests/test_g1_laya.py`; `sherlock-rec g1-check --g1-allow-remote` returned 200 from api.laya.studio, same answers twice, 0.9 s warm |
+| 4 Zero-shot evaluation on the 86 cases | ⏳ gate done, Laya numbers blocked | `eval/g1_eval.py`. Gate fires: min(G0, rule) is already optimal on 96.4% of the 84 answered cases. Laya rows not valid yet: account out of credits (HTTP 402) |
+| 5 Harder generated cases | ⏳ data done, Laya numbers blocked | `eval/g1_gen.py` (seed 7, 100 dev + 100 test, test sha256 739f3ee40245...); G0 is optimal on only 22% of the test half. No question tuning yet (still `g1_questions_v1`) |
+| 6 Integration | ✅ code; final run and ship decision open | `g1` result object, `g1` progress line, Rust reader test (schema stays 1), UI weak hint hidden on abstain |
 
 ### Acceptance criteria
 
-- [ ] AC-G1-1: At default budgets, `minimal_sets`, `unverified_sets`, status and reason code are identical with G1 on and off, on all 86 cases and the scale tests (30 to 300 nodes).
-- [ ] AC-G1-2: At tight budgets, zero wrong claims, and the exact-answer count with G1 on is at least the count with G1 off.
-- [ ] AC-G1-3: Same inputs give a byte-identical result file on three runs on one machine.
-- [ ] AC-G1-4: During diagnosis with G1 on, the only network connections are to the configured G1 endpoint, and zero with `--g1 off` or `--g1 fake`. A non-local endpoint without `--g1-allow-remote` makes zero connections.
-- [ ] AC-G1-5: If the endpoint is unreachable, times out, returns an error or returns malformed answers, the result equals the G1-off result except for the `g1` object (`status = unavailable`).
-- [ ] AC-G1-6: Every card is at most 800 estimated tokens, and the builder matches golden files.
-- [ ] AC-G1-7: Node status in the verdict is unchanged by any G1 score.
-- [ ] AC-G1-8: G1 adds at most 10 seconds on a 33-node team against a warm local endpoint, and never more than the total timeout in any case.
-- [ ] AC-G1-9: The orchestrator and search are fully tested with the `fake` backend and the fake HTTP server, no endpoint required.
-- [ ] AC-G1-10: The README section and `g1-check` command exist, and a clean machine can point Sherlock at an endpoint and run the check.
-- [ ] AC-G1-11: The API key never appears in the result file, logs, progress lines or cache. Card text never appears in logs.
+- [x] AC-G1-1: same answer with G1 on and off: 86 cases (`results.json` invariant `g1_fake_changed_answer` = []), 30 to 300 nodes (`test_scale.py`).
+- [ ] AC-G1-2: tight budgets: needs the Laya runs.
+- [ ] AC-G1-3: three byte-identical runs: not run yet.
+- [x] AC-G1-4: socket trap in `test_g1_laya.py` (remote without opt-in, no key, fake: zero connections).
+- [x] AC-G1-5: dead port, 401, 402, 400, 500, timeout, malformed, out-of-range answers all give the G1-off result with `status = unavailable`.
+- [x] AC-G1-6: golden cards; cards capped at 2,400 characters (800 tokens at 3 characters each); the API measured about 3 characters per token.
+- [x] AC-G1-7: `app-core` test `g1_scores_are_accepted_and_never_change_what_the_trials_decided`.
+- [ ] AC-G1-8: not measured on a local endpoint. Hosted API: about 0.9 s per warm call, so about 30 s for 33 uncached cards.
+- [x] AC-G1-9: `fake` backend and the local System One stand-in; no endpoint needed.
+- [ ] AC-G1-10: README section and `g1-check` exist; the clean-machine check is not done.
+- [x] AC-G1-11: planted-key and card-text scan over result, progress events and cache.
+
+### Facts measured against the real API (2026-10-28)
+
+- A named User-Agent is required (Cloudflare error 1010 otherwise).
+- `GET /v1/models` lists `english` (default, 512 tokens), `multilingual` (1,024) and `typed-decisions` (English, 1,024, only on request). Without `model` the service routed our English card to `multilingual`, so the client sends `typed-decisions` by default.
+- `usage.input_tokens` counts the card once per question (six questions: about 1,600 tokens for a 230-token card), so truncation is read from `usage.truncated` and `usage.state_tokens_dropped`.
+- Billing is per input token, every question included: $0.0357 per 1M after a one-time 6,000-token free tier (laya.studio/pricing). The free tier is used up.
+- The recording does not say which node made a tool call, so cards have no tool field and Q6 is never asked; no node role exists in a run, so cards have no role field.
+
+### Next
+
+1. The user adds Laya credits (estimate: 10 to 15M tokens, about $0.50 for all runs).
+2. `cd python/sherlock && uv run python eval/g1_eval.py --tight 2 --stability --out ../../docs/eval/g1` (needs `eval/.g1/cases.jsonl` from `run_eval.py`).
+3. `uv run python eval/g1_gen.py`, then `g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --out ../../docs/eval/g1_gen`.
+4. Freeze the question version, run once, apply the ship rule (the supervisor confirms the 20 percent margin first).
