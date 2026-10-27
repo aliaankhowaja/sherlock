@@ -13,3 +13,6 @@ harness/langgraph-dev.log
 
 # Demo state (pids, logs, recorded runs, private binary copy)
 .sherlock-demo/
+
+# Browser-tool scratch output (console logs, page snapshots)
+.playwright-cli/
