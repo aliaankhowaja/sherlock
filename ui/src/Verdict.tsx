@@ -24,10 +24,10 @@ function Term({ k, children }: { k: keyof typeof TIP; children: ReactNode }) {
   return <span className="term" tabIndex={0} data-tip={TIP[k]}>{children}</span>
 }
 
-const GATE_NAME: Record<string, string> = { g0: 'clue', g1: 'LLM hint', g2: 'path check' }
+const GATE_NAME: Record<string, string> = { g0: 'clue', g1: 'G1 hint', g2: 'path check' }
 const GATE_TIP: Record<string, string> = {
   g0: 'A cheap clue pointed at a node in this group; it only set the order.',
-  g1: 'The optional language-model hint nominated a node in this group; it only breaks ties in the order.',
+  g1: 'An optional model scored or nominated a node in this group; it only changed the order of trials.',
   g2: 'A suspect you named, kept because a recorded hand-off links it to the failure.',
 }
 
@@ -140,7 +140,7 @@ export default function Verdict({ failed, onDiagnose, onReplay }: { failed: stri
         </section>
         <section className="inspect">
           <h3 className="eyebrow">Evidence</h3>
-          {sel ? <NodeCard node={graph.data.nodes.find((n) => n.id === sel)} step={stepOf(fRun.data, sel)} good={stepOf(gRun.data, sel)} checkFailed={d.artifact.check?.pass === false} /> : <p className="muted">Click a node in the graph to see why it has its status, the trials that touched it, and its input and output.</p>}
+          {sel ? <NodeCard node={graph.data.nodes.find((n) => n.id === sel)} step={stepOf(fRun.data, sel)} good={stepOf(gRun.data, sel)} checkFailed={d.artifact.check?.pass === false} g1Score={s.status === 'abstain' ? undefined : d.artifact.g1?.scores?.find((x) => x.node === sel)?.score} /> : <p className="muted">Click a node in the graph to see why it has its status, the trials that touched it, and its input and output.</p>}
         </section>
       </div>
     </div>

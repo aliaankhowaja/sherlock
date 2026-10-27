@@ -9,7 +9,7 @@ const KIND_LABEL: Record<string, string> = {
 }
 
 /** Everything known about one node: what it is, what it got and gave, and what the verdict says about it. */
-export default function NodeCard({ node, step, good, checkFailed }: { node: GNode | undefined; step?: RunStep; good?: RunStep; checkFailed?: boolean }) {
+export default function NodeCard({ node, step, good, checkFailed, g1Score }: { node: GNode | undefined; step?: RunStep; good?: RunStep; checkFailed?: boolean; g1Score?: number | null }) {
   if (!node) return <p className="muted">Unknown node.</p>
   const v = node.verdict
   return (
@@ -23,6 +23,7 @@ export default function NodeCard({ node, step, good, checkFailed }: { node: GNod
           <b>{v?.pruned ? 'Not tested (pruned)' : STATUS_LABEL[node.status]}</b>
           <p>{plain(node.reason) || STATUS_MEANING[node.status]}</p>
           {!!v?.trials.length && <p>Trials that restored it: {v.trials.map((n) => `#${n}`).join(', ')}.</p>}
+          {g1Score != null && <p className="muted small">G1 hint {g1Score.toFixed(2)} (weak: only ordered the trials)</p>}
         </div>
       )}
       <dl className="facts">

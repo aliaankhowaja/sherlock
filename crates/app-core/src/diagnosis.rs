@@ -523,6 +523,44 @@ mod tests {
     }
 
     #[test]
+    fn g1_scores_are_accepted_and_never_change_what_the_trials_decided() {
+        let g1 = json!({"g1": {
+            "backend": "laya", "status": "ok", "order_variant": "A",
+            "cache": {"hits": 0, "misses": 2}, "order_changed": true, "ms": 2140,
+            "scores": [
+                {"node": "c", "score": 0.99, "answers": {"needs_restore": {"yes": 0.99, "no": 0.01}}},
+                {"node": "b", "score": 0.01},
+                {"node": "a", "score": null},
+            ],
+        }});
+        // `c` is cleared by its trial and `b` is the culprit; G1 says the opposite.
+        for base in [
+            json!({}),
+            json!({"status": "abstain", "minimal_sets": [], "reason_code": "budget_exhausted"}),
+        ] {
+            let plain = parse_artifact(&artifact(base.clone())).unwrap();
+            let mut with = base;
+            with.as_object_mut()
+                .unwrap()
+                .extend(g1.as_object().unwrap().clone());
+            let scored = parse_artifact(&artifact(with)).unwrap();
+            assert_eq!(scored.summary.status, plain.summary.status);
+            assert_eq!(scored.summary.minimal_sets, plain.summary.minimal_sets);
+            let view = |d: &Diagnosis| -> Vec<_> {
+                d.nodes
+                    .iter()
+                    .map(|n| (n.node.clone(), n.status, n.reason.clone()))
+                    .collect()
+            };
+            assert_eq!(view(&scored), view(&plain));
+            assert!(scored.artifact["g1"]["scores"].is_array());
+        }
+        let d = parse_artifact(&artifact(g1)).unwrap();
+        assert_eq!(status_of(&d, "c"), NodeStatus::Cleared);
+        assert_eq!(status_of(&d, "b"), NodeStatus::Culprit);
+    }
+
+    #[test]
     fn unverified_set_members_are_not_culprits() {
         let raw = artifact(json!({"unverified_sets": [["c", "x"]]}));
         let d = parse_artifact(&raw).unwrap();

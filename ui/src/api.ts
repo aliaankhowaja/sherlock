@@ -138,6 +138,8 @@ export interface Artifact {
   intake?: { kind?: string; note?: string; expected?: string } | null
   gates?: GateSummary
   gate_summary?: GateSummary
+  /** Optional G1 scorer; scores only ordered the trials. Older artifacts carry a different shape here. */
+  g1?: { scores?: { node: string; score: number | null }[] }
 }
 
 /** Per-gate counts (additive artifact field; any of them may be missing). */
