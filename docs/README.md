@@ -19,6 +19,7 @@ Our own notes were once treated as truth by agents. Every document now has an au
 - `docs/notes/` (tier 3), live working notes:
   - `status.md` live tracker, including the G1 Laya API v0 build steps
   - `g1-laya-spec.md` the active build plan (G1 Laya API ranker)
+  - `handoff-g1.md` how to orchestrate the G1 build: waves, agents, what to ask the user
   - `spec.md` the 12 October scope spec by Ibraheem
   - `architecture.md` module layout, rules, commands, CLI
   - `ui-api-contract.md` web API contract for the UI
