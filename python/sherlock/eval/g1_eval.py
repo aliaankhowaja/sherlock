@@ -99,7 +99,7 @@ def evaluate(cases, cfg):
         row = {"id": case["id"], "team": case["team"], "candidates": len(case["candidates"]), "methods": {}}
         for m, o in order.items():
             fix, code = first_fix(o, case["gold"], Budget(auto=True))
-            _, tight = first_fix(o, case["gold"], Budget(max_trials=2))
+            _, tight = first_fix(o, case["gold"], Budget(max_trials=cfg["tight"]))
             row["methods"][m] = {"first_fix": fix, "first_gold_rank": metrics(o, gold)["rank"], "_m": metrics(o, gold),
                                  "_exh": (code == "budget_exhausted", tight == "budget_exhausted")}
         for m, g1 in g1s.items():
@@ -161,10 +161,11 @@ def main():
     ap.add_argument("--backend", choices=("laya", "fake"), default="laya")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--stability", action="store_true", help="two extra uncached laya passes")
+    ap.add_argument("--tight", type=int, default=10, help="the tight trial budget (spec: e.g. 10; 2 for the planted cases)")
     a = ap.parse_args()
     cases = [json.loads(line) for line in a.cases.read_text(encoding="utf-8").splitlines() if line.strip()]
     cases = [c for c in cases if c["status"] == "found"]
-    cfg = {"seed": a.seed, "stability": a.stability,
+    cfg = {"seed": a.seed, "stability": a.stability, "tight": a.tight,
            "g1": {"backend": a.backend, "allow_remote": True, "cache_dir": HERE / ".g1" / "cache"}}
     rows, cost, passes = evaluate(cases, cfg)
     down = sum(c["status"].get("unavailable", 0) for c in cost.values())
@@ -181,7 +182,8 @@ def main():
     per_team = {t: {"cases": len(rs), **{m: mean([r["methods"][m]["first_fix"] for r in rs
                                                   if r["methods"][m]["first_fix"] is not None])
                                          for m in ("g0", "rule", "laya", "optimal")}} for t, rs in sorted(teams.items())}
-    res = {"backend": a.backend, "question_version": QUESTION_VERSION, "seed": a.seed, "summary": summarize(rows),
+    res = {"backend": a.backend, "question_version": QUESTION_VERSION, "seed": a.seed, "tight_budget": a.tight,
+           "summary": summarize(rows),
            "per_team": per_team, "gate": {"share": share, "gate_fires": share is not None and share >= 0.95},
            "cost": cost, "stability": {"cases": len(passes), "share": mean([float(p) for p in passes])} if passes else None}
     for r in rows:
