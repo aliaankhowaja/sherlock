@@ -34,10 +34,12 @@ from sherlock.diagnose import _gather_sources, diagnose, write_artifact  # noqa:
 import baselines as extra  # noqa: E402
 from sherlock.evaluation import (BASELINES, METHODS, artifact_violations, from_artifact, score,  # noqa: E402
                                  summarize)
+from sherlock.g1 import node_card  # noqa: E402
 from sherlock.g3 import Client  # noqa: E402
 from sherlock.search import Budget  # noqa: E402
 
 SCHEMA = 2
+G1_DIR = HERE / ".g1"  # node cards for eval/g1_eval.py (git-ignored: derived, rebuilt by every run)
 ALL_METHODS = METHODS + extra.EXTRA
 # FR-E9: the two-cause case live time-travel must fail, and a one-cause control it must be able to solve.
 TWO_CAUSE = "vendor_brief:retriever.drop_latest+extractor.legacy_pattern"
@@ -137,7 +139,7 @@ def _run_group(cases, seed):
     """One lab for `cases`: record, restart under replay, diagnose each, score against the baselines."""
     work = Path(tempfile.mkdtemp(prefix="sherlock-eval-"))
     server, good, failed, cassette = _lab(work, cases)
-    rows, artifacts, unchanged, probes, invariants_live = [], [], [], [], {}
+    rows, artifacts, unchanged, probes, invariants_live, g1_changed = [], [], [], [], {}, []
     try:
         client = Client(server.url)
         for c in cases:
@@ -158,6 +160,10 @@ def _run_group(cases, seed):
             artifacts.append((c.id, art))
             after = _history(client, tid)
             unchanged.append((c.id, before == after))
+            fake = diagnose(client, tid, None, checks, cassette, Budget(), good_runs=[good[c.team]],
+                            node_map=team.node_map, g1={"backend": "fake"})
+            if answer(fake) != answer(art):
+                g1_changed.append(c.id)  # AC-G1-1: G1 may reorder trials, never change the answer
             good_hist = _history(client, good[c.team])
             rng = random.Random(f"{seed}:{c.id}")
             preds = {"sherlock": from_artifact(art)}
@@ -168,12 +174,19 @@ def _run_group(cases, seed):
             preds["plain_retry"], retry = extra.plain_retry(client, art, c.team, team.input, checks)
             if c.id in LIVE_TT:
                 invariants_live[c.id] = _live_tt(client, tid, after, art, good[c.team], team, checks, c)
+            cands = (art.get("pruning") or {}).get("candidates", [])  # in G0 order: G1 is off here
+            g1_case = {"id": c.id, "team": c.team, "gold": c.gold, "status": art["status"], "candidates": cands,
+                       "on_path": (art.get("pruning") or {}).get("nodes_on_path", []),
+                       "clue_score": {n: sum(k["weight"] for k in art.get("clues", []) if k.get("node") == n) for n in cands},
+                       "hint": [n for s in preds["llm_guess_stub"].get("sets", []) for n in s],
+                       "cards": {n: node_card(n, after, good_hist, checks) for n in cands},
+                       "masked": {n: node_card(n, after, good_hist, checks, mask=True) for n in cands}}
             red = art.get("trial_reduction") or {}
             gold_nodes = {n for g in c.gold for n in g}
             clue_nodes = sorted({k["node"] for k in art.get("clues", []) if k.get("node")})
             if c.id in PROBES:
                 probes += _gate_probes(client, c, tid, team, checks, cassette, good[c.team], *PROBES[c.id])
-            rows.append({**c.to_dict(),
+            rows.append({**c.to_dict(), "_g1": g1_case,
                          "methods": {m: score(c.gold, preds[m]) | {"prediction": preds[m]} for m in ALL_METHODS},
                          "retry": retry,
                          "sherlock": {"status": art["status"], "reason_code": art.get("reason_code"),
@@ -190,7 +203,13 @@ def _run_group(cases, seed):
         server.stop()
     attempts = (work / "net_attempts.txt").read_text().splitlines() if (work / "net_attempts.txt").exists() else []
     shutil.rmtree(work, ignore_errors=True)
-    return rows, artifacts, unchanged, attempts, probes, invariants_live
+    return rows, artifacts, unchanged, attempts, probes, invariants_live, g1_changed
+
+
+def answer(art: dict) -> tuple:
+    """What G1 must never change: the sets (as sets), the status and the reason code."""
+    sets = lambda key: sorted(sorted(s) for s in art.get(key) or [])  # noqa: E731
+    return sets("minimal_sets"), sets("unverified_sets"), art.get("status"), art.get("reason_code")
 
 
 def run_eval(seed: int = SEED, only: set | None = None) -> dict:
@@ -205,9 +224,10 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
         return team.llm and len({team.faults[f].node for f in c.faults} & team.request_nodes) >= 2
 
     groups = [[c for c in cases + probe_cases if not alone(c)]] + [[c] for c in cases if alone(c)]
-    rows, artifacts, unchanged, net_attempts, probes, live = [], [], [], [], [], {}
+    rows, artifacts, unchanged, net_attempts, probes, live, g1_changed = [], [], [], [], [], {}, []
     for group in groups:
-        r, a, u, n, p, lv = _run_group(group, seed)
+        r, a, u, n, p, lv, g = _run_group(group, seed)
+        g1_changed += g
         live.update(lv)
         rows += r
         artifacts += a
@@ -216,6 +236,9 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
         probes += p
     order = {c.id: i for i, c in enumerate(cases)}
     rows.sort(key=lambda r: order[r["id"]])
+    G1_DIR.mkdir(exist_ok=True)
+    (G1_DIR / "cases.jsonl").write_text("".join(json.dumps(r.pop("_g1"), sort_keys=True) + "\n" for r in rows),
+                                        encoding="utf-8", newline="\n")
     summary = {s: {m: summarize(rows, m, pick) for m in ALL_METHODS} for s, pick in SLICES.items()}
     used = sum(r["sherlock"]["trials_used"] for r in rows if r["sherlock"]["status"] == "found")
     exhaustive = sum(r["sherlock"]["exhaustive_trials"] for r in rows if r["sherlock"]["status"] == "found")
@@ -230,6 +253,7 @@ def run_eval(seed: int = SEED, only: set | None = None) -> dict:
             "original_thread_unchanged": all(ok for _, ok in unchanged),
             "artifact_violations": {i: v for i, a in artifacts if (v := artifact_violations(a))},
             "live_time_travel": live,
+            "g1_fake_changed_answer": sorted(g1_changed),
         },
         "retry": {"runs_per_case": extra.RETRIES,
                   "cases_where_a_retry_passed": sum(r["retry"]["passed"] > 0 for r in rows),
@@ -267,6 +291,8 @@ def expectations(res: dict) -> list[str]:
         bad.append(f"replay tried the network: {inv['replay_network_attempts'][:3]}")
     if not inv["original_thread_unchanged"]:
         bad.append("an original thread changed after the forks")
+    if inv["g1_fake_changed_answer"]:
+        bad.append(f"G1 (fake) changed the answer: {inv['g1_fake_changed_answer']}")
     if inv["artifact_violations"]:
         bad.append(f"artifacts break the honesty rules: {inv['artifact_violations']}")
     for r in res["cases"]:

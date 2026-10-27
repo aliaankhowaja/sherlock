@@ -16,3 +16,4 @@ harness/langgraph-dev.log
 
 # Browser-tool scratch output (console logs, page snapshots)
 .playwright-cli/
+python/sherlock/eval/.g1/

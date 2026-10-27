@@ -14119,6 +14119,7 @@
   "failures": [],
   "invariants": {
     "artifact_violations": {},
+    "g1_fake_changed_answer": [],
     "live_time_travel": {
       "vendor_brief:retriever.drop_latest+extractor.legacy_pattern": {
         "case": "vendor_brief:retriever.drop_latest+extractor.legacy_pattern",
