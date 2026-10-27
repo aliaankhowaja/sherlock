@@ -1,3 +1,5 @@
+> **Working note (tier 3). Not authoritative.** It may be stale or wrong. Facts come from the code and from docs/eval. Never cite this file in anything submitted to the university.
+
 # Sherlock — build specification
 
 **Status:** internal build document. Derived from the signed proposal
@@ -17,7 +19,7 @@ more. Where a detail is not yet settled, it says so rather than inventing one.
 | `causal-debugger/causal-agent-debugger.md` | Committee source of truth. Method, CCP, evaluation, FAST mapping. **Governs.** |
 | `causal-debugger/product-experience.md` | Product/UX source of truth. Screens, must-have vs noise. |
 | `causal-debugger/debugger-review.md` | Review log. Its "AFTER IDEA APPROVAL" items are now due and are folded in below. |
-| `docs/Sherlock-Brief.pdf` (9 Oct) | Literature update. Superseded on method. See §3.3. |
+| `docs/history/Sherlock-Brief.pdf` (9 Oct) | Literature update. Superseded on method. See §3.3. |
 | This document | Build plan. FRs, NFRs, architecture. |
 
 ---

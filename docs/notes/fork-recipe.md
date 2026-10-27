@@ -1,3 +1,5 @@
+> **Working note (tier 3). Not authoritative.** It may be stale or wrong. Facts come from the code and from docs/eval. Never cite this file in anything submitted to the university.
+
 # Spike: the fork recipe against a live server
 
 **Date:** 2026-10-13 · **Phase:** 0 (P0.2, P0.3, P0.5) · **Result:** 20/20 checks pass, two corrections to spec §4.3
