@@ -140,7 +140,8 @@ def _g1_check(args) -> int:
             raw = ask(cfg, SAMPLE_CARD, cfg["timeout_ms"] / 1000)
             runs.append((raw, *parse(raw), round(1000 * (time.monotonic() - start))))
     except (OSError, ValueError) as exc:
-        print(f"sherlock-rec: {cfg['endpoint']}{cfg['path']}: {type(exc).__name__}: {exc}", file=sys.stderr)
+        hint = " (the Laya workspace has no credits)" if getattr(exc, "code", None) == 402 else ""
+        print(f"sherlock-rec: {cfg['endpoint']}{cfg['path']}: {type(exc).__name__}: {exc}{hint}", file=sys.stderr)
         return EXIT_ERROR
     (raw, answers, truncated, first_ms), (_, again, _, warm_ms) = runs
     print(json.dumps({"url": cfg["endpoint"] + cfg["path"], "model_requested": cfg.get("model"),

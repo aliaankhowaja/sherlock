@@ -3,7 +3,7 @@ SHELL := bash
 .DEFAULT_GOAL := help
 export PORT ?= 3000
 
-.PHONY: help setup doctor demo demo-stop demo-status test test-fast eval serve clean
+.PHONY: help setup doctor demo demo-stop demo-status test test-fast eval g1-eval serve clean
 
 help: ## Show this list
 	@grep -hE '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -33,6 +33,9 @@ test-fast: ## Quick checks: no evaluation, no live servers (a few minutes)
 
 eval: ## Regenerate the evaluation tables in docs/eval (about 5 minutes)
 	cd python/sherlock && uv run python eval/run_eval.py --out ../../docs/eval
+
+g1-eval: ## G1 Laya evaluation and ship decision (needs LAYA_API_KEY with credits, ~$0.12, ~30 minutes)
+	@bash scripts/g1-eval.sh
 
 serve: ## Dev server against your own `langgraph dev` on :2024 (port $(PORT))
 	cargo run -p cli -- serve --port $(PORT)

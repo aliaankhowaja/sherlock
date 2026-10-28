@@ -319,6 +319,6 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 ### Next (handed to Ali, 2026-10-28)
 
 1. Add Laya credits: the workspace balance is 0 (HTTP 402). The runs need about 3.2M input tokens, about $0.12.
-2. `cd python/sherlock && uv run python eval/g1_eval.py --tight 2 --stability --out ../../docs/eval/g1` (needs `eval/.g1/cases.jsonl` from `run_eval.py`).
-3. `uv run python eval/g1_gen.py`, then `g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --out ../../docs/eval/g1_gen`.
-4. Freeze the question version, run once, apply the ship rule (the supervisor confirms the 20 percent margin first).
+2. `make g1-eval` (or `bash scripts/g1-eval.sh`): smoke test, step 4 on the 86 cases, step 5 on the generated test half,
+   the AC-G1-3 re-run check and the ship rule. It stops at the first failure; cached answers are not paid for twice.
+3. Commit `docs/eval/g1` and `docs/eval/g1_gen`, and record the decision here (the supervisor confirms the 20% margin).
