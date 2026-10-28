@@ -279,7 +279,7 @@ Beyond spec §10:
 - `ui/dist` must exist for the `api` crate to compile. Run `cd ui && npm run build`; an empty `ui/dist/` is enough for tests.
 
 
-## G1 Laya API v0 (branch `g1-laya`, local)
+## G1 Laya API v0 (branch `g1-laya`)
 
 Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Updated 2026-10-28.
 
@@ -316,9 +316,9 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 - Billing is per input token, every question included: $0.0357 per 1M after a one-time 6,000-token free tier (laya.studio/pricing). The free tier is used up.
 - The recording does not say which node made a tool call, so cards have no tool field and Q6 is never asked; no node role exists in a run, so cards have no role field.
 
-### Next
+### Next (handed to Ali, 2026-10-28)
 
-1. The user adds Laya credits (estimate: 10 to 15M tokens, about $0.50 for all runs).
+1. Add Laya credits: the workspace balance is 0 (HTTP 402). The runs need about 3.2M input tokens, about $0.12.
 2. `cd python/sherlock && uv run python eval/g1_eval.py --tight 2 --stability --out ../../docs/eval/g1` (needs `eval/.g1/cases.jsonl` from `run_eval.py`).
 3. `uv run python eval/g1_gen.py`, then `g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --out ../../docs/eval/g1_gen`.
 4. Freeze the question version, run once, apply the ship rule (the supervisor confirms the 20 percent margin first).
