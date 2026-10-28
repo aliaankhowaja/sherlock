@@ -193,7 +193,9 @@ def main():
     md = report(res)
     if a.out:
         a.out.mkdir(parents=True, exist_ok=True)
-        (a.out / "g1_results.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+        kept = {k: v for k, v in res.items() if k not in ("cost", "stability")}  # these vary run to run: markdown only
+        (a.out / "g1_results.json").write_text(json.dumps(kept, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+                                               newline="\n")
         (a.out / "g1_results.md").write_text(md, encoding="utf-8", newline="\n")
     print(md, end="")
 
