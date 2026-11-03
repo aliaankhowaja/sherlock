@@ -34,11 +34,12 @@ make test        # full gate, adds the ~5 minute evaluation (docs/eval)
 
 Off by default. `sherlock-rec diagnose --g1 laya --g1-allow-remote` asks the Laya System One API, zero-shot, how likely each remaining agent is to need restoring, and tests the likeliest first. It only changes the order of trials: the answer is the same with it on or off, and if the API fails the run continues as if it were off.
 
-- **Key:** set `LAYA_API_KEY` in the environment or in a `.env` file in the directory you run from. It is never a flag and is never written to results, logs or the cache.
-- **Privacy:** the endpoint (default `https://api.laya.studio`, or `--g1-endpoint` / `LAYA_API_BASE`) is remote, so a short, redacted card per agent leaves your machine. That is why `--g1-allow-remote` is required; a local endpoint (`localhost`) needs neither the flag nor a key.
-- **Check first:** `sherlock-rec g1-check --g1-allow-remote` sends the built-in sample card twice and prints the model, token use and every answer.
+- **Key:** set `LAYA_API_KEY` in the environment or in a `.env` file in the directory you run from. It is never a flag and is never written to results, logs or the cache. Not needed with `LOCAL=true`.
+- **Local inference:** set `LOCAL=true` (with `--g1 laya`) to run the open-weight checkpoint in this process instead of calling the API. For a normal `sherlock-rec` run install it first with `pip install laya` (or `uv pip install laya`); `make g1-eval` fetches it transiently with `uv run --with laya`. The first run downloads `convaiinnovations/laya-typed-decisions` unless `--g1-model` points at a local checkpoint directory. Nothing leaves the machine except that one-time model download, and no key or `--g1-allow-remote` is needed. Local G1 gets a 10-minute total budget by default (`--g1-total-timeout-ms` to change). If loading hangs, set `USE_TF=0`.
+- **Privacy:** in HTTP mode the endpoint (default `https://api.laya.studio`, or `--g1-endpoint` / `LAYA_API_BASE`) is remote, so a short, redacted card per agent leaves your machine. That is why `--g1-allow-remote` is required; a local endpoint (`localhost`) needs neither the flag nor a key.
+- **Check first:** `sherlock-rec g1-check --g1-allow-remote` (or `LOCAL=true sherlock-rec g1-check`) runs the built-in sample card twice and prints the model, token use and every answer.
 - **Model:** `typed-decisions` by default (English, 1,024-token context; `--g1-model` to change). Without a model name the service guesses the language and can pick its multilingual model.
-- **Reproducible:** answers are cached in `.sherlock/g1_cache/`, so a re-run gives the same order offline. `--g1-no-cache` always calls the API.
+- **Reproducible:** answers are cached in `.sherlock/g1_cache/`, so a re-run gives the same order offline. `--g1-no-cache` always calls the model again.
 - **Expect little:** Laya is used zero-shot (never trained on these questions), and zero-shot results for such models are reported close to chance. Treat its order as a weak hint.
 
 ## Where things are

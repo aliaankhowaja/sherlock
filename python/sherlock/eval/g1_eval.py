@@ -170,7 +170,8 @@ def main():
     rows, cost, passes = evaluate(cases, cfg)
     down = sum(c["status"].get("unavailable", 0) for c in cost.values())
     if a.backend == "laya" and down:  # the laya rows would silently be the G0 order
-        sys.exit(f"g1_eval: Laya was unavailable for {down} case(s); check the key and credits with `sherlock-rec g1-check`")
+        sys.exit(f"g1_eval: Laya was unavailable for {down} case(s); check LAYA_API_KEY/credits or "
+                 f"LOCAL=true and the `laya` package with `sherlock-rec g1-check`")
     fixes = {r["id"]: {m: x["first_fix"] for m, x in r["methods"].items()} for r in rows}
     inf = float("inf")
     near = [min(f["g0"] if f["g0"] is not None else inf, f["rule"] if f["rule"] is not None else inf)

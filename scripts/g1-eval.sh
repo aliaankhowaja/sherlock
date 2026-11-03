@@ -2,51 +2,68 @@
 # G1 Laya evaluation, spec build steps 4 to 6 (docs/notes/g1-laya-spec.md): every live run in one place.
 # Usage: make g1-eval   (or: bash scripts/g1-eval.sh)
 #
-# Needs LAYA_API_KEY (environment or .env in the repo root) on a Laya workspace with credits: about 3.2M input
-# tokens, about $0.12. Sends synthetic node cards to api.laya.studio. Answers are cached in
+# HTTP mode needs LAYA_API_KEY (environment or .env in the repo root) on a Laya workspace with credits: about
+# 3.2M input tokens, about $0.12, and sends synthetic node cards to api.laya.studio. LOCAL=true instead runs the
+# `laya` package in this process through `uv run --with laya` (first run downloads the CPU/CUDA package set) and
+# sends nothing. Answers are cached in
 # python/sherlock/eval/.g1/cache, so a re-run after a failure only pays for what is missing.
 # Writes docs/eval/g1 (86 planted cases) and docs/eval/g1_gen (generated test half); commit both afterwards.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 section() { echo; echo "=== $1 ==="; }
+truthy() { case "${1:-}" in 1|true|TRUE|True|yes|YES|Yes|on|ON|On) return 0;; *) return 1;; esac; }
 
-if [ -z "${LAYA_API_KEY:-}" ] && [ -f .env ]; then
-  LAYA_API_KEY="$(grep '^LAYA_API_KEY=' .env | head -1 | cut -d= -f2- | tr -d '\r"'"'"'')"
-  export LAYA_API_KEY
+if [ -f .env ]; then
+  if [ -z "${LAYA_API_KEY:-}" ]; then
+    LAYA_API_KEY="$(grep '^LAYA_API_KEY=' .env | head -1 | cut -d= -f2- | tr -d '\r"'"'"'' || true)"
+    [ -z "$LAYA_API_KEY" ] || export LAYA_API_KEY
+  fi
+  if [ -z "${LOCAL:-}" ]; then
+    LOCAL="$(grep '^LOCAL=' .env | head -1 | cut -d= -f2- | tr -d '\r"'"'"'' || true)"
+    [ -z "$LOCAL" ] || export LOCAL
+  fi
 fi
-[ -n "${LAYA_API_KEY:-}" ] || { echo "g1-eval: set LAYA_API_KEY (environment or .env)" >&2; exit 1; }
+
+if truthy "${LOCAL:-}"; then
+  RUN=(uv run --with laya)
+  smoke=("${RUN[@]}" sherlock-rec g1-check)
+else
+  [ -n "${LAYA_API_KEY:-}" ] || { echo "g1-eval: set LAYA_API_KEY or LOCAL=true (environment or .env)" >&2; exit 1; }
+  RUN=(uv run)
+  smoke=("${RUN[@]}" sherlock-rec g1-check --g1-allow-remote)
+fi
 
 cd python/sherlock
 
-section "1/6 smoke test: the endpoint answers (sends the sample card twice)"
-uv run sherlock-rec g1-check --g1-allow-remote
+section "1/6 smoke test: Laya answers the sample card twice ($(truthy "${LOCAL:-}" && echo local || echo endpoint))"
+"${smoke[@]}"
 
 if [ ! -f eval/.g1/cases.jsonl ]; then
   section "2/6 node cards for the 86 planted cases (runs the full evaluation, about 10 to 20 minutes)"
-  uv run python eval/run_eval.py --out ../../docs/eval
+  "${RUN[@]}" python eval/run_eval.py --out ../../docs/eval
 else
   section "2/6 node cards for the 86 planted cases: already built (delete eval/.g1/cases.jsonl to rebuild)"
 fi
 
 section "3/6 step 4: Laya on the 86 planted cases, with the 3-pass stability check"
-uv run python eval/g1_eval.py --tight 2 --stability --out ../../docs/eval/g1
+"${RUN[@]}" python eval/g1_eval.py --tight 2 --stability --out ../../docs/eval/g1
 
 section "4/6 step 5: Laya on the generated test half"
-uv run python eval/g1_gen.py
-uv run python eval/g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --tight 10 --out ../../docs/eval/g1_gen
+"${RUN[@]}" python eval/g1_gen.py
+"${RUN[@]}" python eval/g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --tight 10 --out ../../docs/eval/g1_gen
 
 section "5/6 AC-G1-3: two more runs from the cache give byte-identical results"
 for i in 1 2; do
-  uv run python eval/g1_eval.py --tight 2 --out "eval/.g1/rerun_$i" > /dev/null
-  uv run python eval/g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --tight 10 --out "eval/.g1/rerun_gen_$i" > /dev/null
+  "${RUN[@]}" python eval/g1_eval.py --tight 2 --out "eval/.g1/rerun_$i" > /dev/null
+  "${RUN[@]}" python eval/g1_eval.py --cases eval/.g1/gen_v1/test.jsonl --tight 10 --out "eval/.g1/rerun_gen_$i" > /dev/null
   cmp ../../docs/eval/g1/g1_results.json "eval/.g1/rerun_$i/g1_results.json"
   cmp ../../docs/eval/g1_gen/g1_results.json "eval/.g1/rerun_gen_$i/g1_results.json"
 done
 echo "AC-G1-3: identical"
 
 section "6/6 the pre-declared ship rule (spec section 11; the 20% margin awaits the supervisor's confirmation)"
-uv run python - <<'EOF'
+"${RUN[@]}" python - <<'EOF'
 import json
 from pathlib import Path
 

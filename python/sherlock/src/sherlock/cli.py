@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -109,26 +110,33 @@ def parse_pasted(items) -> dict:
 def _laya_cfg(args, cache_dir: Path | None) -> dict:
     """G1 Laya settings from the flags. The key stays in the environment: LAYA_API_KEY, or a .env file here."""
     env_file = Path(".env")
-    if "LAYA_API_KEY" not in os.environ and env_file.is_file():
+    if env_file.is_file():
         for line in env_file.read_text(encoding="utf-8").splitlines():
             name, sep, value = line.partition("=")
-            if sep and name.strip() == "LAYA_API_KEY":
-                os.environ["LAYA_API_KEY"] = value.strip().strip("'\"")
+            if sep and name.strip() in ("LAYA_API_KEY", "LOCAL") and name.strip() not in os.environ:
+                os.environ[name.strip()] = value.strip().strip("'\"")
+    from sherlock.g1 import env_true
+
     given = {"endpoint": args.g1_endpoint or os.environ.get("LAYA_API_BASE"), "path": args.g1_path,
              "model": args.g1_model, "timeout_ms": args.g1_timeout_ms, "total_timeout_ms": args.g1_total_timeout_ms}
-    return {"backend": "laya", "allow_remote": args.g1_allow_remote, "cache_dir": None if args.g1_no_cache else cache_dir,
+    return {"backend": "laya", "local": env_true("LOCAL"), "allow_remote": args.g1_allow_remote,
+            "cache_dir": None if args.g1_no_cache else cache_dir,
             **{k: v for k, v in given.items() if v is not None}}
 
 
 def _g1_check(args) -> int:
-    """Smoke test of a G1 Laya endpoint: the sample card twice, the reported model, usage and every probability."""
+    """Smoke test of G1 Laya (local or endpoint): the sample card twice, the reported model, usage and answers."""
     import time
     from urllib.parse import urlsplit
 
-    from sherlock.g1 import DEFAULTS, SAMPLE_CARD, ask, blocked, parse
+    from sherlock.g1 import DEFAULTS, SAMPLE_CARD, ask, blocked, local_mode, parse
 
     cfg = {**DEFAULTS, **_laya_cfg(args, None)}
-    print(f"sherlock-rec: this sends card text to {urlsplit(cfg['endpoint']).hostname}", file=sys.stderr)
+    local = local_mode(cfg)
+    if local:
+        print(f"sherlock-rec: this runs Laya locally with model {cfg.get('model')}", file=sys.stderr)
+    else:
+        print(f"sherlock-rec: this sends card text to {urlsplit(cfg['endpoint']).hostname}", file=sys.stderr)
     problem = blocked(cfg)
     if problem:
         print(f"sherlock-rec: {problem}", file=sys.stderr)
@@ -139,12 +147,15 @@ def _g1_check(args) -> int:
             start = time.monotonic()
             raw = ask(cfg, SAMPLE_CARD, cfg["timeout_ms"] / 1000)
             runs.append((raw, *parse(raw), round(1000 * (time.monotonic() - start))))
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, RuntimeError) as exc:
         hint = " (the Laya workspace has no credits)" if getattr(exc, "code", None) == 402 else ""
-        print(f"sherlock-rec: {cfg['endpoint']}{cfg['path']}: {type(exc).__name__}: {exc}{hint}", file=sys.stderr)
+        where = f"local model {cfg.get('model')}" if local else f"{cfg['endpoint']}{cfg['path']}"
+        print(f"sherlock-rec: {where}: {type(exc).__name__}: {exc}{hint}", file=sys.stderr)
         return EXIT_ERROR
     (raw, answers, truncated, first_ms), (_, again, _, warm_ms) = runs
-    print(json.dumps({"url": cfg["endpoint"] + cfg["path"], "model_requested": cfg.get("model"),
+    print(json.dumps({"mode": "local" if local else "http",
+                      "url": None if local else cfg["endpoint"] + cfg["path"],
+                      "model_requested": cfg.get("model"),
                       "model_reported": raw.get("model"), "routed_to": (raw.get("routing") or {}).get("model"),
                       "usage": raw.get("usage"), "truncated": truncated, "answers": answers,
                       "same_answers_twice": answers == again, "ms_first": first_ms, "ms_warm": warm_ms}, indent=2))
@@ -222,13 +233,15 @@ def _intake(args) -> int:
 
 
 def _laya_args(p) -> None:
-    p.add_argument("--g1-model", help="model name: for --g1-url, or the Laya checkpoint (default typed-decisions)")
+    p.add_argument("--g1-model", help="Laya checkpoint: an alias, HF repo id or local path (default typed-decisions)")
     p.add_argument("--g1-endpoint", help="Laya base URL (default: env LAYA_API_BASE, else https://api.laya.studio)")
     p.add_argument("--g1-path", help="Laya path (default /v1/systemone)")
     p.add_argument("--g1-allow-remote", action="store_true",
-                   help="allow a non-local Laya endpoint: the redacted node cards then leave this machine")
+                   help="allow a non-local Laya endpoint: the redacted node cards then leave this machine "
+                        "(unused when env LOCAL=true runs the model in this process)")
     p.add_argument("--g1-timeout-ms", type=int, help="per Laya call (default 10000)")
-    p.add_argument("--g1-total-timeout-ms", type=int, help="all of G1 in one diagnosis (default 60000)")
+    p.add_argument("--g1-total-timeout-ms", type=int,
+                   help="all of G1 in one diagnosis (default 60000; 600000 when LOCAL=true)")
     p.add_argument("--g1-no-cache", action="store_true",
                    help="always call the endpoint; the result is then not reproducible (g1.cache = disabled)")
 
@@ -277,8 +290,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="hard cap on G3 trials (default: 40, or 3 per candidate + 20 when larger)")
     dg.add_argument("--g1", choices=["off", "hosted", "laya", "fake"],
                     help="optional G1 trial ordering (default off; hosted when --g1-url is given). `laya` scores each "
-                         "candidate with the Laya API (key: env LAYA_API_KEY); `fake` scores by a hash of the node "
-                         "name, for tests. G1 only reorders trials, never changes the answer")
+                         "candidate with the Laya API (key: env LAYA_API_KEY); with env LOCAL=true it runs the laya "
+                         "package in this process instead; `fake` scores by a hash of the node name, for tests. "
+                         "G1 only reorders trials, never changes the answer")
     dg.add_argument("--g1-url", help="optional G1 shortlist: base URL of an OpenAI-compatible endpoint "
                                      "(e.g. https://api.openai.com/v1). The model sees redacted node summaries, has no tools, "
                                      "and can only reorder trials")
@@ -305,7 +319,7 @@ def main(argv: list[str] | None = None) -> int:
     it.add_argument("--check", help="a check file Z (sherlock.yaml)")
     it.add_argument("--note")
     it.add_argument("--dir", default=".sherlock", help="Sherlock directory (default .sherlock)")
-    gc = sub.add_parser("g1-check", help="smoke-test a G1 Laya endpoint with the sample card (sends it twice)")
+    gc = sub.add_parser("g1-check", help="smoke-test G1 Laya with the sample card (local or endpoint; runs it twice)")
     _laya_args(gc)
     run = sub.add_parser("run", help="run a command under the recorder")
     run.add_argument("--replay", action="store_true", help="serve calls from the cassette; never go live")
@@ -342,8 +356,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"sherlock: cannot say: no recording at {cassette}", file=sys.stderr)
         return EXIT_ABSTAIN
     env = child_env(mode, cassette, args.match, allow_tools=args.allow_tool, max_cassette_mb=args.max_cassette_mb)
-    # subprocess, not os.execl: execl on Windows detaches the child from the parent.
-    code = subprocess.call(cmd, env=env)
+    # subprocess, not os.execl: execl on Windows detaches the child from the parent. Popen, not call: call
+    # kills the child on Ctrl-C, so a server never gets to flush what it recorded.
+    proc = subprocess.Popen(cmd, env=env, start_new_session=os.name != "nt",
+                            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0)
+    try:
+        code = proc.wait()
+    except KeyboardInterrupt:
+        proc.send_signal(signal.CTRL_BREAK_EVENT if os.name == "nt" else signal.SIGINT)
+        code = proc.wait()
     if mode == "replay":
         # The child may have swallowed the abort; the cassette remembers it.
         reasons = Cassette(cassette).abstains()

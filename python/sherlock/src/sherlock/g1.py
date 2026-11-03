@@ -5,10 +5,11 @@ always outranks a score. G1 never names a cause, never adds or removes a candida
 Backends: `laya` (the Laya System One API, zero-shot: the score is P(needs_restore = yes)) and `fake` (a hash of the
 node name, no network, for tests). Today's hosted shortlist stays in gates.py.
 
-The Laya call is the only network use in a diagnosis, and only with `--g1 laya`. A non-local endpoint also needs
-`--g1-allow-remote`, because the card text leaves the machine. Answers are rounded to 4 decimals and cached on disk
-by card, so a re-run gives the same scores offline. The API key comes from the environment, never from a flag, and
-is never written anywhere.
+The Laya call is the only network use in a diagnosis, and only with `--g1 laya`. Set `LOCAL=true` to run the
+`laya` package in this process instead: no endpoint, no key and no card text leaves the machine (the checkpoint
+itself may be downloaded once). A non-local HTTP endpoint also needs `--g1-allow-remote`, because the card text
+leaves the machine. Answers are rounded to 4 decimals and cached on disk by card, so a re-run gives the same scores
+offline. The API key comes from the environment, never from a flag, and is never written anywhere.
 
 Each candidate is shown to the scorer as a node card: a short, redacted, deterministic text that puts the node's
 failed behaviour next to its known-good behaviour. The recording does not say which node made a tool call, so
@@ -32,9 +33,12 @@ from sherlock.sources import node_outputs
 
 CARD_CHARS = 2400  # 800 tokens at a conservative 1 token per 3 characters (spec 5, rule 3)
 SNIPPET = 200
-LOCAL = ("localhost", "127.0.0.1", "::1")
+LOCAL_HOSTS = ("localhost", "127.0.0.1", "::1")
+_ENV_TRUTHY = {"1", "true", "yes", "on"}
+_LOCAL_AGENTS: dict[str, object] = {}
 DEFAULTS = {"endpoint": "https://api.laya.studio", "path": "/v1/systemone", "model": "typed-decisions",
             "timeout_ms": 10000, "total_timeout_ms": 60000}  # typed-decisions: English, 1,024-token context
+LOCAL_TOTAL_TIMEOUT_MS = 600000  # local CPU inference is much slower than one HTTP call; still bounded
 QUESTION_VERSION = "g1_questions_v1"
 QUESTIONS = {  # the wording is part of QUESTION_VERSION: any change needs a new version. No tool_relevance (see above)
     "output_effect": {"type": "choice", "instructions": "How does the failed output differ from the good output?",
@@ -149,23 +153,73 @@ def node_card(node: str, history: list[dict], good_history: list[dict] | None, c
     return "\n".join(line for _, line in fields), truncated
 
 
+class LocalUnavailable(RuntimeError):
+    """Local Laya cannot run here (missing package or checkpoint); G1 falls back to the G0 order (C8)."""
+
+
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, *args):  # a redirect could carry the card and the key to another host
         return None
 
 
+def env_true(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in _ENV_TRUTHY
+
+
+def local_mode(cfg: dict) -> bool:
+    """`LOCAL=true` runs the model in this process; an explicit cfg["local"] wins over the environment."""
+    value = cfg.get("local")
+    return env_true("LOCAL") if value is None else bool(value)
+
+
 def blocked(cfg: dict) -> str | None:
     """Why G1 may not call this endpoint at all, checked before any request is built."""
+    if local_mode(cfg):  # in-process inference contacts no endpoint and needs no key
+        return None
     host = urlsplit(cfg["endpoint"]).hostname or ""
-    if host not in LOCAL and not cfg.get("allow_remote"):
+    if host not in LOCAL_HOSTS and not cfg.get("allow_remote"):
         return f"{host} is not local, so card text would leave the machine; pass --g1-allow-remote to allow it"
-    if host not in LOCAL and not os.environ.get("LAYA_API_KEY"):
+    if host not in LOCAL_HOSTS and not os.environ.get("LAYA_API_KEY"):
         return "LAYA_API_KEY is not set"
     return None
 
 
+def _local_agent(cfg: dict):
+    """The resident `laya` agent for this checkpoint, loaded once and reused across cards."""
+    model = cfg.get("model") or DEFAULTS["model"]
+    if model in _LOCAL_AGENTS:
+        return _LOCAL_AGENTS[model]
+    try:
+        import laya
+    except Exception as exc:  # noqa: BLE001 - any import failure is a clear install hint
+        raise LocalUnavailable(
+            "local Laya needs the `laya` package: run `pip install laya` (or `uv pip install laya`)") from exc
+    options = {"device": cfg["device"]} if cfg.get("device") else {}
+    try:
+        agent = laya.load(model, **options)
+    except Exception as exc:  # noqa: BLE001 - weights missing, bad path, unsupported device
+        raise LocalUnavailable(
+            f"local Laya model {model!r} could not be loaded: {type(exc).__name__}: {exc}") from exc
+    _LOCAL_AGENTS[model] = agent
+    return agent
+
+
+def _ask_local(cfg: dict, card: str) -> dict:
+    try:
+        raw = _local_agent(cfg).system_one(card, QUESTIONS)
+    except LocalUnavailable:
+        raise
+    except Exception as exc:  # noqa: BLE001 - one bad card is a null score, as with HTTP
+        raise RuntimeError(f"local Laya inference failed: {type(exc).__name__}: {exc}") from exc
+    if not isinstance(raw, dict):
+        raise ValueError("local Laya returned no result mapping")
+    return raw
+
+
 def ask(cfg: dict, card: str, timeout_s: float) -> dict:
-    """POST one card with the question set; the raw response. One retry on a connection error, 429 or 5xx."""
+    """Score one card locally or POST it to the endpoint; the raw response."""
+    if local_mode(cfg):
+        return _ask_local(cfg, card)
     key = os.environ.get("LAYA_API_KEY")
     body = {"state": card, "questions": QUESTIONS, **({"model": cfg["model"]} if cfg.get("model") else {})}
     req = urllib.request.Request(cfg["endpoint"].rstrip("/") + cfg["path"], json.dumps(body).encode(),
@@ -206,13 +260,16 @@ def parse(raw: dict) -> tuple[dict, bool]:
 
 def cached_answers(cfg: dict, card: str, timeout_s: float) -> tuple[dict, bool]:
     """({answers, truncated, model}, cache hit). The cache holds answers only: never the card, never the key."""
-    key = json.dumps([urlsplit(cfg["endpoint"]).netloc, cfg["path"], cfg.get("model"), QUESTION_VERSION, card])
+    if local_mode(cfg):
+        key = json.dumps(["local", cfg.get("model"), QUESTION_VERSION, card])
+    else:
+        key = json.dumps([urlsplit(cfg["endpoint"]).netloc, cfg["path"], cfg.get("model"), QUESTION_VERSION, card])
     path = Path(cfg["cache_dir"]) / f"{hashlib.sha256(key.encode()).hexdigest()}.json" if cfg.get("cache_dir") else None
     if path and path.is_file():
         return json.loads(path.read_text(encoding="utf-8")), True
     raw = ask(cfg, card, timeout_s)
     answers, truncated = parse(raw)
-    entry = {"answers": answers, "truncated": truncated, "model": raw.get("model")}
+    entry = {"answers": answers, "truncated": truncated, "model": raw.get("model") or cfg.get("model")}
     if path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(entry, sort_keys=True), encoding="utf-8")
@@ -227,12 +284,17 @@ def rank(cfg: dict, candidates: list[str], card_of) -> dict:
     """The artifact's `g1` object. `scores` is in rank order: score high to low, then name; null scores last.
     `card_of(node)` gives (card, truncated); a card that cannot be built gives a null score (C8), never an error."""
     start = time.monotonic()
+    given = cfg
     cfg = {**DEFAULTS, **cfg}
     laya = cfg["backend"] == "laya"
+    local = local_mode(cfg)
+    if local and "total_timeout_ms" not in given:
+        cfg["total_timeout_ms"] = LOCAL_TOTAL_TIMEOUT_MS
     out = {"backend": cfg["backend"], "status": "skipped", "order_variant": "A", "scores": [], "truncated_cards": [],
            "card_hashes": {}}
     if laya:
-        out.update(question_version=QUESTION_VERSION, endpoint_host=urlsplit(cfg["endpoint"]).hostname,
+        out.update(question_version=QUESTION_VERSION, mode="local" if local else "http",
+                   endpoint_host=None if local else urlsplit(cfg["endpoint"]).hostname,
                    model=cfg.get("model"), client_version=__version__, server_version=None,
                    cache={"hits": 0, "misses": 0} if cfg.get("cache_dir") else "disabled")
     if len(candidates) < 2:
@@ -256,6 +318,9 @@ def rank(cfg: dict, candidates: list[str], card_of) -> dict:
             break
         try:
             entry, hit = cached_answers(cfg, card, min(cfg["timeout_ms"] / 1000, left))
+        except LocalUnavailable as exc:  # C8: no local package or checkpoint means G1 is off, not a failed run
+            problem = str(exc)
+            break
         except Exception as exc:  # noqa: BLE001 - C8: one bad card is a null score; a dead endpoint stops G1
             if isinstance(exc, OSError) and (not called or getattr(exc, "code", None) in (401, 402, 403)):
                 problem = f"the endpoint failed: {type(exc).__name__} {getattr(exc, 'code', '')}".rstrip()

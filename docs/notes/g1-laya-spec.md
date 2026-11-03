@@ -4,7 +4,7 @@
 
 Oct 27, 2026 · @Ali · Revision of the Oct 23 spec
 
-**What changed in this revision.** The first iteration calls Laya through an HTTP API, zero-shot. There is no fine-tuning, no training data pipeline, no combiner fitting, no local weights handling and no ONNX export. The goal of v0 is to answer one question cheaply: does an off-the-shelf Laya, shown a node card, rank the right nodes higher than the deterministic baselines? Local weights and fine-tuning are deferred to a later version and listed in section 13.
+**What changed in this revision.** The first iteration calls Laya through an HTTP API, zero-shot. There is no fine-tuning, no training data pipeline, no combiner fitting and no ONNX export. Local inference through the `laya` package is now supported behind the environment variable `LOCAL=true`; fine-tuning remains deferred to a later version and is listed in section 13. The goal of v0 is to answer one question cheaply: does an off-the-shelf Laya, shown a node card, rank the right nodes higher than the deterministic baselines?
 
 ## 1. Purpose and scope
 
@@ -30,11 +30,11 @@ Every constraint below comes from the Sherlock mid-evaluation report and is a re
 | --- | --- | --- |
 | C1 | G1 may reorder candidates and, only when enabled, widen the list. It never names a cause. Only a passing G3 trial does. | FR-17, FR-18, NFR-3 |
 | C2 | With G1 off or on, `minimal_sets` must be identical on every evaluation case. This is the invariant the hint model already meets (TC-15). | FR-18, TC-15 |
-| C3 (revised) | The only network use during diagnosis is the G1 call to the configured Laya endpoint, and only when `--g1 laya` is set. No other host is contacted. The default endpoint is the hosted Laya API, `https://api.laya.studio/v1/systemone`, which is remote, so the opt-in in C5 applies. G3 trials and search never make network calls. | FR-3, NFR-2 |
+| C3 (revised) | In HTTP mode the only network use during diagnosis is the G1 call to the configured Laya endpoint, and only when `--g1 laya` is set. No other host is contacted. The default endpoint is the hosted Laya API, `https://api.laya.studio/v1/systemone`, which is remote, so the opt-in in C5 applies. With `LOCAL=true` inference runs in process, so diagnosis makes no network calls at all (the first model load may read the Hugging Face cache or download the checkpoint). G3 trials and search never make network calls. | FR-3, NFR-2 |
 | C4 | Same inputs give a byte-identical result file. Raw API probabilities are rounded to 4 decimals, cached by card hash, and ties are broken by a fixed rule (section 7). | NFR-1, AC-8 |
-| C5 (revised) | Nothing leaves the machine without opt-in and there is no telemetry. The default Laya endpoint is remote, so using it is an explicit opt-in (`--g1-allow-remote`, or `g1.allow_remote = true` in config), because card text then leaves the machine. Cards are redacted first (C6). Jev stays research-only. | NFR-11 |
+| C5 (revised) | Nothing leaves the machine without opt-in and there is no telemetry. In HTTP mode the default Laya endpoint is remote, so using it is an explicit opt-in (`--g1-allow-remote`, or `g1.allow_remote = true` in config), because card text then leaves the machine. `LOCAL=true` keeps every card in process and needs neither the opt-in nor a key. Cards are redacted first (C6). Jev stays research-only. | NFR-11 |
 | C6 | Cards are built from redacted data only. | FR-4, NFR-10 |
-| C7 (revised) | The Sherlock side runs on a laptop CPU with no GPU and no model weights. Where the model runs is the endpoint's concern. | NFR-4 |
+| C7 (revised) | By default the Sherlock side runs on a laptop CPU with no GPU and no model weights; where the model runs is the endpoint's concern. `LOCAL=true` is the opt-in exception: it loads the open checkpoint in process, on CPU or whatever accelerator the `laya` package selects. | NFR-4 |
 | C8 (revised) | A G1 failure (endpoint unreachable, timeout, auth error, malformed response, empty card) never causes an abstain. G1 is skipped and the run continues as if it were off. A G1 call must never block diagnosis longer than the configured total timeout (section 10). | FR-15, AC-6 |
 | C9 | The trial budget rules are unchanged. G1 API calls do not count as trials. | FR-16 |
 | C10 | No abstain result names a node, and G1 scores never appear as a culprit label. | FR-15, AC-6 |
@@ -59,6 +59,8 @@ G1 sits between pruning and the path check, and the only new work is step 3. Eve
 Laya is a small open-weight "System 1" decision model: it reads a state plus typed questions and returns probabilities in one forward pass, with no text generation. In v0 Sherlock uses it only as a remote scorer.
 
 **Endpoint for v0.** Use the hosted Laya API at `https://api.laya.studio/v1/systemone`, authenticated with a bearer key in the environment variable `LAYA_API_KEY`. Open-weight Laya can also be served locally (`laya-serve`, Unsloth, LiteLLM or Bifrost gateways) with the same request format, so keep the base URL, path and model name configurable. That lets the client later point at a local server with no code change. The Laya docs for the hosted service were not available to me, so confirm the details below with the smoke test in section 10.
+
+**Local inference (`LOCAL=true`).** Set `LOCAL=true` and install the `laya` package (`pip install laya`). The client loads `convaiinnovations/laya-typed-decisions` (or the `--g1-model` alias, repo id or local directory) once, calls `agent.system_one(card, questions)`, and reuses the same answer parser, scoring rule and cache as HTTP mode. The local result has the same `answers` and `usage` shape, so no scoring logic changes. A missing package or checkpoint makes G1 `unavailable` and leaves the diagnosis exactly as if G1 were off (C8).
 
 | Setting | Value |
 | --- | --- |
@@ -253,11 +255,12 @@ Four backends. `off` returns `skipped`. `hosted` wraps the existing hint model. 
 **Switches (proposed)**
 
 - `sherlock-rec diagnose --g1 off|hosted|laya`, default `off`.
-- `--g1-endpoint URL`, or env `LAYA_API_BASE`. Default `https://api.laya.studio`.
+- `LOCAL=true` in the environment (or `.env`) runs the `laya` package in process instead of calling an endpoint.
+- `--g1-endpoint URL`, or env `LAYA_API_BASE`. Default `https://api.laya.studio`. Ignored when `LOCAL=true`.
 - `--g1-path PATH`, default `/v1/systemone`.
 - `--g1-model NAME`, default unset (the `model` field is omitted from the request).
 - API key from env (load .env) `LAYA_API_KEY` only (a missing key makes G1 `unavailable`), never from a flag, never written to the result file or logs.
-- `--g1-allow-remote`: required if the endpoint host is not `localhost`, `127.0.0.1` or `::1`. Because the default endpoint is remote, `--g1 laya` needs this flag too. Without it, G1 is `unavailable` with a clear message that says card text would leave the machine (C5).
+- `--g1-allow-remote`: required in HTTP mode if the endpoint host is not `localhost`, `127.0.0.1` or `::1`. Because the default endpoint is remote, `--g1 laya` needs this flag too. Without it, G1 is `unavailable` with a clear message that says card text would leave the machine (C5). Not needed when `LOCAL=true`.
 - `--g1-timeout-ms` per call, default 10000. `--g1-total-timeout-ms` for all of G1 on one diagnosis, default 60000.
 - `--g1-no-cache`, as above.
 - There is no `fetch-model` command in v0.
@@ -322,7 +325,7 @@ Nothing is trained, so there is no train split and no label-fitting. The existin
 
 Follow these steps in order. Put the client in one module, for example `g1/laya_client.py`, with no side effects at import time.
 
-**1. Configure.** Read endpoint, path, model, timeout and key as in section 8. Default to `https://api.laya.studio/v1/systemone`. If the host is not local and `--g1-allow-remote` is absent, or `LAYA_API_KEY` is unset, return `unavailable` before building any request.
+**1. Configure.** Read endpoint, path, model, timeout and key as in section 8. Default to `https://api.laya.studio/v1/systemone`. If `LOCAL` is true, load the model in process instead and skip the endpoint, key and opt-in checks. Otherwise, if the host is not local and `--g1-allow-remote` is absent, or `LAYA_API_KEY` is unset, return `unavailable` before building any request.
 
 **2. Build the request.** One request per node card. Header `Content-Type: application/json`, plus `Authorization: Bearer $LAYA_API_KEY` only when the key is set. Body (add `"model"` only if `--g1-model` is set):
 

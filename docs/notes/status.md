@@ -281,7 +281,7 @@ Beyond spec §10:
 
 ## G1 Laya API v0 (branch `g1-laya`)
 
-Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Updated 2026-10-28.
+Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Updated 2026-11-02.
 
 ### Build steps (spec section 12)
 
@@ -289,7 +289,7 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 | --- | --- | --- |
 | 1 Backend interface, `off`/`fake`, call site | ✅ | `g1.py` `rank`; hook in `diagnose._unit` after pruning; `tests/test_g1.py`, `tests/test_scale.py` |
 | 2 Node cards, golden files | ✅ | `g1.node_card`; `tests/golden/g1_cards/` (vendor brief, all 5 nodes read by eye) |
-| 3 Laya client, cache, `g1-check`, fake server tests | ✅ | `tests/test_g1_laya.py`; `sherlock-rec g1-check --g1-allow-remote` returned 200 from api.laya.studio, same answers twice, 0.9 s warm |
+| 3 Laya client, cache, `g1-check`, fake server tests | ✅ | `tests/test_g1_laya.py`; `sherlock-rec g1-check --g1-allow-remote` returned 200 from api.laya.studio, same answers twice, 0.9 s warm; `LOCAL=true` path covered by a fake `laya` module |
 | 4 Zero-shot evaluation on the 86 cases | ⏳ gate done, Laya numbers blocked | `eval/g1_eval.py`. Gate fires: min(G0, rule) is already optimal on 96.4% of the 84 answered cases. Laya rows not valid yet: account out of credits (HTTP 402) |
 | 5 Harder generated cases | ⏳ data done, Laya numbers blocked | `eval/g1_gen.py` (seed 7, 100 dev + 100 test, test sha256 739f3ee40245...); G0 is optimal on only 22% of the test half. No question tuning yet (still `g1_questions_v1`) |
 | 6 Integration | ✅ code; final run and ship decision open | `g1` result object, `g1` progress line, Rust reader test (schema stays 1), UI weak hint hidden on abstain |
@@ -299,7 +299,7 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 - [x] AC-G1-1: same answer with G1 on and off: 86 cases (`results.json` invariant `g1_fake_changed_answer` = []), 30 to 300 nodes (`test_scale.py`).
 - [ ] AC-G1-2: tight budgets: needs the Laya runs.
 - [ ] AC-G1-3: three byte-identical runs: not run yet.
-- [x] AC-G1-4: socket trap in `test_g1_laya.py` (remote without opt-in, no key, fake: zero connections).
+- [x] AC-G1-4: socket trap in `test_g1_laya.py` (remote without opt-in, no key, fake, `LOCAL=true`: zero connections).
 - [x] AC-G1-5: dead port, 401, 402, 400, 500, timeout, malformed, out-of-range answers all give the G1-off result with `status = unavailable`.
 - [x] AC-G1-6: golden cards; cards capped at 2,400 characters (800 tokens at 3 characters each); the API measured about 3 characters per token.
 - [x] AC-G1-7: `app-core` test `g1_scores_are_accepted_and_never_change_what_the_trials_decided`.
@@ -307,6 +307,15 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 - [x] AC-G1-9: `fake` backend and the local System One stand-in; no endpoint needed.
 - [ ] AC-G1-10: README section and `g1-check` exist; the clean-machine check is not done.
 - [x] AC-G1-11: planted-key and card-text scan over result, progress events and cache.
+
+### Local inference mode (2026-11-02)
+
+- `LOCAL=true` (environment or `.env`) makes the `laya` backend load the checkpoint in process and call `agent.system_one`; HTTP stays the default when `LOCAL` is unset or false.
+- The local agent is loaded once per checkpoint and reused, answers reuse the same parser, scoring rule and on-disk cache, and a missing package or checkpoint gives `status = unavailable` with the diagnosis unchanged.
+- HTTP endpoint, key and `--g1-allow-remote` checks are skipped in local mode; tests assert zero socket connections.
+- Install the optional package with `pip install laya` (not a base dependency); `make g1-eval` uses `uv run --with laya`, and a missing package now prints the install command instead of an opaque make failure.
+- Local CPU smoke test (2026-11-02): `same_answers_twice=true`, first call 300 s including the 421M checkpoint download, warm call 14 s. Local G1 defaults to a 10-minute total budget rather than the HTTP 60 s. No accuracy evaluation yet: the fake-module tests cover behaviour, not speed or accuracy.
+- `make g1-eval` step 2 now completes after the run wrapper forwards `SIGINT` to its child instead of letting `subprocess.call` kill it, so `langgraph dev` flushes the last recorded threads before replay. Verified 2026-11-02: 86 cases, 84 exact, 2 honest abstains, 0 expectation failures; regression test in `tests/test_run_records.py`. Step 3 (local Laya on all cases) has not been run end to end.
 
 ### Facts measured against the real API (2026-10-28)
 
