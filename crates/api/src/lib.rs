@@ -618,6 +618,9 @@ pub async fn serve(opts: ServeOptions) -> Result<()> {
             p.dir.display(),
             p.program
         ),
+        None if opts.langsmith_api_key.is_some() => println!(
+            "Run button: off (LangSmith has no checkpoint history; pass --source langgraph)"
+        ),
         None => println!("Run button: off (no recorded project; pass --project DIR)"),
     }
     let state = state.with_project(project, Some(opts.port));

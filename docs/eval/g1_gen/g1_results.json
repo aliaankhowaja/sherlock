@@ -1,0 +1,4655 @@
+{
+  "backend": "laya",
+  "cases": [
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0100",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0101",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n31"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0102",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n32"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0103",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0104",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n25"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0105",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 5,
+          "first_gold_rank": 5
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n40"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0106",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n34"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0107",
+      "methods": {
+        "g0": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n12"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0108",
+      "methods": {
+        "g0": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n32"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0109",
+      "methods": {
+        "g0": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n40"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0110",
+      "methods": {
+        "g0": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "hint": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "rule": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        }
+      },
+      "team": "gen_n27"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0111",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n16"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0112",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n32"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0113",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n29"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0114",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n39"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0115",
+      "methods": {
+        "g0": {
+          "first_fix": 10,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 10,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 10,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n19"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0116",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n35"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0117",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n10"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0118",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n39"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0119",
+      "methods": {
+        "g0": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n26"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0120",
+      "methods": {
+        "g0": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n31"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0121",
+      "methods": {
+        "g0": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n32"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0122",
+      "methods": {
+        "g0": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "hint": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0123",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n23"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0124",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n10"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0125",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n20"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0126",
+      "methods": {
+        "g0": {
+          "first_fix": 9,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 9,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 8,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 8,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 8,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 9,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 9,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n34"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0127",
+      "methods": {
+        "g0": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n25"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0128",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n39"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0129",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n40"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0130",
+      "methods": {
+        "g0": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 29,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n30"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0131",
+      "methods": {
+        "g0": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 9,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n22"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0132",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "random": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n25"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0133",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n33"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0134",
+      "methods": {
+        "g0": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0135",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n16"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0136",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        }
+      },
+      "team": "gen_n13"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0137",
+      "methods": {
+        "g0": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n11"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0138",
+      "methods": {
+        "g0": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0139",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n33"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0140",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n11"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0141",
+      "methods": {
+        "g0": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n26"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0142",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n38"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0143",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "random": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n15"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0144",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n25"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0145",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n16"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0146",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n36"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0147",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n21"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0148",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 11,
+          "first_gold_rank": 4
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0149",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0150",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n15"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0151",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0152",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 8
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 8
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 8
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n13"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0153",
+      "methods": {
+        "g0": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "hint": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0154",
+      "methods": {
+        "g0": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n14"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0155",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0156",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0157",
+      "methods": {
+        "g0": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0158",
+      "methods": {
+        "g0": {
+          "first_fix": 30,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 30,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 30,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n40"
+    },
+    {
+      "candidates": 1,
+      "id": "g1gen:7:0159",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n37"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0160",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 20,
+          "first_gold_rank": 4
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n18"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0161",
+      "methods": {
+        "g0": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 10,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0162",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n30"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0163",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n36"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0164",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n39"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0165",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n38"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0166",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0167",
+      "methods": {
+        "g0": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n36"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0168",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0169",
+      "methods": {
+        "g0": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n30"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0170",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n22"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0171",
+      "methods": {
+        "g0": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n34"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0172",
+      "methods": {
+        "g0": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 19,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 17,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n12"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0173",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n24"
+    },
+    {
+      "candidates": 8,
+      "id": "g1gen:7:0174",
+      "methods": {
+        "g0": {
+          "first_fix": 9,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 9,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 11,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 11,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 7
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 10,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 8,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 9,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n21"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0175",
+      "methods": {
+        "g0": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 30,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 28,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n28"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0176",
+      "methods": {
+        "g0": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n9"
+    },
+    {
+      "candidates": 1,
+      "id": "g1gen:7:0177",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n27"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0178",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n16"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0179",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n17"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0180",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n27"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0181",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 7
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n21"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0182",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 9,
+          "first_gold_rank": 4
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n16"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0183",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n8"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0184",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n15"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0185",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 5,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n29"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0186",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 5,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 5,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 5,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 10,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n22"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0187",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 31,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 18,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n37"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0188",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n38"
+    },
+    {
+      "candidates": 3,
+      "id": "g1gen:7:0189",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n10"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0190",
+      "methods": {
+        "g0": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "hint": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        }
+      },
+      "team": "gen_n39"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0191",
+      "methods": {
+        "g0": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 32,
+          "first_gold_rank": 5
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 11,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n32"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0192",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n37"
+    },
+    {
+      "candidates": 4,
+      "id": "g1gen:7:0193",
+      "methods": {
+        "g0": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "hint": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "rule": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        }
+      },
+      "team": "gen_n15"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0194",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 16,
+          "first_gold_rank": 5
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "gen_n8"
+    },
+    {
+      "candidates": 6,
+      "id": "g1gen:7:0195",
+      "methods": {
+        "g0": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "hint": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_alone": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "laya_masked": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 27,
+          "first_gold_rank": 6
+        }
+      },
+      "team": "gen_n22"
+    },
+    {
+      "candidates": 2,
+      "id": "g1gen:7:0196",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n33"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0197",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        },
+        "laya": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "laya_alone": {
+          "first_fix": 6,
+          "first_gold_rank": 5
+        },
+        "laya_masked": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 3,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 3
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 6
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 4
+        }
+      },
+      "team": "gen_n13"
+    },
+    {
+      "candidates": 7,
+      "id": "g1gen:7:0198",
+      "methods": {
+        "g0": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 9,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 7,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n12"
+    },
+    {
+      "candidates": 5,
+      "id": "g1gen:7:0199",
+      "methods": {
+        "g0": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_alone": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "laya_masked": {
+          "first_fix": 12,
+          "first_gold_rank": 3
+        },
+        "optimal": {
+          "first_fix": 4,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 7,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 6,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "gen_n16"
+    }
+  ],
+  "gate": {
+    "gate_fires": false,
+    "share": 0.22
+  },
+  "per_team": {
+    "gen_n10": {
+      "cases": 3,
+      "g0": 6.667,
+      "laya": 8.333,
+      "optimal": 3.667,
+      "rule": 6.667
+    },
+    "gen_n11": {
+      "cases": 2,
+      "g0": 6.5,
+      "laya": 7,
+      "optimal": 3,
+      "rule": 6.5
+    },
+    "gen_n12": {
+      "cases": 3,
+      "g0": 11.333,
+      "laya": 14.667,
+      "optimal": 4,
+      "rule": 11.333
+    },
+    "gen_n13": {
+      "cases": 3,
+      "g0": 6.333,
+      "laya": 6.667,
+      "optimal": 4.333,
+      "rule": 6.333
+    },
+    "gen_n14": {
+      "cases": 1,
+      "g0": 28,
+      "laya": 28,
+      "optimal": 4,
+      "rule": 28
+    },
+    "gen_n15": {
+      "cases": 4,
+      "g0": 4.5,
+      "laya": 7.5,
+      "optimal": 2.25,
+      "rule": 4.5
+    },
+    "gen_n16": {
+      "cases": 6,
+      "g0": 4.5,
+      "laya": 11.833,
+      "optimal": 3,
+      "rule": 4.5
+    },
+    "gen_n17": {
+      "cases": 6,
+      "g0": 6,
+      "laya": 6.333,
+      "optimal": 2.667,
+      "rule": 6
+    },
+    "gen_n18": {
+      "cases": 1,
+      "g0": 6,
+      "laya": 20,
+      "optimal": 4,
+      "rule": 6
+    },
+    "gen_n19": {
+      "cases": 1,
+      "g0": 10,
+      "laya": 10,
+      "optimal": 3,
+      "rule": 10
+    },
+    "gen_n20": {
+      "cases": 1,
+      "g0": 7,
+      "laya": 12,
+      "optimal": 4,
+      "rule": 7
+    },
+    "gen_n21": {
+      "cases": 3,
+      "g0": 7.667,
+      "laya": 8.333,
+      "optimal": 4,
+      "rule": 7.667
+    },
+    "gen_n22": {
+      "cases": 4,
+      "g0": 12.25,
+      "laya": 13.25,
+      "optimal": 4.5,
+      "rule": 12.25
+    },
+    "gen_n23": {
+      "cases": 1,
+      "g0": 3,
+      "laya": 3,
+      "optimal": 2,
+      "rule": 3
+    },
+    "gen_n24": {
+      "cases": 6,
+      "g0": 7.5,
+      "laya": 10.5,
+      "optimal": 2.667,
+      "rule": 7.5
+    },
+    "gen_n25": {
+      "cases": 4,
+      "g0": 10.75,
+      "laya": 12,
+      "optimal": 3,
+      "rule": 10.75
+    },
+    "gen_n26": {
+      "cases": 2,
+      "g0": 15,
+      "laya": 16,
+      "optimal": 4,
+      "rule": 15
+    },
+    "gen_n27": {
+      "cases": 3,
+      "g0": 11.667,
+      "laya": 11.667,
+      "optimal": 2.333,
+      "rule": 11.667
+    },
+    "gen_n28": {
+      "cases": 6,
+      "g0": 10.333,
+      "laya": 9.5,
+      "optimal": 3.333,
+      "rule": 10.333
+    },
+    "gen_n29": {
+      "cases": 2,
+      "g0": 3.5,
+      "laya": 4.5,
+      "optimal": 3,
+      "rule": 3.5
+    },
+    "gen_n30": {
+      "cases": 3,
+      "g0": 6,
+      "laya": 13,
+      "optimal": 3.333,
+      "rule": 6
+    },
+    "gen_n31": {
+      "cases": 2,
+      "g0": 9.5,
+      "laya": 9.5,
+      "optimal": 4,
+      "rule": 9.5
+    },
+    "gen_n32": {
+      "cases": 5,
+      "g0": 12.6,
+      "laya": 15.6,
+      "optimal": 3.6,
+      "rule": 12.6
+    },
+    "gen_n33": {
+      "cases": 3,
+      "g0": 3,
+      "laya": 6.667,
+      "optimal": 1.667,
+      "rule": 3
+    },
+    "gen_n34": {
+      "cases": 3,
+      "g0": 8.333,
+      "laya": 10,
+      "optimal": 3.667,
+      "rule": 8.333
+    },
+    "gen_n35": {
+      "cases": 1,
+      "g0": 2,
+      "laya": 16,
+      "optimal": 2,
+      "rule": 2
+    },
+    "gen_n36": {
+      "cases": 3,
+      "g0": 6.333,
+      "laya": 12,
+      "optimal": 3.667,
+      "rule": 6.333
+    },
+    "gen_n37": {
+      "cases": 3,
+      "g0": 3.333,
+      "laya": 13,
+      "optimal": 2.667,
+      "rule": 3.333
+    },
+    "gen_n38": {
+      "cases": 3,
+      "g0": 6,
+      "laya": 5.667,
+      "optimal": 3.333,
+      "rule": 6
+    },
+    "gen_n39": {
+      "cases": 5,
+      "g0": 11.4,
+      "laya": 12.2,
+      "optimal": 3.6,
+      "rule": 11.4
+    },
+    "gen_n40": {
+      "cases": 4,
+      "g0": 12.25,
+      "laya": 15,
+      "optimal": 4.5,
+      "rule": 12.25
+    },
+    "gen_n8": {
+      "cases": 2,
+      "g0": 4.5,
+      "laya": 11,
+      "optimal": 3,
+      "rule": 4.5
+    },
+    "gen_n9": {
+      "cases": 1,
+      "g0": 5,
+      "laya": 9,
+      "optimal": 2,
+      "rule": 5
+    }
+  },
+  "question_version": "g1_questions_v1",
+  "seed": 1,
+  "summary": {
+    "g0": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 22,
+      "fix_mean": 8.18,
+      "fix_median": 6.0,
+      "mrr": 0.607,
+      "multi_candidate": 98,
+      "ndcg3": 0.581,
+      "no_fix": 0,
+      "recall3": 0.73
+    },
+    "hint": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 22,
+      "fix_mean": 8.18,
+      "fix_median": 6.0,
+      "mrr": 0.607,
+      "multi_candidate": 98,
+      "ndcg3": 0.581,
+      "no_fix": 0,
+      "recall3": 0.73
+    },
+    "laya": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 36,
+      "fix_mean": 10.83,
+      "fix_median": 8.5,
+      "mrr": 0.47,
+      "multi_candidate": 98,
+      "ndcg3": 0.396,
+      "no_fix": 0,
+      "recall3": 0.505
+    },
+    "laya_alone": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 36,
+      "fix_mean": 10.83,
+      "fix_median": 8.5,
+      "mrr": 0.47,
+      "multi_candidate": 98,
+      "ndcg3": 0.396,
+      "no_fix": 0,
+      "recall3": 0.505
+    },
+    "laya_masked": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 36,
+      "fix_mean": 11.03,
+      "fix_median": 7.0,
+      "mrr": 0.434,
+      "multi_candidate": 98,
+      "ndcg3": 0.376,
+      "no_fix": 0,
+      "recall3": 0.505
+    },
+    "optimal": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 0,
+      "fix_mean": 3.28,
+      "fix_median": 4.0,
+      "mrr": 1.0,
+      "multi_candidate": 98,
+      "ndcg3": 1.0,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "q2": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 18,
+      "fix_mean": 7.21,
+      "fix_median": 6.0,
+      "mrr": 0.72,
+      "multi_candidate": 98,
+      "ndcg3": 0.67,
+      "no_fix": 0,
+      "recall3": 0.76
+    },
+    "random": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 27,
+      "fix_mean": 7.88,
+      "fix_median": 6.5,
+      "mrr": 0.576,
+      "multi_candidate": 98,
+      "ndcg3": 0.543,
+      "no_fix": 0,
+      "recall3": 0.675
+    },
+    "rule": {
+      "cases": 100,
+      "exhausted_default": 0,
+      "exhausted_tight": 22,
+      "fix_mean": 8.18,
+      "fix_median": 6.0,
+      "mrr": 0.607,
+      "multi_candidate": 98,
+      "ndcg3": 0.581,
+      "no_fix": 0,
+      "recall3": 0.73
+    }
+  },
+  "tight_budget": 10
+}

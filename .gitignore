@@ -17,3 +17,8 @@ harness/langgraph-dev.log
 # Browser-tool scratch output (console logs, page snapshots)
 .playwright-cli/
 python/sherlock/eval/.g1/
+
+# Local mid-evaluation report and rubric (not part of the product).
+# The report itself lives in its own repository.
+FYP-1-Mid-Assessment-Guidelines-and-Rubrics.pdf
+Mid 1 Report/

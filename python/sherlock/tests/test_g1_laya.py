@@ -145,6 +145,24 @@ def test_a_truncated_card_gets_no_score_and_a_429_is_retried(cassette, tmp_path)
     assert g["scores"][-1] == {"node": "extractor", "score": None, "answers": g["scores"][-1]["answers"]}
 
 
+def test_every_card_truncated_stays_partial_and_does_not_look_like_a_missing_key(cassette, tmp_path):  # noqa: F811
+    base = run(cassette)
+
+    def reply(body):
+        out = answers(body)
+        out["usage"]["truncated"] = True
+        out["usage"]["state_tokens_dropped"] = 12
+        return 200, out, 0
+
+    with LayaStub(reply) as stub:
+        r = run(cassette, cfg(stub, tmp_path))
+    g = r["g1"]
+    assert g["status"] == "partial" and "reason" not in g
+    assert g["scores"] and all(s["score"] is None for s in g["scores"])
+    assert set(g["truncated_cards"]) == {s["node"] for s in g["scores"]}
+    assert answer(r) == answer(base)
+
+
 def test_a_remote_endpoint_needs_the_opt_in_and_a_key_and_nothing_connects(cassette, tmp_path, monkeypatch):  # noqa: F811
     tried = []
     real = socket.socket.connect
@@ -157,6 +175,32 @@ def test_a_remote_endpoint_needs_the_opt_in_and_a_key_and_nothing_connects(casse
     assert no_opt_in["status"] == "unavailable" and "--g1-allow-remote" in no_opt_in["reason"]
     assert no_key["status"] == "unavailable" and "LAYA_API_KEY" in no_key["reason"]
     assert tried == []  # AC-G1-4
+
+
+class BatchAgent(FakeLocalAgent):
+    """Scores every uncached card in one predict_batch, which is what Metal wants."""
+
+    def __init__(self):
+        super().__init__()
+        self.batches = []
+
+    def predict_batch(self, states, questions):
+        self.batches.append(list(states))
+        out = []
+        for state in states:
+            raw = answers({"state": state, "questions": questions})
+            raw.pop("model", None)
+            out.append(raw)
+        return out
+
+
+def test_local_scoring_uses_one_batch_for_uncached_cards(cassette, tmp_path, monkeypatch):  # noqa: F811
+    agent, module = install_laya(monkeypatch, BatchAgent())
+    r = run(cassette, local_cfg(tmp_path))
+    g = r["g1"]
+    assert g["status"] == "ok" and g["scores"][0]["node"] == "extractor"
+    assert agent.calls == [] and len(agent.batches) == 1 and len(agent.batches[0]) > 1
+    assert module.loads == [("typed-decisions", {})]
 
 
 def test_local_inference_needs_no_endpoint_key_or_network(cassette, tmp_path, monkeypatch):  # noqa: F811 - AC-G1-4

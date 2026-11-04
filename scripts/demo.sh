@@ -75,7 +75,9 @@ echo "$lab_url" >"$DEMO/lab.url"
 say "Lab ready at $lab_url"
 
 # 2. Web app on top of it.
-(nohup "$DEMO/bin/sherlock$EXE" serve --port "$PORT" --no-open \
+# `--source langgraph` is required: `auto` follows LANGSMITH_API_KEY in `.env`, and the
+# run/graph views refuse a LangSmith source (they need checkpoint history).
+(nohup "$DEMO/bin/sherlock$EXE" serve --port "$PORT" --no-open --source langgraph \
    --langgraph-url "$lab_url" --sherlock-dir "$(native "$DEMO")" --project "$(native "$DEMO/lab")" \
    --sherlock-rec "$(native "$REC_BIN")" >"$DEMO/serve.log" 2>&1 &
  echo $! >"$DEMO/serve.sh.pid")

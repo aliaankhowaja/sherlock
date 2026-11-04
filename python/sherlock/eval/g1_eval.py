@@ -92,7 +92,7 @@ def mean(xs):
 
 
 def evaluate(cases, cfg):
-    rows, cost, passes = [], {m: {"calls": 0, "hits": 0, "ms": 0, "status": {}} for m in ("laya", "laya_masked")}, []
+    rows, cost, passes, reasons = [], {m: {"calls": 0, "hits": 0, "ms": 0, "status": {}} for m in ("laya", "laya_masked")}, [], []
     for case in cases:
         gold = {n for s in case["gold"] for n in s}
         order, g1s = orders(case, cfg, gold)
@@ -109,12 +109,14 @@ def evaluate(cases, cfg):
             c["hits"] += cache["hits"] if isinstance(cache, dict) else 0
             c["ms"] += g1["ms"]
             c["status"][g1["status"]] = c["status"].get(g1["status"], 0) + 1
+            if g1["status"] == "unavailable":
+                reasons.append(f"{case['id']} ({m}): {g1.get('reason') or 'unavailable'}")
         if cfg["stability"] and len(case["candidates"]) > 1:
             runs = [[s["node"] for s in rank({**cfg["g1"], "cache_dir": None}, case["candidates"],
                                              lambda n: tuple(case["cards"][n]))["scores"]] for _ in range(2)]
             passes.append(runs[0] == runs[1] == [s["node"] for s in g1s["laya"]["scores"]])
         rows.append(row)
-    return rows, cost, passes
+    return rows, cost, passes, reasons
 
 
 def summarize(rows):
@@ -167,11 +169,11 @@ def main():
     cases = [c for c in cases if c["status"] == "found"]
     cfg = {"seed": a.seed, "stability": a.stability, "tight": a.tight,
            "g1": {"backend": a.backend, "allow_remote": True, "cache_dir": HERE / ".g1" / "cache"}}
-    rows, cost, passes = evaluate(cases, cfg)
+    rows, cost, passes, reasons = evaluate(cases, cfg)
     down = sum(c["status"].get("unavailable", 0) for c in cost.values())
     if a.backend == "laya" and down:  # the laya rows would silently be the G0 order
-        sys.exit(f"g1_eval: Laya was unavailable for {down} case(s); check LAYA_API_KEY/credits or "
-                 f"LOCAL=true and the `laya` package with `sherlock-rec g1-check`")
+        shown = "; ".join(reasons[:6]) or "no reason recorded"
+        sys.exit(f"g1_eval: Laya was unavailable for {down} scoring pass(es): {shown}")
     fixes = {r["id"]: {m: x["first_fix"] for m, x in r["methods"].items()} for r in rows}
     inf = float("inf")
     near = [min(f["g0"] if f["g0"] is not None else inf, f["rule"] if f["rule"] is not None else inf)

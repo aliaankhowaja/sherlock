@@ -1,0 +1,3785 @@
+{
+  "backend": "laya",
+  "cases": [
+    {
+      "candidates": 1,
+      "id": "vendor_brief:router.wrong_source",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 1,
+      "id": "vendor_brief:writer.stale_template",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 1,
+      "id": "vendor_brief:reviewer.false_block",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 2,
+      "id": "vendor_brief:retriever.drop_latest+extractor.legacy_pattern",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 2,
+      "id": "vendor_brief:retriever.reverse_order+writer.stale_template",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 1,
+      "id": "order_desk:no_bulk_discount",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "order_desk:qty_off_by_one",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "order_desk:stale_inventory+drops_shipping_line",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "invoice_pipeline:normalize.stale_rate",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 2,
+      "id": "invoice_pipeline:extract.comma_split+normalize.trust_parsed",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 2,
+      "id": "invoice_pipeline:extract.comma_split+post.round_down",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 1,
+      "id": "support_bot:fmt.shout",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 1,
+      "id": "support_bot:prep.truncate",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 1,
+      "id": "support_bot:ask.terse_instruction",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:customer_lookup.stale_cache",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:customer_lookup.stale_cache+urgency.threshold_off",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:order_lookup.timeout",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:intake.ref_lowercase",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:pii_redact.miss_card+compliance_check.skip_pii_scan",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:sla_standard.hours_typo+customer_lookup.stale_cache",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:refund_calc.cap_off+rerank.ascending",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:merge_results.drop_history",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:draft_reply.terse_instruction",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 3,
+      "id": "support_desk:approval_gate.limit_off+audit_log.drops_ticket_id+send.dry_run",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:policy_check.short_window",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:application_intake.thousands_sep",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:fraud_velocity.threshold_one+fraud_device.default_device",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:fraud_aggregate.threshold_two+fraud_velocity.threshold_one",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:bank_parse.credit_debit_swap",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:credit_bureau.stale_report",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:employer_verify.stale_registry+risk_score.min_balance_x4",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:limit_check.stale_exposure",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:income_normalise.net_not_gross",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:letter_draft.terse_instruction",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:policy_rules.dti_limit_low",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:id_parse.swap_dates",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:pricing.floor_payment+ledger_write.drop_decision",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:quarter_off_by_one",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:swap_cols",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:stale_eur_rate+gbp_inverted",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:skip_first_row+key_ignores_month",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:sign_flip+sum_abs",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:cap_1000",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:always_warn",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:drop_limit_5pct",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:wrong_prior+no_dampening",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:terse_instruction+quarter_off_by_one",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:drop_refunds+locale_comma",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:mean_not_median",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 1,
+      "id": "revenue_report:stale_segments",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "vendor_brief:extractor.legacy_pattern+router.wrong_source",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 2,
+      "id": "vendor_brief:retriever.drop_latest+writer.stale_template",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 2,
+      "id": "vendor_brief:retriever.reverse_order+router.wrong_source",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 1,
+      "id": "vendor_brief:retriever.drop_latest+retriever.reverse_order",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "vendor_brief"
+    },
+    {
+      "candidates": 2,
+      "id": "order_desk:no_bulk_discount+stale_inventory",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "order_desk:no_bulk_discount+qty_off_by_one",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "order_desk:drops_shipping_line+qty_off_by_one",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "order_desk:drops_shipping_line+no_bulk_discount",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "order_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "invoice_pipeline:normalize.trust_parsed+post.round_down",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 1,
+      "id": "invoice_pipeline:validate.reject_large",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 2,
+      "id": "invoice_pipeline:extract.comma_split+validate.reject_large",
+      "methods": {
+        "g0": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 1,
+      "id": "invoice_pipeline:normalize.trust_parsed+validate.reject_large",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "invoice_pipeline"
+    },
+    {
+      "candidates": 2,
+      "id": "support_bot:ask.terse_instruction+fmt.trailing_newline",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 1,
+      "id": "support_bot:fmt.shout+fmt.trailing_newline",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 2,
+      "id": "support_bot:ask.terse_instruction+fmt.shout",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 2,
+      "id": "support_bot:fmt.trailing_newline+prep.truncate",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_bot"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:compliance_check.skip_pii_scan+faq_score.no_normalise",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "support_desk:compliance_check.skip_pii_scan+policy_check.short_window",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:draft_reply.terse_instruction+merge_results.drop_history",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:faq_search.stale_index+lang_detect.swap_codes",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:approval_gate.limit_off+send.dry_run",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 2,
+      "id": "support_desk:faq_search.stale_index+rerank.ascending",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "support_desk"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:decision_router.always_refer+fraud_identity.months_as_days",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:fraud_aggregate.threshold_two+pricing.floor_payment",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:employer_verify.stale_registry+kyc_match.exact_case",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:credit_bureau.thin_file+risk_score.util_cutoff",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 1,
+      "id": "loan_underwriting:id_parse.swap_dates+policy_rules.kyc_ignored",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "loan_underwriting:fraud_identity.months_as_days+id_parse.swap_dates",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "random": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "loan_underwriting"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:drop_selfserve+key_ignores_month",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:drop_last_bar+sign_flip",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:exclude_refunds+wrong_prior",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:cap_1000+wrong_text",
+      "methods": {
+        "g0": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_alone": {
+          "first_fix": 3,
+          "first_gold_rank": 2
+        },
+        "laya_masked": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 2,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:key_ignores_month+stale_segments",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    },
+    {
+      "candidates": 2,
+      "id": "revenue_report:always_warn+drop_refunds",
+      "methods": {
+        "g0": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "hint": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_alone": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "laya_masked": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "optimal": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "q2": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "random": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        },
+        "rule": {
+          "first_fix": 1,
+          "first_gold_rank": 1
+        }
+      },
+      "team": "revenue_report"
+    }
+  ],
+  "gate": {
+    "gate_fires": true,
+    "share": 0.964
+  },
+  "per_team": {
+    "invoice_pipeline": {
+      "cases": 7,
+      "g0": 1.571,
+      "laya": 1.429,
+      "optimal": 1.429,
+      "rule": 1.714
+    },
+    "loan_underwriting": {
+      "cases": 18,
+      "g0": 1.222,
+      "laya": 1.222,
+      "optimal": 1.222,
+      "rule": 1.222
+    },
+    "order_desk": {
+      "cases": 7,
+      "g0": 1,
+      "laya": 1,
+      "optimal": 1,
+      "rule": 1
+    },
+    "revenue_report": {
+      "cases": 19,
+      "g0": 1.158,
+      "laya": 1.158,
+      "optimal": 1.105,
+      "rule": 1.158
+    },
+    "support_bot": {
+      "cases": 7,
+      "g0": 1.286,
+      "laya": 1.571,
+      "optimal": 1.286,
+      "rule": 1.286
+    },
+    "support_desk": {
+      "cases": 17,
+      "g0": 1.118,
+      "laya": 1.176,
+      "optimal": 1.118,
+      "rule": 1.118
+    },
+    "vendor_brief": {
+      "cases": 9,
+      "g0": 1.333,
+      "laya": 1.222,
+      "optimal": 1.222,
+      "rule": 1.333
+    }
+  },
+  "question_version": "g1_questions_v1",
+  "seed": 1,
+  "summary": {
+    "g0": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 31,
+      "fix_mean": 1.214,
+      "fix_median": 1.0,
+      "mrr": 0.982,
+      "multi_candidate": 43,
+      "ndcg3": 0.987,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "hint": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 33,
+      "fix_mean": 1.238,
+      "fix_median": 1.0,
+      "mrr": 0.97,
+      "multi_candidate": 43,
+      "ndcg3": 0.978,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "laya": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 32,
+      "fix_mean": 1.226,
+      "fix_median": 1.0,
+      "mrr": 0.976,
+      "multi_candidate": 43,
+      "ndcg3": 0.982,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "laya_alone": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 32,
+      "fix_mean": 1.226,
+      "fix_median": 1.0,
+      "mrr": 0.976,
+      "multi_candidate": 43,
+      "ndcg3": 0.982,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "laya_masked": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 34,
+      "fix_mean": 1.25,
+      "fix_median": 1.0,
+      "mrr": 0.964,
+      "multi_candidate": 43,
+      "ndcg3": 0.974,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "optimal": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 28,
+      "fix_mean": 1.179,
+      "fix_median": 1.0,
+      "mrr": 1.0,
+      "multi_candidate": 43,
+      "ndcg3": 1.0,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "q2": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 32,
+      "fix_mean": 1.226,
+      "fix_median": 1.0,
+      "mrr": 0.976,
+      "multi_candidate": 43,
+      "ndcg3": 0.982,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "random": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 33,
+      "fix_mean": 1.238,
+      "fix_median": 1.0,
+      "mrr": 0.97,
+      "multi_candidate": 43,
+      "ndcg3": 0.978,
+      "no_fix": 0,
+      "recall3": 1.0
+    },
+    "rule": {
+      "cases": 84,
+      "exhausted_default": 0,
+      "exhausted_tight": 32,
+      "fix_mean": 1.226,
+      "fix_median": 1.0,
+      "mrr": 0.976,
+      "multi_candidate": 43,
+      "ndcg3": 0.982,
+      "no_fix": 0,
+      "recall3": 1.0
+    }
+  },
+  "tight_budget": 2
+}

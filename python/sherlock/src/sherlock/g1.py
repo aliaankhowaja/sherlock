@@ -258,21 +258,34 @@ def parse(raw: dict) -> tuple[dict, bool]:
     return answers, bool(usage.get("truncated") or usage.get("state_tokens_dropped") or usage.get("truncated_questions"))
 
 
-def cached_answers(cfg: dict, card: str, timeout_s: float) -> tuple[dict, bool]:
-    """({answers, truncated, model}, cache hit). The cache holds answers only: never the card, never the key."""
+def _cache_path(cfg: dict, card: str) -> Path | None:
+    if not cfg.get("cache_dir"):
+        return None
     if local_mode(cfg):
         key = json.dumps(["local", cfg.get("model"), QUESTION_VERSION, card])
     else:
         key = json.dumps([urlsplit(cfg["endpoint"]).netloc, cfg["path"], cfg.get("model"), QUESTION_VERSION, card])
-    path = Path(cfg["cache_dir"]) / f"{hashlib.sha256(key.encode()).hexdigest()}.json" if cfg.get("cache_dir") else None
-    if path and path.is_file():
-        return json.loads(path.read_text(encoding="utf-8")), True
-    raw = ask(cfg, card, timeout_s)
+    return Path(cfg["cache_dir"]) / f"{hashlib.sha256(key.encode()).hexdigest()}.json"
+
+
+def _entry_from(cfg: dict, raw: dict) -> dict:
     answers, truncated = parse(raw)
-    entry = {"answers": answers, "truncated": truncated, "model": raw.get("model") or cfg.get("model")}
+    return {"answers": answers, "truncated": truncated, "model": raw.get("model") or cfg.get("model")}
+
+
+def _write_entry(path: Path | None, entry: dict) -> None:
     if path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(entry, sort_keys=True), encoding="utf-8")
+
+
+def cached_answers(cfg: dict, card: str, timeout_s: float) -> tuple[dict, bool]:
+    """({answers, truncated, model}, cache hit). The cache holds answers only: never the card, never the key."""
+    path = _cache_path(cfg, card)
+    if path and path.is_file():
+        return json.loads(path.read_text(encoding="utf-8")), True
+    entry = _entry_from(cfg, ask(cfg, card, timeout_s))
+    _write_entry(path, entry)
     return entry, False
 
 
@@ -301,6 +314,41 @@ def rank(cfg: dict, candidates: list[str], card_of) -> dict:
         return {**out, "ms": 0}
     problem = blocked(cfg) if laya else None
     scores, answers, called = {}, {}, False
+    misses: list[tuple[str, str]] = []
+
+    def _accept(n: str, entry: dict, hit: bool) -> None:
+        nonlocal called
+        called = True
+        if out["cache"] != "disabled":
+            out["cache"]["hits" if hit else "misses"] += 1
+        out["model"] = entry["model"]
+        answers[n] = entry["answers"]
+        if entry["truncated"] and n not in out["truncated_cards"]:
+            out["truncated_cards"].append(n)
+        # a card the model cut may have lost its end or the questions, so it gets no score
+        scores[n] = None if entry["truncated"] else entry["answers"]["needs_restore"]["yes"]
+
+    def _score_one(n: str, card: str) -> bool:
+        """Score one card. False means stop: the endpoint is dead, the key is missing, or time ran out."""
+        nonlocal problem
+        left = cfg["total_timeout_ms"] / 1000 - (time.monotonic() - start)
+        if left <= 0:
+            problem = f"the G1 time limit of {cfg['total_timeout_ms']} ms was reached"
+            return False
+        try:
+            entry, hit = cached_answers(cfg, card, min(cfg["timeout_ms"] / 1000, left))
+        except LocalUnavailable as exc:  # C8: no local package or checkpoint means G1 is off, not a failed run
+            problem = str(exc)
+            return False
+        except Exception as exc:  # noqa: BLE001 - C8: one bad card is a null score; a dead endpoint stops G1
+            if isinstance(exc, OSError) and (not called or getattr(exc, "code", None) in (401, 402, 403)):
+                problem = f"the endpoint failed: {type(exc).__name__} {getattr(exc, 'code', '')}".rstrip()
+                return False
+            scores[n] = None
+            return True
+        _accept(n, entry, hit)
+        return True
+
     for n in candidates if not problem else ():
         try:
             card, truncated = card_of(n)
@@ -312,31 +360,54 @@ def rank(cfg: dict, candidates: list[str], card_of) -> dict:
         if not laya:
             scores[n] = fake_score(n)
             continue
+        if local:
+            path = _cache_path(cfg, card)
+            if path and path.is_file():
+                _accept(n, json.loads(path.read_text(encoding="utf-8")), True)
+            else:
+                misses.append((n, card))
+            continue
+        if not _score_one(n, card):
+            break
+    if misses and not problem:
+        # One forward for every uncached card. On Metal, system_one scores a single card and
+        # leaves the batch axis idle; predict_batch packs them. Checked against system_one on
+        # this checkpoint: the rounded probabilities match, so the cache stays interchangeable.
+        # sort_by_length is left off because that packing can change the floats.
         left = cfg["total_timeout_ms"] / 1000 - (time.monotonic() - start)
+        raws = None
         if left <= 0:
             problem = f"the G1 time limit of {cfg['total_timeout_ms']} ms was reached"
-            break
-        try:
-            entry, hit = cached_answers(cfg, card, min(cfg["timeout_ms"] / 1000, left))
-        except LocalUnavailable as exc:  # C8: no local package or checkpoint means G1 is off, not a failed run
-            problem = str(exc)
-            break
-        except Exception as exc:  # noqa: BLE001 - C8: one bad card is a null score; a dead endpoint stops G1
-            if isinstance(exc, OSError) and (not called or getattr(exc, "code", None) in (401, 402, 403)):
-                problem = f"the endpoint failed: {type(exc).__name__} {getattr(exc, 'code', '')}".rstrip()
-                break
-            scores[n] = None
-            continue
-        called = True
-        if out["cache"] != "disabled":
-            out["cache"]["hits" if hit else "misses"] += 1
-        out["model"] = entry["model"]
-        answers[n] = entry["answers"]
-        if entry["truncated"] and n not in out["truncated_cards"]:
-            out["truncated_cards"].append(n)
-        # a card the server cut may have lost its end or the questions, so it gets no score
-        scores[n] = None if entry["truncated"] else entry["answers"]["needs_restore"]["yes"]
-    if not problem and all(v is None for v in scores.values()):
+        else:
+            try:
+                agent = _local_agent(cfg)
+                if len(misses) > 1 and hasattr(agent, "predict_batch"):
+                    raws = agent.predict_batch([card for _, card in misses], QUESTIONS)
+                    if len(raws) != len(misses):
+                        raws = None
+            except LocalUnavailable as exc:
+                problem = str(exc)
+            except Exception:  # noqa: BLE001 - fall back to one card at a time
+                raws = None
+        if not problem and raws is not None:
+            for (n, card), raw in zip(misses, raws):
+                try:
+                    entry = _entry_from(cfg, raw)
+                except Exception:  # noqa: BLE001 - one bad card is a null score
+                    scores[n] = None
+                    continue
+                _write_entry(_cache_path(cfg, card), entry)
+                _accept(n, entry, False)
+        elif not problem:
+            for n, card in misses:
+                if not _score_one(n, card):
+                    break
+    # A card the model cut gets a null score and the run continues (spec rule 4). That is
+    # `partial`, including when every card was cut. `unavailable` is a dead endpoint, a missing
+    # key, or a time limit: treating "all truncated" as that made the evaluation stop and blame
+    # the API key.
+    every_card_cut = bool(scores) and set(scores) <= set(out["truncated_cards"])
+    if not problem and all(v is None for v in scores.values()) and not every_card_cut:
         problem = "no card got a score"
     if problem:  # C8: the run goes on exactly as if G1 were off
         out.update(status="unavailable", reason=problem)

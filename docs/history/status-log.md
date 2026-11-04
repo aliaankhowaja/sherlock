@@ -80,6 +80,13 @@
 
 ## Session log
 
+- **2026-11-04** — `LOCAL=true make g1-eval` from `python/sherlock/.venv` (laya 0.4.22, MPS) finished exit 0 in about 9 minutes. Planted cases: Laya does not beat G0 (1.226 vs 1.214 mean trials). Generated test half: Laya 10.83 vs G0 8.18, so the ship rule keeps Laya optional and off. AC-G1-3 identical. Results in `docs/eval/g1` and `docs/eval/g1_gen`, not committed.
+- **2026-11-03** — Fast-forwarded `main` to `b5ed945`. The docs move conflicted with local session notes (`docs/STATUS.md` is now `docs/notes/status.md`; the session log lives here). Kept the upstream G1 section and moved the local notes below. Still uncommitted: `.gitignore` (mid-report paths), `scripts/demo.sh` (`--source langgraph`), and the LangSmith run-button message in `crates/api/src/lib.rs`.
+- **2026-10-15** — Mid report: AI disclosure narrowed to the Rust pipelines (ingestion, API, CLI). Removed the claim that most of Phases 0–6 was generated in assistant sessions.
+- **2026-10-15** — Mid report: dropped the blank pages between chapters (`openany`, one extra title-page break, and a heading guard that was ejecting chapter-title pages). 179 pages, compiles clean.
+- **2026-10-15** — FYP-1 mid report written in LaTeX (`Mid 1 Report/Sherlock_FYP1_Mid_Report/`, tectonic, 203 pages, 0 undefined refs) on the campus template; checked by three review passes (rubric, facts vs repo, consistency) and fixed. Found while fact-checking: FR-U11 is partial (no hosted share view); `langgraph-api`/`langgraph-runtime-inmem` are Elastic-2.0, not MIT; `agents.md` exit-code meanings are stale (D-08). Still needed from the team: signatures, supervisor meeting log, git tags, D-07 fix and a macOS re-run.
+- **2026-10-15** — Pulled `main` (`363f929..e8e52c5`). Rechecked the 14 Oct gap list against that code. Closed in code: FR-U6, FR-U7, FR-U9/NFR-12, FR-I5, FR-G3.10, FR-X7, NFR-10, FR-E9. Still partial: FR-K2 (pasted value is a context patch), FR-U2 (strip is derived from the assertion reason), FR-R4, FR-R9 (message exists; not on every ingest path), NFR-3 (`aiohttp` still open), NFR-17/FR-R8, NFR-21 (wheel builds, not published), NFR-23 (version on `/api/info` and `/steps`, not on diagnosis artifacts), FR-E4 (LLM guess is a local stub).
+
 - **2026-10-15** — Must-requirement sweep on `phase-6` (3 parallel agents):
   - FR-U9/NFR-12: `/` opens on a finished two-cause verdict (live, else seeded vendor_brief) with "Try your own run".
   - FR-U6: nodes that differ from the known-good run read "ran ok, output differs"; ok nodes say "check failed downstream".
@@ -97,6 +104,8 @@
   - FR-E9: live time-travel without the cassette fails `vendor_brief:retriever.drop_latest+extractor.legacy_pattern`; a one-cause control passes (`invariants.live_time_travel`).
   - NFR-11 partial: 24 s from `sherlock-rec run` to first diagnosis (clean install not timed). NFR-14: needs a user test, not measured.
 
+- **2026-10-14** - Demo run view failed because `serve` auto-picked LangSmith from `.env`. `scripts/demo.sh` now passes `--source langgraph`. Restarted the running demo; `/api/runs/{id}/steps` returns 200.
+- **2026-10-14** - Mid-eval demo check against the FYP-1 Form 2 rubric. Core demo (two-cause find, abstain) is past the halfway bar. On this Mac `scripts/doctor.sh` reports `sherlock-rec` not installed and `ui/dist` is the 8 October build, so `make demo` needs `make setup` first.
 - **2026-10-14** - Large demo teams on `phase-6`: `_kit.Pipeline` plus `support_desk` (33 nodes), `loan_underwriting` (32), `revenue_report` (33), 105 faults, 54 planned and seeded cases; `run_eval.py` covers 7 teams with gate probes and a scale table (84/86 exact, at most 7 trials vs up to 2^32 exhaustive); live demo with 11 diagnoses up at `http://127.0.0.1:58469`; found and worked around the invisible list-edge join in the run history. Harness 180 tests green.
 - **2026-10-14** - Teammate setup on `phase-6`: thin `Makefile` over `scripts/{setup,demo,demo-stop,doctor,test-fast}.sh`, short `readme.md`, `.gitattributes` (this line was restored from a truncated view after an accidental overwrite of the working file; its author should re-check it).
 - **2026-10-14** — Phase 6b on `phase-6`: diagnosis engine scaled to 30-300 node pipelines (duality search, priority-ordered enumeration, auto trial budget), optional G1 shortlist (`gates.py`, `--g1-*`), per-gate attribution in the artifact. 271 recorder tests (incl. `test_scale.py` 22, `test_g1.py` 8) and 49 harness tests green. FR-D10 still not built (cassette replay is deterministic).
