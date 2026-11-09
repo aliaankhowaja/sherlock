@@ -8,7 +8,8 @@ and the answer string on the terminal snapshot and on the last agent's result. R
 fewer than two agents are dropped, including the single-agent Who&When families
 (smolagents, alfagent). A count that disagrees with the pinned snapshot stops the run.
 
-The bulk file is gitignored. Tests read tests/fixtures/public_traces/sources.jsonl.
+The uncompressed file is gitignored. The tracked copy is docs/eval/public_traces/cases.jsonl.gz.
+Tests read tests/fixtures/public_traces/sources.jsonl.
 """
 
 import argparse

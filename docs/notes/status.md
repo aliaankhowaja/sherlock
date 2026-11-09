@@ -7,7 +7,7 @@
 
 **Last updated:** 2026-11-09 · **Current phase:** 6 complete; G1 Laya is on `main` at `6a9f476`, optional and off · **Branch:** `main`
 
-Public-trace conversion, phases 1–2, is on `main`. AEGIS test+val keeps 2,364 traces and Who&When Pro text keeps 2,668 (1,748 in the headline; 920 mathchat rows tagged `two_role`). `smolagents` and `alfagent` are dropped. The Laya ordering run is not done. Plan: [`public-trace-conversion.md`](public-trace-conversion.md).
+Public-trace conversion, phases 1–2, is on `main`. AEGIS test+val keeps 2,364 traces and Who&When Pro text keeps 2,668 (1,748 in the headline; 920 mathchat rows tagged `two_role`). `smolagents` and `alfagent` are dropped. The 5,032 traces are in [`../eval/public_traces/cases.jsonl.gz`](../eval/public_traces/cases.jsonl.gz); `gunzip -k` expands them. The Laya ordering run is not done. Plan: [`public-trace-conversion.md`](public-trace-conversion.md).
 
 ## How to update this file
 

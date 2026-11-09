@@ -207,7 +207,7 @@ Words the report uses: rank, reciprocal rank, recall@3, ndcg@3, trials_to_label,
 
 Two Python scripts under `python/sherlock/eval/`, plus one Python test. The parser is unchanged. `fetch_run_logs_reads_converted_public_traces` in `crates/app-core/src/ingestion.rs` reads the five converted histories through `parse_run_logs` and checks that each agent turn becomes one event. The scoring path uses the Python history walkers directly, because G1 cards are computed in Python from the history array.
 
-The bulk JSONL stays out of git (it is hundreds of megabytes and is already in the Hugging Face cache). Git tracks a five-row fixture and the counts this plan records. The generated case file for a full run lives under `docs/eval/public_traces/` and is gitignored until a run is actually reviewed.
+The uncompressed JSONL is about 411 MB and stays out of git. The same 5,032 traces are tracked as `docs/eval/public_traces/cases.jsonl.gz` (about 32 MB). `gunzip -k docs/eval/public_traces/cases.jsonl.gz` writes `cases.jsonl` next to it. Git also tracks a five-row fixture and the counts this plan records.
 
 Suggested layout, created when implementation starts:
 

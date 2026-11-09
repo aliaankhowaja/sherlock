@@ -18,8 +18,8 @@ harness/langgraph-dev.log
 .playwright-cli/
 python/sherlock/eval/.g1/
 
-# Converted public traces. The five-row fixture under tests/ is the tracked sample.
-docs/eval/public_traces/
+# Uncompressed public-trace corpus (about 411 MB). The gzip beside it is tracked.
+docs/eval/public_traces/cases.jsonl
 
 # Local mid-evaluation report and rubric (not part of the product).
 # The report itself lives in its own repository.
