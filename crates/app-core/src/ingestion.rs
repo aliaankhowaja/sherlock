@@ -529,4 +529,134 @@ mod tests {
         let logs = fetch_run_logs(&fake, "t1", &RunLogsQuery::new(10)).expect("parse");
         assert!(logs.events.is_empty());
     }
+
+    /// Every agent task becomes one event, and the event's write is that task's `result`.
+    /// Nothing else becomes an event. `parse_steps` then replays those same nodes oldest first.
+    fn assert_history_is_one_to_one(history: &serde_json::Value) {
+        let logs = fetch_run_logs(
+            &Fake::ok(history.clone()),
+            "public",
+            &RunLogsQuery::new(10_000),
+        )
+        .expect("parse");
+        let snaps = history.as_array().expect("history array");
+        assert!(
+            snaps[0]["tasks"].as_array().expect("tasks").is_empty(),
+            "the newest snapshot is the terminal one"
+        );
+        let mut expected = Vec::new();
+        for snap in snaps {
+            let tasks = snap["tasks"].as_array().expect("tasks");
+            if tasks.is_empty() {
+                continue;
+            }
+            let step = snap
+                .pointer("/metadata/step")
+                .and_then(serde_json::Value::as_i64);
+            let run_id = snap
+                .pointer("/metadata/run_id")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+            let checkpoint_id = snap
+                .pointer("/checkpoint/checkpoint_id")
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_string);
+            for task in tasks {
+                expected.push((
+                    task["name"].as_str().expect("name").to_string(),
+                    task["result"].clone(),
+                    step,
+                    run_id.clone(),
+                    checkpoint_id.clone(),
+                ));
+            }
+        }
+        assert!(
+            expected.len() >= 2,
+            "a kept trace has at least two agent turns"
+        );
+        assert_eq!(
+            logs.events.len(),
+            expected.len(),
+            "one event per agent task"
+        );
+        for (event, (name, result, step, run_id, checkpoint_id)) in
+            logs.events.iter().zip(expected.iter())
+        {
+            assert_eq!(event.node, *name);
+            assert_eq!(&event.writes, result, "the event write is the task result");
+            assert_eq!(event.step, *step);
+            assert_eq!(&event.run_id, run_id);
+            assert_eq!(&event.checkpoint_id, checkpoint_id);
+            assert!(event.error.is_none());
+        }
+        let distinct: std::collections::BTreeSet<&str> =
+            expected.iter().map(|(name, ..)| name.as_str()).collect();
+        assert!(distinct.len() >= 2);
+        for banned in ["User", "System", "user", "human"] {
+            assert!(!distinct.contains(banned));
+        }
+        let steps = crate::steps::parse_steps("public", history, None).expect("steps");
+        let replayed: Vec<&str> = steps.steps.iter().map(|step| step.node.as_str()).collect();
+        let conversation: Vec<&str> = expected
+            .iter()
+            .rev()
+            .map(|(name, ..)| name.as_str())
+            .collect();
+        assert_eq!(replayed, conversation);
+    }
+
+    #[test]
+    fn fetch_run_logs_reads_converted_public_traces() {
+        let raw =
+            include_str!("../../../python/sherlock/tests/fixtures/public_traces/histories.jsonl");
+        let mut seen = 0usize;
+        for line in raw.lines().filter(|line| !line.trim().is_empty()) {
+            let record: serde_json::Value = serde_json::from_str(line).expect("fixture record");
+            assert_history_is_one_to_one(record.get("history").expect("history"));
+            seen += 1;
+        }
+        assert_eq!(seen, 5);
+    }
+
+    /// One converted trace per framework from the generated corpus, when that file is on disk.
+    #[test]
+    #[ignore = "reads the gitignored docs/eval/public_traces/cases.jsonl"]
+    fn fetch_run_logs_matches_a_subset_of_the_ingested_corpus() {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../docs/eval/public_traces/cases.jsonl");
+        let file =
+            std::fs::File::open(&path).unwrap_or_else(|_| panic!("missing {}", path.display()));
+        let reader = std::io::BufReader::new(file);
+        let mut want = [
+            "agentverse",
+            "dylan",
+            "llm_debate",
+            "macnet",
+            "smoagents",
+            "magentic_one",
+            "magentic-one",
+            "debate",
+            "metagpt",
+            "mathchat",
+        ]
+        .into_iter()
+        .collect::<std::collections::BTreeSet<_>>();
+        for line in std::io::BufRead::lines(reader) {
+            let line = line.expect("read");
+            if line.trim().is_empty() {
+                continue;
+            }
+            let record: serde_json::Value = serde_json::from_str(&line).expect("record");
+            let framework = record["framework"].as_str().unwrap_or("");
+            if !want.remove(framework) {
+                continue;
+            }
+            assert_history_is_one_to_one(record.get("history").expect("history"));
+            if want.is_empty() {
+                break;
+            }
+        }
+        assert!(want.is_empty(), "missing frameworks: {want:?}");
+    }
 }

@@ -77,9 +77,13 @@
   - One job at a time (409 otherwise), killed after 15 minutes; progress is polled (`GET /api/jobs/{id}`), not streamed, to keep the server simple.
   - Token is generated from the standard library's OS-seeded hasher keys (no new dependency); good enough for a localhost CSRF token, not a secret store.
 
+- **2026-11-09 — public traces.** The ordering study uses AEGIS test+val and the Who&When Pro text split, converted to checkpoint history. Headline metrics compare orders against the published culprit names. Live G3 replay stays out of this study. Plan: `docs/notes/public-trace-conversion.md`.
+
 
 ## Session log
 
+- **2026-11-09** — Implemented the AEGIS and Who&When Pro converter and the ordering script (`eval/convert_public_traces.py`, `eval/public_g1.py`). Pinned counts match: 2,364 AEGIS, 2,668 Who&When, of which 920 mathchat rows stay out of the headline. Single-agent families are dropped. `parse_run_logs` matches converted tasks one-to-one, including one trace per kept framework. `diagnose` found the published set on two corpus rows after checkpoints gained `next`. The Laya run is still unrun.
+- **2026-11-09** — Fast-forwarded `main` to `6a9f476` and pushed it. Planned the AEGIS + Who&When Pro conversion (`docs/notes/public-trace-conversion.md`). Pinned counts: AEGIS test+val keep 2,364 of 2,387; Who&When text keeps 2,668 of 6,257, of which 920 mathchat rows stay out of the headline. The study compares order against the published label (`trials_to_label`, rank, recall@3). It does not call `evaluation.score` on a planted oracle and it does not replay the graph.
 - **2026-11-04** — `LOCAL=true make g1-eval` from `python/sherlock/.venv` (laya 0.4.22, MPS) finished exit 0 in about 9 minutes. Planted cases: Laya does not beat G0 (1.226 vs 1.214 mean trials). Generated test half: Laya 10.83 vs G0 8.18, so the ship rule keeps Laya optional and off. AC-G1-3 identical. Results in `docs/eval/g1` and `docs/eval/g1_gen`, not committed.
 - **2026-11-03** — Fast-forwarded `main` to `b5ed945`. The docs move conflicted with local session notes (`docs/STATUS.md` is now `docs/notes/status.md`; the session log lives here). Kept the upstream G1 section and moved the local notes below. Still uncommitted: `.gitignore` (mid-report paths), `scripts/demo.sh` (`--source langgraph`), and the LangSmith run-button message in `crates/api/src/lib.rs`.
 - **2026-10-15** — Mid report: AI disclosure narrowed to the Rust pipelines (ingestion, API, CLI). Removed the claim that most of Phases 0–6 was generated in assistant sessions.
