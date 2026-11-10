@@ -5,9 +5,9 @@
 > **This is the live progress tracker.** Read it before starting work; update it before you stop.
 > Scope is set by [`spec.md`](spec.md), which governs. The status columns inside the spec are a 12 October snapshot — **live status lives here only.** Session rules (model, commits) are in [`../../AGENTS.md`](../../AGENTS.md).
 
-**Last updated:** 2026-11-09 · **Current phase:** 6 complete; G1 Laya is on `main` at `6a9f476`, optional and off · **Branch:** `main`
+**Last updated:** 2026-11-10 · **Current phase:** 6 complete; G1 Laya is on `main` at `6a9f476`, optional and off (confirmed on real traces 2026-11-10) · **Branch:** `main`
 
-Public-trace conversion, phases 1–2, is on `main`. AEGIS test+val keeps 2,364 traces and Who&When Pro text keeps 2,668 (1,748 in the headline; 920 mathchat rows tagged `two_role`). `smolagents` and `alfagent` are dropped. The 5,032 traces are in [`../eval/public_traces/cases.jsonl.gz`](../eval/public_traces/cases.jsonl.gz); `gunzip -k` expands them. The Laya ordering run is not done. Plan: [`public-trace-conversion.md`](public-trace-conversion.md).
+Public-trace conversion, phases 1–2, is on `main`. AEGIS test+val keeps 2,364 traces and Who&When Pro text keeps 2,668 (1,748 in the headline; 920 mathchat rows tagged `two_role`). `smolagents` and `alfagent` are dropped. The 5,032 traces are in [`../eval/public_traces/cases.jsonl.gz`](../eval/public_traces/cases.jsonl.gz); `gunzip -k` expands them. The Laya ordering run is done (2026-11-10, null result, [`../eval/public_traces/public_g1.md`](../eval/public_traces/public_g1.md) — details under Verified facts). Plan: [`public-trace-conversion.md`](public-trace-conversion.md).
 
 ## How to update this file
 
@@ -261,6 +261,7 @@ Dated; they have a shelf life. Re-check before relying on them in a report.
 - **2026-10-14 - A LangGraph list-edge join is invisible in the server history:** `add_edge([a, b], n)` runs correctly in-process, but in `/threads/{id}/history` the join steps list no tasks, so `n` never appears as a node (Sherlock then abstained `cannot_attribute` on 13 of 18 first-run `support_desk` cases, because faults owned by joined nodes had no node on the tape). `defer=True` is not a substitute (the node ran before its other predecessors finished). The kit wires a join from the last-finishing predecessors with plain edges, which the history shows. Real teams that use list-edge joins would hit this; not handled in the engine.
 
 - **2026-11-09 — public traces, pinned snapshots, no server:** `eval/convert_public_traces.py --check` kept 2,364 of 2,387 AEGIS rows and 2,668 of 6,257 Who&When Pro text rows (1,748 headline, 920 `two_role`). The drop table matched the plan, including 3,276 `smolagents` and 311 `alfagent` removed as single-agent. `parse_run_logs` and `parse_steps` match the converted tasks one event to one task on the five-row fixture and on one trace of each kept framework in `docs/eval/public_traces/cases.jsonl`. `diagnose` on that history first abstained because `next` was missing; with `next` set to the node that ran, it found the published set on an AEGIS `llm_debate` row (`{Assistant1, Assistant2}`, 7 trials) and a Who&When `debate` row (`{agent_1}`, 5 trials). The trial result is a stand-in: there is no graph to resume. The local Laya run over the full file has not been done.
+- **2026-11-10 — final public-trace Laya ordering run (`make g1-public`, in-process `laya`, seed 1, `laya` backend; result files 2026-11-10 03:32).** On 4,112 headline rows: mean `trials_to_label` (the number of deterministic check calls until the G3 search hits the first passing restore) — random 6.52, path 6.10, g0 6.33, laya 6.74, laya_masked 6.79. Paired per row: laya needs on average 0.42 more check calls than the shipped G0 order (slower on 1,229 rows, faster on 912, 1,971 ties) and 0.65 more than path; `path` reaches the fix within 20 trials on 100% of rows, laya on 96.4%. Laya does clearly beat random (faster on 1,449 rows, MRR 0.759 vs 0.732), so the per-card zero-shot signal is real — but the deterministic orders already capture it, and laya's within-equal-clue tie-break adds nothing on real traces. Null result against the pre-declared ship rule: Laya stays optional and off by default. Tables in `docs/eval/public_traces/public_g1.md`, per-row data and metadata in `public_g1.json`, both committed in aa526e7 together with `make g1-public` (`scripts/g1-public.sh`).
 
 ## Open items
 
@@ -297,6 +298,7 @@ Build plan: [`g1-laya-spec.md`](g1-laya-spec.md). Default off behind `--g1`. Upd
 | 4 Zero-shot evaluation on the 86 cases | ✅ local run 2026-11-04 | `docs/eval/g1`. 84 answered cases. Laya fix_mean 1.226 vs G0 1.214. Gate fires: min(G0, rule) is already optimal on 96.4%. Stability 43/43. Statuses: laya ok 40, partial 3, skipped 41 (no unavailable). |
 | 5 Harder generated cases | ✅ local run 2026-11-04 | `docs/eval/g1_gen`. Test half sha256 739f3ee40245.... 100 cases. Laya fix_mean 10.83 vs G0 8.18. Gate does not fire (G0 optimal on 22%). |
 | 6 Integration | ✅ ship decision recorded | AC-G1-3 byte-identical. Decision: Laya stays optional, off by default (generated half is 32.4% more trials, not 20% fewer; tight-budget exhaustion is higher with Laya). |
+| — Real traces: `make g1-public` on the 5,032-trace public corpus | ✅ local run 2026-11-10 | `docs/eval/public_traces/public_g1.md` (4,112 headline rows, seed 1, `laya` backend). Null result: laya mean `trials_to_label` 6.74 vs path 6.10 and g0 6.33. The ship decision stands: optional, off by default. |
 
 ### Acceptance criteria
 

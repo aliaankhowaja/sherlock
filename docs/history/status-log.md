@@ -4,6 +4,8 @@
 
 ## Decision log
 
+- **2026-11-10 — final public-trace Laya run; ship decision re-confirmed on real traces.** `eval/public_g1.py` (`make g1-public`, in-process `laya`, seed 1) over 4,112 public headline rows: Laya's zero-shot ranking clearly beats random (faster on 1,449 rows, MRR 0.759 vs 0.732), but the deterministic orders are still better where it matters — mean `trials_to_label` laya 6.74 vs path 6.10 and the shipped G0 order 6.33, and paired against G0 Laya is slower on 1,229 rows and faster on 912 (+0.42 mean check calls per diagnosis). Null result against the pre-declared rule; Laya stays optional and off by default, and the 2026-11-04 ship decision now rests on both the harness/generated cases and real traces. Result tables committed in `aa526e7` (`docs/eval/public_traces/public_g1.{md,json}`).
+
 - **2026-10-12/13 — team meeting; spec by Ibraheem.** Final scope is `docs/notes/spec.md`. No live calls: cache or abstain. The 9 October brief is superseded on method.
 - **2026-10-13 — Wajih.** Atomic commits; no AI co-author; the other two members as `Co-authored-by` (see `CLAUDE.md`). Build sessions use Sonnet with an Opus advisor; the token budget is tight.
 - **2026-10-13.** Ingestion reads `tasks[].result` instead of diffing checkpoints (more exact than spec §5.1's proposal).
@@ -81,6 +83,8 @@
 
 
 ## Session log
+
+- **2026-11-10** — Final G1 public-trace evaluation done locally (`make g1-public` → `eval/public_g1.py` over `docs/eval/public_traces/cases.jsonl`, in-process `laya`, seed 1): null result, Laya stays optional and off (decision log same date; verified facts in `docs/notes/status.md`). Added `make g1-public` (`scripts/g1-public.sh`): local-first run with a smoke test, card cache reuse, `sudo shutdown` timed after the run ends (`SHUTDOWN=0` skips, `SHUTDOWN_DELAY_MIN` moves the cancel window) — also fixed `make help` skipping target names with digits. Script, Makefile change and result tables committed in `aa526e7`; the two status notes are deliberately left uncommitted.
 
 - **2026-11-09** — Shared the 5,032-trace corpus as `docs/eval/public_traces/cases.jsonl.gz` (32 MB). The 411 MB JSONL stays gitignored. `gunzip -k` expands it.
 - **2026-11-09** — Implemented the AEGIS and Who&When Pro converter and the ordering script (`eval/convert_public_traces.py`, `eval/public_g1.py`). Pinned counts match: 2,364 AEGIS, 2,668 Who&When, of which 920 mathchat rows stay out of the headline. Single-agent families are dropped. `parse_run_logs` matches converted tasks one-to-one, including one trace per kept framework. `diagnose` found the published set on two corpus rows after checkpoints gained `next`. The Laya run is still unrun.
