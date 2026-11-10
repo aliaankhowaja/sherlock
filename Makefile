@@ -3,10 +3,10 @@ SHELL := bash
 .DEFAULT_GOAL := help
 export PORT ?= 3000
 
-.PHONY: help setup doctor demo demo-stop demo-status test test-fast eval g1-eval serve clean
+.PHONY: help setup doctor demo demo-stop demo-status test test-fast eval g1-eval g1-public serve clean
 
 help: ## Show this list
-	@grep -hE '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
+	@grep -hE '^[a-z0-9-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "  Options: PORT=3100 make demo   (web app port, default 3000)   OPEN=0 make demo   (do not open a browser)"
 
@@ -36,6 +36,9 @@ eval: ## Regenerate the evaluation tables in docs/eval (about 5 minutes)
 
 g1-eval: ## G1 Laya evaluation and ship decision (needs LAYA_API_KEY with credits, ~$0.12, ~30 minutes)
 	@bash scripts/g1-eval.sh
+
+g1-public: ## Final G1 Laya ordering run on the 5,032 public traces (local A100), then shuts this machine down
+	@bash scripts/g1-public.sh
 
 serve: ## Dev server against your own `langgraph dev` on :2024 (port $(PORT))
 	cargo run -p cli -- serve --port $(PORT)
