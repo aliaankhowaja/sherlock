@@ -174,3 +174,16 @@ def test_driver_records_a_headline_case_and_the_abstain_case(tmp_path, monkeypat
     assert abstain["product"]["reason_code"] == "unrecorded_call"
     for lab in ("head", "abstain"):
         assert not (tmp_path / lab / "net_attempts.txt").exists()
+
+
+@pytest.mark.parametrize("reply, cut", [
+    ({"choices": [{"finish_reason": "length", "message": {"content": ""}}]}, True),
+    ({"stop_reason": "max_tokens", "content": []}, True),
+    ({"choices": [{"finish_reason": "stop", "message": {"content": "#### 7"}}]}, False),
+])
+def test_a_reply_stopped_by_the_output_cap_is_told_apart_from_a_wrong_one(tmp_path, reply, cut):
+    from sherlock.cassette import Cassette
+    tape = Cassette(tmp_path / "c.db")
+    call = tape.begin("http", "POST http://m/v1/chat/completions", b"{}")
+    tape.finish(call, status=200, headers=[], is_sse=False, duration_ms=1, chunks=[json.dumps(reply).encode()])
+    assert rc._cut_off(tmp_path / "c.db") is cut

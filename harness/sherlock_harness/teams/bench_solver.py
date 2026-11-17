@@ -2,9 +2,8 @@
 
 read -> bias -> preface -> steer -> solve -> extract -> format, joined by ordinary edges. Only `solve` calls a
 model: one chat-completions request to the OpenAI-compatible server at BENCH_URL (model BENCH_MODEL, bearer key
-BENCH_API_KEY when set), or one Anthropic Messages request when BENCH_API=anthropic.
-Every other node is plain code, so a replay that serves `solve` from the cassette reproduces the run
-exactly.
+BENCH_API_KEY when set, extra body fields from the JSON in BENCH_EXTRA, e.g. an output cap or the reasoning effort).
+Every other node is plain code, so a replay that serves `solve` from the cassette reproduces the run exactly.
 
 Faults are switched on per run through context, `{"faults": [...]}`, and are named `<node>.<flag>`, so the patch
 that undoes one is owned by its node. Headline faults sit on `extract` and `format` and always change
@@ -16,6 +15,7 @@ Loaded by path by ``langgraph dev``; must not import from the rest of ``sherlock
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass, field
@@ -62,16 +62,11 @@ def _on(runtime: Runtime[Context], fault: str) -> bool:
 
 def ask(content: str) -> str:
     """The team's only network call."""
-    body = {"model": os.environ["BENCH_MODEL"], "messages": [{"role": "user", "content": content}]}
+    body = {"model": os.environ["BENCH_MODEL"], "messages": [{"role": "user", "content": content}],
+            **json.loads(os.environ.get("BENCH_EXTRA") or "{}")}
     key = os.environ.get("BENCH_API_KEY")
-    base = os.environ["BENCH_URL"].rstrip("/")
-    with httpx.Client(timeout=300) as client:
-        if os.environ.get("BENCH_API") == "anthropic":
-            resp = client.post(base + "/messages", json={**body, "max_tokens": 8192},
-                               headers={"x-api-key": key} if key else {})
-            resp.raise_for_status()  # text blocks only: a thinking block is not the reply
-            return "".join(b.get("text") or "" for b in resp.json().get("content") or [] if b.get("type") == "text")
-        resp = client.post(base + "/chat/completions", json=body,
+    with httpx.Client(timeout=3600) as client:  # a long reasoning reply on a shared GPU can take tens of minutes
+        resp = client.post(os.environ["BENCH_URL"].rstrip("/") + "/chat/completions", json=body,
                            headers={"Authorization": f"Bearer {key}"} if key else {})
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"] or ""

@@ -2,6 +2,10 @@
 
     cd python/sherlock
     export BENCH_URL=https://<openai-compatible host>/v1 BENCH_MODEL=<model> BENCH_API_KEY=<key>
+    # e.g. a llama.cpp server running Qwen3.8 at its full reasoning effort, the output cap kept inside the
+    # server's per-request context:
+    #   BENCH_URL=http://<host>:<port>/v1 BENCH_MODEL=qwen
+    #   BENCH_EXTRA='{"max_tokens": 120000, "chat_template_kwargs": {"reasoning_effort": "xhigh"}}'
     uv run python eval/replay_corpus.py pilot            # at most 90 attempts, stops at 30 kept, then the abstain case
     # a person reads every transcript in .replay_corpus/transcripts.md, then:
     uv run python eval/replay_corpus.py more --transcripts-read     # on to 200 kept or the end of the pool
@@ -167,6 +171,21 @@ def _requests(cassette: Path) -> list[str]:
     return out
 
 
+def _cut_off(cassette: Path) -> bool:
+    """A recorded model reply stopped at its output cap (OpenAI `length`, Anthropic `max_tokens`): no answer, not a
+    wrong one."""
+    tape = Cassette(cassette)
+    for call in tape.calls():
+        try:
+            body = json.loads(b"".join(tape.chunks(call["id"])))
+        except ValueError:
+            continue
+        if isinstance(body, dict) and (body.get("stop_reason") == "max_tokens" or any(
+                isinstance(c, dict) and c.get("finish_reason") == "length" for c in body.get("choices") or [])):
+            return True
+    return False
+
+
 def _sets(sets) -> list[list[str]]:
     return sorted(sorted(s) for s in sets or [])
 
@@ -253,11 +272,12 @@ def run_case(work: Path, q: dict, faults: list[str], *, url: str, abstain: bool 
 
     server = Server(work, replay=False, cassette=cassette, stub_port=port, log=work / "record.log")
     try:
-        client = Client(server.url, timeout=900)
+        client = Client(server.url, timeout=4000)
         clean, values = _run(client, q["question"], [], live=True)
         rec["clean"] = {"thread": clean, "reply": values.get("reply"), "final_output": values.get("final_output")}
         if not _passes(checks, values):
-            return done("unkept", ["the clean run does not pass equals"])
+            return done("unkept", ["the model hit its output cap before answering" if _cut_off(cassette)
+                                   else "the clean run does not pass equals"])
         failed = _run(client, q["question"], faults, live=True)[0] if abstain else None
         time.sleep(FLUSH_S)
     finally:
@@ -268,7 +288,7 @@ def run_case(work: Path, q: dict, faults: list[str], *, url: str, abstain: bool 
 
     server = Server(work, replay=True, cassette=cassette, stub_port=port, log=work / "replay.log")
     try:
-        client = Client(server.url, timeout=900)
+        client = Client(server.url, timeout=4000)
         if not abstain:  # served from the clean tape, so the model text cannot change between the two runs
             failed = _run(client, q["question"], faults, live=False)[0]
         good, bad = _history(client, clean), _history(client, failed)

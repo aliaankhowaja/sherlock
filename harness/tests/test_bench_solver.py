@@ -79,7 +79,7 @@ def test_short_answer(reply, answer):
     assert team.short_answer(reply) == answer
 
 
-def test_anthropic_api_sends_messages_and_keeps_only_text_blocks(monkeypatch):
+def test_extra_body_fields_reach_the_request(monkeypatch):
     sent = {}
 
     class Resp:
@@ -87,7 +87,7 @@ def test_anthropic_api_sends_messages_and_keeps_only_text_blocks(monkeypatch):
             pass
 
         def json(self):
-            return {"content": [{"type": "thinking", "thinking": "#### 1"}, {"type": "text", "text": "#### 420"}]}
+            return {"choices": [{"message": {"content": "#### 420"}}]}
 
     def post(self, url, json, headers):
         sent.update(url=url, body=json)
@@ -95,7 +95,8 @@ def test_anthropic_api_sends_messages_and_keeps_only_text_blocks(monkeypatch):
 
     monkeypatch.setenv("BENCH_URL", "http://model.test/v1/")
     monkeypatch.setenv("BENCH_MODEL", "m")
-    monkeypatch.setenv("BENCH_API", "anthropic")
+    monkeypatch.setenv("BENCH_EXTRA", '{"max_tokens": 120000, "chat_template_kwargs": {"reasoning_effort": "xhigh"}}')
     monkeypatch.setattr(team.httpx.Client, "post", post)
     assert team.ask("q") == "#### 420"
-    assert sent["url"] == "http://model.test/v1/messages" and sent["body"]["max_tokens"] > 0
+    assert sent["url"] == "http://model.test/v1/chat/completions"
+    assert sent["body"]["max_tokens"] == 120000 and sent["body"]["chat_template_kwargs"] == {"reasoning_effort": "xhigh"}
