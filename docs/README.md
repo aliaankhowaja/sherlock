@@ -20,6 +20,7 @@ Our own notes were once treated as truth by agents. Every document now has an au
   - `status.md` live tracker, including the G1 Laya API v0 build steps
   - `g1-laya-spec.md` the active build plan (G1 Laya API ranker)
   - `public-trace-conversion.md` plan for turning AEGIS and Who&When Pro text into checkpoint history
+  - `replay-corpus-plan.md` why those logs cannot host a replay test, and the scripted corpus that can
   - `spec.md` the 12 October scope spec by Ibraheem
   - `architecture.md` module layout, rules, commands, CLI
   - `ui-api-contract.md` web API contract for the UI
