@@ -360,8 +360,15 @@ def main(argv: list[str] | None = None) -> int:
     # kills the child on Ctrl-C, so a server never gets to flush what it recorded.
     proc = subprocess.Popen(cmd, env=env, start_new_session=os.name != "nt",
                             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0)
+    if os.name == "nt":  # CTRL_BREAK kills Python outright (no KeyboardInterrupt) and misses the child's own group
+        signal.signal(signal.SIGBREAK, lambda *_: proc.send_signal(signal.CTRL_BREAK_EVENT))
     try:
-        code = proc.wait()
+        while True:  # wake every second on Windows: a signal handler only runs between bytecodes, not inside wait()
+            try:
+                code = proc.wait(timeout=1 if os.name == "nt" else None)
+                break
+            except subprocess.TimeoutExpired:
+                pass
     except KeyboardInterrupt:
         proc.send_signal(signal.CTRL_BREAK_EVENT if os.name == "nt" else signal.SIGINT)
         code = proc.wait()

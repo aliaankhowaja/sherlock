@@ -1,8 +1,12 @@
 import json
 import os
+import signal
 import subprocess
 import sys
+import time
 from pathlib import Path
+
+import pytest
 
 import sherlock.cli as cli
 
@@ -62,3 +66,34 @@ def test_replay_abstain_is_reported_even_if_user_code_swallows_it(tmp_path):
     assert "swallowed CannotSay" in p.stdout
     assert p.returncode == cli.EXIT_ABSTAIN
     assert "cannot say: never recorded" in p.stderr
+
+
+def _alive(pid: int) -> bool:
+    out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True).stdout
+    return str(pid) in out
+
+
+@pytest.mark.skipif(os.name != "nt", reason="CTRL_BREAK is the Windows stop signal")
+def test_ctrl_break_on_run_also_stops_the_child(tmp_path):
+    """Stopping `sherlock run` must not orphan the server it started (it sits in its own process group)."""
+    pid_file = tmp_path / "child.pid"
+    child = f"import os,time;open(r'{pid_file}','w').write(str(os.getpid()));time.sleep(60)"
+    run = subprocess.Popen([sys.executable, "-m", "sherlock", "run", "--", sys.executable, "-c", child],
+                           cwd=tmp_path, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+    try:
+        for _ in range(100):
+            if pid_file.exists() and pid_file.read_text():
+                break
+            time.sleep(0.1)
+        pid = int(pid_file.read_text())
+        run.send_signal(signal.CTRL_BREAK_EVENT)
+        run.wait(timeout=30)
+        for _ in range(50):
+            if not _alive(pid):
+                break
+            time.sleep(0.1)
+        assert not _alive(pid), "the child outlived `sherlock run`"
+    finally:
+        pids = [str(run.pid)] + ([pid_file.read_text()] if pid_file.exists() and pid_file.read_text() else [])
+        for pid in pids:  # never leave a sleeper behind, pass or fail
+            subprocess.run(["taskkill", "/PID", pid, "/F", "/T"], capture_output=True)
