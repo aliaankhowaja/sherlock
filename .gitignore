@@ -17,6 +17,7 @@ harness/langgraph-dev.log
 # Browser-tool scratch output (console logs, page snapshots)
 .playwright-cli/
 python/sherlock/eval/.g1/
+python/sherlock/eval/.replay_corpus/
 
 # Uncompressed public-trace corpus (about 411 MB). The gzip beside it is tracked.
 docs/eval/public_traces/cases.jsonl
