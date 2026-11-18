@@ -84,6 +84,10 @@
 
 ## Session log
 
+- **2026-11-18** — Replay corpus pilot and full run on Qwen3.8 27B (xhigh, 120k cap): 185 of 300 kept, every automatic rule held, abstain case correct (summary in `docs/notes/status.md`). Fixed `sherlock run` orphaning its child on Windows (`dc198d0`; 73 leaked dev servers found). Pre-existing failure, not touched: `test_g1_laya.py::test_local_mode_uses_a_longer_default_total_timeout` fails on `main` too.
+
+- **2026-11-17** — Replay corpus plan (`docs/notes/replay-corpus-plan.md`) steps 1–4 built on branch `replay-corpus`, not run on a real model: `harness/sherlock_harness/teams/bench_solver.py` (+ `harness/tests/test_bench_solver.py`), driver `python/sherlock/eval/replay_corpus.py` (+ `tests/test_replay_corpus.py`, one live lab against the loopback stub). Step 5 (pilot of 30, human transcript read) needs `BENCH_URL`/`BENCH_MODEL`/`BENCH_API_KEY` and the pinned AEGIS / Who&When snapshots in the HF cache. Found on Windows: `langgraph dev` is killed by the stop (exit 0xC000013A), so only its 10 s flush saves runs, and a history read on the recording server unhooks the checkpoints from that flush (langgraph-runtime-inmem 0.36); the driver never reads history on the recorder and waits 12 s before stopping it.
+
 - **2026-11-10** — Final G1 public-trace evaluation done locally (`make g1-public` → `eval/public_g1.py` over `docs/eval/public_traces/cases.jsonl`, in-process `laya`, seed 1): null result, Laya stays optional and off (decision log same date; verified facts in `docs/notes/status.md`). Added `make g1-public` (`scripts/g1-public.sh`): local-first run with a smoke test, card cache reuse, `sudo shutdown` timed after the run ends (`SHUTDOWN=0` skips, `SHUTDOWN_DELAY_MIN` moves the cancel window) — also fixed `make help` skipping target names with digits. Script, Makefile change and result tables committed in `aa526e7`; the two status notes are deliberately left uncommitted.
 
 - **2026-11-09** — Shared the 5,032-trace corpus as `docs/eval/public_traces/cases.jsonl.gz` (32 MB). The 411 MB JSONL stays gitignored. `gunzip -k` expands it.
